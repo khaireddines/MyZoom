@@ -1,0 +1,12 @@
+/Database
+/MyZoom/node_modules
+/MyZoom/public/hot
+/MyZoom/public/storage
+/MyZoom/storage/*.key
+/MyZoom/vendor
+.env.backup
+.phpunit.result.cache
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log

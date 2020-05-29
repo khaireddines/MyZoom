@@ -1,0 +1,64 @@
+version: "3.1"
+services: 
+    mysql:
+        image: mysql:5.7
+        container_name: mysql-db-service-Zoom
+        working_dir: /application
+        restart: always
+        volumes:
+            - .:/application
+            - ./Database:/var/lib/mysql
+        environment:
+            - MYSQL_ROOT_PASSWORD=password
+            - MYSQL_DATABASE=ZoomLike
+            - MYSQL_USER=useradm
+            - MYSQL_PASSWORD=useradm
+        ports:
+            - 3307:3306
+
+    webserver:
+        image: nginx:alpine
+        container_name: webserver-service-Zoom
+        working_dir: /application
+        volumes:
+            - .:/application
+            - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+        ports:
+            - 81:80
+            
+    
+    php-fpm:
+        build: docker/php-fpm
+        container_name: php-fpm-service-Zoom
+        working_dir: /application/
+        volumes:
+            - .:/application
+            - ./docker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+        ports:
+            - 6001:6001
+#    websocket:
+#        build: docker/websocket_config
+#        container_name: websockets
+#        working_dir: /application
+#        command: /usr/bin/php /application/MyZoom/artisan websockets:serve
+#        volumes: 
+#            - ./docker/websocket_config/:/etc/supervisor/conf.d/
+#        ports: 
+#            - 6001:6001
+
+    adminer:
+        image: adminer
+        depends_on: 
+            - mysql
+        container_name: adminer-service-Zoom
+        ports:
+            - 8083:8080
+
+    janus-webrtc:
+        build: docker/januswebrtc-server
+        container_name: JanusWebRTC
+        command: janus-gateway/janus
+        ports: 
+            - 8088:8088
+            - 8089:8089
+           

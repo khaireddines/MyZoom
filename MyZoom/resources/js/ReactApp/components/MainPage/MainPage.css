@@ -1,0 +1,11 @@
+.center{
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+button{
+    width: 20rem;
+    height: 10rem;
+    border-radius: 0px !important;
+}
+
