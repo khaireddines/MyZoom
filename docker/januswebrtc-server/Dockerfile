@@ -3,10 +3,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Installing Tools Needed
 RUN apt-get update -y \
 	&& apt-get -y install aptitude git \
-    && aptitude -y install libmicrohttpd-dev libjansson-dev \
+	&& aptitude -y install libmicrohttpd-dev libjansson-dev \
 	libssl-dev libsrtp2-dev libsofia-sip-ua-dev libglib2.0-dev \
 	libopus-dev libogg-dev libcurl4-openssl-dev liblua5.3-dev \
-	libconfig-dev pkg-config gengetopt libtool automake
+	libconfig-dev pkg-config gengetopt libtool automake meson ninja-build
 # Installing Dependencies
 #RUN git clone https://github.com/sctplab/usrsctp \
 #	&& cd usrsctp \
@@ -31,14 +31,13 @@ RUN git clone https://libwebsockets.org/repo/libwebsockets \
 # Installing Tools Needed for Documentations
 RUN aptitude -y install doxygen graphviz
 # Installing LibNice
-RUN apt-get install -y gtk-doc-tools \
-	&& git clone https://gitlab.freedesktop.org/libnice/libnice \
+RUN git clone https://gitlab.freedesktop.org/libnice/libnice.git \
 	&& cd libnice \
-	&& ./autogen.sh \
-	&& ./configure --prefix=/usr \
-	&& make \
-	&& make install 
-
+	&& meson --prefix=/usr build && ninja -C build && ninja -C build install
+# Exporting nice.pc
+ENV PKG_CONFIG_PATH=/usr/lib64/pkgconfig
+# Copy The Library Libnice.so.10 to lib\
+RUN cp /lib64/libnice.so.10 /lib/
 # Installing Janus
 RUN git clone https://github.com/meetecho/janus-gateway.git \
 	&& cd janus-gateway \
