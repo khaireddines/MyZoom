@@ -96,7 +96,7 @@ const MainApp = () => {
                 return null;
         }
     };
-    //FIXME: fix the delay of attatching the access token for axios
+    
     const { authUser } = useSelector(({ auth }) => auth);
     useEffect(() => {
         if (authUser !=null) {

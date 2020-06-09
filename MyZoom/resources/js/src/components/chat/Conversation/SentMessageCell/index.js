@@ -1,11 +1,11 @@
 import React from "react";
 import {Avatar} from "antd";
 
-const SentMessageCell = ({conversation}) => {
+const SentMessageCell = ({conversation,user}) => {
+  
   return (
     <div className="gx-chat-item gx-flex-row-reverse">
-      {/*  TODO :: you need to replace the avatar picture with the current user */}
-      <Avatar className="gx-size-40 gx-align-self-end" src={"https://via.placeholder.com/150x150"}
+      <Avatar className="gx-size-40 gx-align-self-end" src={`/assets/images/${user.Profile_picture}`}
               alt={conversation.name}/>
 
       <div className="gx-bubble-block">
