@@ -1,12 +1,13 @@
 import React, {Component} from "react";
 import {Button, Checkbox, Drawer, message} from "antd";
 import CustomScrollbars from "../../../util/CustomScrollbars";
-
 import contactList from "./data/contactList";
 import ContactList from "../../../components/contact/ContactList";
 import AppModuleHeader from "../../../components/AppModuleHeader/index";
 import AddContact from "../../../components/contact/AddContact";
 import IntlMessages from "../../../util/IntlMessages";
+import axios from "../../../util/Api";
+
 
 let contactId = 723812738;
 
@@ -29,7 +30,6 @@ const filterOptions = [
 ];
 
 class Contact extends Component {
-
   ContactSideBar = (user) => {
     return <div className="gx-module-side">
       <div className="gx-module-side-header">
@@ -145,25 +145,14 @@ class Contact extends Component {
     }
 
   };
+  
   onSaveContact = (data) => {
-    let isNew = true;
-    const contactList = this.state.allContact.map((contact) => {
-      if (contact.id === data.id) {
-        isNew = false;
-        return data
-      } else {
-        return contact
-      }
-    });
-    if (isNew) {
-      contactList.push(data);
-    }
-    this.setState({
-      alertMessage: isNew ? 'Contact Added Successfully' : 'Contact Updated Successfully',
-      showMessage: true,
-      contactList: contactList,
-      allContact: contactList
-    });
+    axios.post('/api/addfriend',data).then(res =>{
+      this.setState({
+        alertMessage: res.data,
+        showMessage: true,
+      })
+    })
     // this.onFilterOptionSelect(this.state.filterOption);
   };
   onDeleteContact = (data) => {
@@ -237,6 +226,7 @@ class Contact extends Component {
       showMessage: false,
       selectedSectionId: 1,
       drawerState: false,
+      // FIXME : you need to get the current user from the redux store
       user: {
         name: 'Robert Johnson',
         email: 'robert.johnson@example.com',
@@ -339,7 +329,8 @@ class Contact extends Component {
         </div>
 
         <AddContact open={addContactState} contact={{
-          'id': contactId++,
+          // TODO Change the id of the user dynamicly
+          'id': '',
           'name': '',
           'thumb': '',
           'email': '',

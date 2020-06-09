@@ -1,5 +1,5 @@
 import React from "react";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {Avatar, Popover} from "antd";
 import {userSignOut} from "../../appRedux/actions/Auth";
 
@@ -15,11 +15,11 @@ const UserInfo = () => {
       </li>
     </ul>
   );
-
+  const {authUser} = useSelector(({auth})=> auth);
   return (
     <Popover overlayClassName="gx-popover-horizantal" placement="bottomRight" content={userMenuOptions}
              trigger="click">
-      <Avatar src='https://via.placeholder.com/150x150'
+      <Avatar src={`/assets/images/${authUser.Profile_picture}`}
               className="gx-avatar gx-pointer" alt=""/>
     </Popover>
   )

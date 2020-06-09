@@ -2,6 +2,7 @@
 /MyZoom/node_modules
 /MyZoom/public/hot
 /MyZoom/public/storage
+logs
 /MyZoom/storage/*.key
 /MyZoom/vendor
 .env.backup

@@ -1,21 +1,21 @@
 <?php
 
 namespace App\Http\Controllers;
+// TODO : critical you need to work on this first 
 
+use App\Friendship;
 use App\PrivateChat;
+use App\User;
 use Illuminate\Http\Request;
 
 class PrivateChatController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the Contacts.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
-    }
+    
 
     /**
      * Show the form for creating a new resource.

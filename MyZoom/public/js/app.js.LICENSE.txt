@@ -20,6 +20,14 @@ object-assign
 */
 
 /*!
+ * Pusher JavaScript Library v6.0.3
+ * https://pusher.com/
+ *
+ * Copyright 2020, Pusher
+ * Released under the MIT licence.
+ */
+
+/*!
  * Sizzle CSS Selector Engine v2.3.5
  * https://sizzlejs.com/
  *
@@ -28,6 +36,11 @@ object-assign
  * https://js.foundation/
  *
  * Date: 2020-03-14
+ */
+
+/*!
+ * deep-diff.
+ * Licensed under the MIT License.
  */
 
 /*!

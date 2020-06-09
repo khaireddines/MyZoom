@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {useSelector} from "react-redux";
 import {Menu} from "antd";
 import {Link} from "react-router-dom";
@@ -28,13 +28,18 @@ const SidebarContent = () => {
 
   const selectedKeys = pathname.substr(1);
   const defaultOpenKeys = selectedKeys.split('/')[1];
+  const {authUser}= useSelector(({auth})=>auth);
+  const [user,setUser] = useState(null);
+  useEffect(()=>{
+    setUser(authUser);
+  });
 
   return (<>
 
       <SidebarLogo/>
       <div className="gx-sidebar-content">
         <div className={`gx-sidebar-notifications ${getNoHeaderClass(navStyle)}`}>
-          <UserProfile/>
+          {(user !=null) && <UserProfile user={user} />}
           <AppsNavigation/>
         </div>
         <CustomScrollbars className="gx-layout-sider-scrollbar" >

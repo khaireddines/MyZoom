@@ -2,7 +2,6 @@ import React, {Component} from "react";
 import {Avatar, Button, Drawer, Input, Tabs} from "antd";
 import CustomScrollbars from "../../../util/CustomScrollbars";
 import Moment from "moment";
-
 import ChatUserList from "../../../components/chat/ChatUserList";
 import conversationList from "./data/conversationList";
 import Conversation from "../../../components/chat/Conversation/index";
@@ -12,9 +11,23 @@ import IntlMessages from "../../../util/IntlMessages";
 import SearchBox from "../../../components/SearchBox";
 import CircularProgress from "../../../components/CircularProgress/index";
 import './chat.css';
+import { connect } from "react-redux";
+import { getFriendsList } from "../../../appRedux/actions";
+
 const TabPane = Tabs.TabPane;
 
 class Chat extends Component {
+  componentDidMount(){
+    let user = JSON.parse(localStorage.getItem('user'));
+    (localStorage.getItem('tokens')) && this.props.getFriends(user).then(()=>{
+      this.setState({
+        contactList: this.props.friendList,
+        user:this.props.authUser
+      });
+    })
+    
+  }
+ //FIXME:: fix the filters of contact and users
   filterContact = (userName) => {
     if (userName === '') {
       return users.filter(user => !user.recent);
@@ -36,13 +49,14 @@ class Chat extends Component {
     const {conversationData} = conversation;
     return <div className="gx-chat-main">
       <div className="gx-chat-main-header">
-        <span className="gx-d-block gx-d-lg-none gx-chat-btn"><i className="gx-icon-btn icon icon-chat"
-                                                                 onClick={this.onToggleDrawer.bind(this)}/></span>
+        <span className="gx-d-block gx-d-lg-none gx-chat-btn">
+          <i className="gx-icon-btn icon icon-chat"
+          onClick={this.onToggleDrawer.bind(this)}/></span>
         <div className="gx-chat-main-header-info">
 
           <div className="gx-chat-avatar gx-mr-2">
             <div className="gx-status-pos">
-              <Avatar src={selectedUser.thumb}
+              <Avatar src={`/assets/images/${selectedUser.Profile_picture}`}
                       className="gx-rounded-circle gx-size-60"
                       alt=""
                       />
@@ -94,11 +108,11 @@ class Chat extends Component {
         </div>
         <div className="gx-chat-user gx-chat-user-center">
           <div className="gx-chat-avatar gx-mx-auto">
-            <Avatar src={"https://via.placeholder.com/150x150"}
-                    className="gx-size-60" alt="John Doe"/>
+            <Avatar src={`/assets/images/${this.state.user.Profile_picture}`}
+                    className="gx-size-60" alt=""/>
           </div>
 
-          <div className="gx-user-name h4 gx-my-2">Robert Johnson</div>
+          <div className="gx-user-name h4 gx-my-2">{this.state.user.name}</div>
 
         </div>
       </div>
@@ -142,7 +156,7 @@ class Chat extends Component {
             });
           }}>
             <div className="gx-status-pos">
-              <Avatar id="avatar-button" src={"https://via.placeholder.com/150x150"}
+              <Avatar id="avatar-button" src={`/assets/images/${this.props.authUser.Profile_picture}`}
                       className="gx-size-50"
                       alt=""/>
               <span className="gx-status gx-online"/>
@@ -151,10 +165,10 @@ class Chat extends Component {
 
           <div className="gx-module-user-info gx-flex-column gx-justify-content-center">
             <div className="gx-module-title">
-              <h5 className="gx-mb-0">Robert Johnson</h5>
+              <h5 className="gx-mb-0">{this.props.authUser.name} </h5>
             </div>
             <div className="gx-module-user-detail">
-              <span className="gx-text-grey gx-link">robert@example.com</span>
+              <span className="gx-text-grey gx-link"> {this.props.authUser.email} </span>
             </div>
           </div>
         </div>
@@ -172,7 +186,8 @@ class Chat extends Component {
       <div className="gx-chat-sidenav-content">
         {/*<AppBar position="static" className="no-shadow chat-tabs-header">*/}
         <Tabs className="gx-tabs-half" defaultActiveKey="1">
-          <TabPane label={<IntlMessages id="chat.chatUser"/>} tab={<IntlMessages id="chat.chatUser"/>} key="1">
+          <TabPane label={<IntlMessages id="chat.chatUser"/>} 
+          tab={<IntlMessages id="chat.chatUser"/>} key="1">
             <CustomScrollbars className="gx-chat-sidenav-scroll-tab-1">
               {this.state.chatUsers.length === 0 ?
                 <div className="gx-p-5">{this.state.userNotFound}</div>
@@ -242,9 +257,10 @@ class Chat extends Component {
       </div>)
   };
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
+      user:{},
       loader: false,
       userNotFound: 'No user found',
       drawerState: false,
@@ -252,13 +268,14 @@ class Chat extends Component {
       selectedTabIndex: 1,
       userState: 1,
       searchChatUser: '',
-      contactList: users.filter((user) => !user.recent),
+      contactList: props.friendList,
+      //users.filter((user) => !user.recent),
       selectedUser: null,
       message: '',
       chatUsers: users.filter((user) => user.recent),
       conversationList: conversationList,
       conversation: null
-    }
+    } 
   }
 
   submitComment() {
@@ -266,7 +283,7 @@ class Chat extends Component {
       const updatedConversation = this.state.conversation.conversationData.concat({
         'type': 'sent',
         'message': this.state.message,
-        'sentAt': Moment().format('hh:mm:ss A'),
+        'sentAt': Moment().format('hh:mm A'),
       });
       this.setState({
         conversation: {
@@ -311,6 +328,7 @@ class Chat extends Component {
         <div className="gx-app-module gx-chat-module">
           <div className="gx-chat-module-box">
             <div className="gx-d-block gx-d-lg-none">
+            
               <Drawer
                 placement="left"
                 closable={false}
@@ -333,6 +351,13 @@ class Chat extends Component {
     )
   }
 }
-
-
-export default Chat;
+const mapStateToProps = (state)=> ({
+  friendList:state.commonQuery.friendList,
+  loading:state.commonData.loading,
+  authUser:state.auth.authUser
+})
+const mapDispatchToProps =dispatch =>({
+  getFriends:(id)=>dispatch(getFriendsList(id)),
+  
+})
+export default connect(mapStateToProps,mapDispatchToProps)(Chat);

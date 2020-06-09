@@ -22,12 +22,9 @@ RUN apt-get update \
     && curl -sL https://deb.nodesource.com/setup_13.x | bash - \
     && apt-get install -y nodejs \
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+# Install supervisor
 RUN apt-get update \
     && apt-get -y install supervisor \
-    && service supervisor start \
-    && supervisorctl update \
-    # still got a problem in the image build websockets: ERROR (no such process) but it work mannualy !!
-    && supervisorctl start websockets \ 
     && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
 # Install Redis 
 #RUN apt-get update \
@@ -35,4 +32,6 @@ RUN apt-get update \
 #&& apt-get install php-pear php-dev \
 #&& pecl7.X-sp install redis \
 #&& apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+
+# Expose Websocket port
 EXPOSE 6001/tcp

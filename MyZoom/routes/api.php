@@ -25,7 +25,7 @@ Route::get('/test', function () {
     return response($data);
 });
 Route::middleware('auth:api')->group(function () {
-    Route::post('getUser', function () {
-       return  Auth::user();
-    });
+    Route::post('getUser', function () {return  Auth::user();});
+    Route::post('addfriend','friendlistController@store');
+    Route::post('contactList','friendlistController@contactList');
 });

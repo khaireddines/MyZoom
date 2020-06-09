@@ -1,9 +1,9 @@
-import React from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Avatar, Popover } from "antd";
 import { userSignOut } from "../../appRedux/actions/Auth";
 import { useHistory } from "react-router-dom";
-const UserProfile = () => {
+const UserProfile = ({user}) => {
     const dispatch = useDispatch();
     const history = useHistory();
     const userMenuOptions = (
@@ -20,7 +20,8 @@ const UserProfile = () => {
             </li>
         </ul>
     );
-
+    
+        console.log(user);
     return (
         <div className="gx-flex-row gx-align-items-center gx-mb-4 gx-avatar-row">
             <Popover
@@ -29,12 +30,12 @@ const UserProfile = () => {
                 trigger="click"
             >
                 <Avatar
-                    src="https://via.placeholder.com/150x150"
-                    className="gx-size-40 gx-pointer gx-mr-3"
+                    src={`/assets/images/${user.Profile_picture}`}
+                    className="gx-size-40 gx-pointer gx-mr-1"
                     alt=""
                 />
                 <span className="gx-avatar-name">
-                    Rob Farnandies
+                    {user.name}
                     <i className="icon icon-chevron-down gx-fs-xxs gx-ml-2" />
                 </span>
             </Popover>

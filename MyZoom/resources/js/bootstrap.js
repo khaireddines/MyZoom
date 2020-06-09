@@ -22,7 +22,12 @@ try {
 window.axios = require("axios");
 
 window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
-
+if (localStorage.getItem('tokens')) {
+    let tokens = JSON.parse(localStorage.getItem('tokens'));
+    window.axios.defaults.headers.common["authorization"] =
+    "Bearer " + tokens.access_token;
+    
+  }
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
  * for events that are broadcast by Laravel. Echo and event broadcasting
@@ -31,7 +36,12 @@ window.axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
 import Echo from "laravel-echo";
 window.Pusher = require("pusher-js");
-const ACCESS_TOKEN =JSON.parse(localStorage.getItem('tokens'));
+let ACCESS_TOKEN ={};
+if (localStorage.getItem('tokens'))
+    ACCESS_TOKEN =JSON.parse(localStorage.getItem('tokens'));
+else
+    ACCESS_TOKEN = {access_token:''};
+
 window.Echo = new Echo({
     broadcaster: "pusher",
     key: process.env.MIX_PUSHER_APP_KEY,
@@ -47,7 +57,3 @@ window.Echo = new Echo({
         },
     },
 });
-window.Echo.join('Chat')
-    .listen('MessageSent', (e) => {
-        console.log(e.message);
-    });

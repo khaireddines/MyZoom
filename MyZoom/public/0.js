@@ -2,7 +2,7 @@
 
 /***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./resources/js/src/routes/inBuiltApps/Chat/chat.css":
 /*!*******************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--6-1!./node_modules/postcss-loader/src??ref--6-2!./resources/js/src/routes/inBuiltApps/Chat/chat.css ***!
+  !*** ./node_modules/css-loader??ref--5-1!./node_modules/postcss-loader/src??ref--5-2!./resources/js/src/routes/inBuiltApps/Chat/chat.css ***!
   \*******************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -12,9 +12,78 @@ exports = module.exports = __webpack_require__(/*! ../../../../../../node_module
 
 
 // module
-exports.push([module.i, ".gx-chat-sidenav-scroll-tab-1 div:first-child,.gx-chat-list-scroll div:first-child{\n    overflow-x: hidden !important;\n}", ""]);
+exports.push([module.i, ".gx-chat-sidenav-scroll-tab-1 div:first-child,\n.gx-chat-list-scroll div:first-child,\n.gx-chat-sidenav-scroll-tab-2 div:first-child {\n    overflow-x: hidden !important;\n}\n.gx-chat-contact-name {\n    font-size: 15px !important;\n    font-weight: 400 !important;\n}\n.gx-chat-item {\n    padding-top: 0px;\n    padding-bottom: 5px;\n}\n", ""]);
 
 // exports
+
+
+/***/ }),
+
+/***/ "./resources/js/src/appRedux/actions/CommonQuery.js":
+/*!**********************************************************!*\
+  !*** ./resources/js/src/appRedux/actions/CommonQuery.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+
+
+/***/ }),
+
+/***/ "./resources/js/src/appRedux/actions/index.js":
+/*!****************************************************!*\
+  !*** ./resources/js/src/appRedux/actions/index.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _Setting__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Setting */ "./resources/js/src/appRedux/actions/Setting.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "toggleCollapsedSideNav", function() { return _Setting__WEBPACK_IMPORTED_MODULE_0__["toggleCollapsedSideNav"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "updateWindowWidth", function() { return _Setting__WEBPACK_IMPORTED_MODULE_0__["updateWindowWidth"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "setThemeType", function() { return _Setting__WEBPACK_IMPORTED_MODULE_0__["setThemeType"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "setThemeColorSelection", function() { return _Setting__WEBPACK_IMPORTED_MODULE_0__["setThemeColorSelection"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "onNavStyleChange", function() { return _Setting__WEBPACK_IMPORTED_MODULE_0__["onNavStyleChange"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "onLayoutTypeChange", function() { return _Setting__WEBPACK_IMPORTED_MODULE_0__["onLayoutTypeChange"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "switchLanguage", function() { return _Setting__WEBPACK_IMPORTED_MODULE_0__["switchLanguage"]; });
+
+/* harmony import */ var _Auth__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Auth */ "./resources/js/src/appRedux/actions/Auth.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "setInitUrl", function() { return _Auth__WEBPACK_IMPORTED_MODULE_1__["setInitUrl"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "userSignUp", function() { return _Auth__WEBPACK_IMPORTED_MODULE_1__["userSignUp"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "userSignIn", function() { return _Auth__WEBPACK_IMPORTED_MODULE_1__["userSignIn"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getUser", function() { return _Auth__WEBPACK_IMPORTED_MODULE_1__["getUser"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "userSignOut", function() { return _Auth__WEBPACK_IMPORTED_MODULE_1__["userSignOut"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getFriendsList", function() { return _Auth__WEBPACK_IMPORTED_MODULE_1__["getFriendsList"]; });
+
+/* harmony import */ var _Common__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Common */ "./resources/js/src/appRedux/actions/Common.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "fetchStart", function() { return _Common__WEBPACK_IMPORTED_MODULE_2__["fetchStart"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "fetchSuccess", function() { return _Common__WEBPACK_IMPORTED_MODULE_2__["fetchSuccess"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "fetchError", function() { return _Common__WEBPACK_IMPORTED_MODULE_2__["fetchError"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "showMessage", function() { return _Common__WEBPACK_IMPORTED_MODULE_2__["showMessage"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "hideMessage", function() { return _Common__WEBPACK_IMPORTED_MODULE_2__["hideMessage"]; });
+
+/* harmony import */ var _CommonQuery__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./CommonQuery */ "./resources/js/src/appRedux/actions/CommonQuery.js");
+/* harmony import */ var _CommonQuery__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_CommonQuery__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _CommonQuery__WEBPACK_IMPORTED_MODULE_3__) if(["toggleCollapsedSideNav","updateWindowWidth","setThemeType","setThemeColorSelection","onNavStyleChange","onLayoutTypeChange","switchLanguage","setInitUrl","userSignUp","userSignIn","getUser","userSignOut","getFriendsList","fetchStart","fetchSuccess","fetchError","showMessage","hideMessage","default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _CommonQuery__WEBPACK_IMPORTED_MODULE_3__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+
+
+
 
 
 /***/ }),
@@ -50,7 +119,7 @@ var UserCell = function UserCell(_ref) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "gx-status-pos"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(antd__WEBPACK_IMPORTED_MODULE_1__["Avatar"], {
-    src: chat.thumb,
+    src: "/assets/images/".concat(chat.thumb),
     className: "gx-size-40",
     alt: chat.name
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
@@ -140,18 +209,18 @@ var UserCell = function UserCell(_ref) {
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "gx-status-pos"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(antd__WEBPACK_IMPORTED_MODULE_1__["Avatar"], {
-    src: user.thumb,
+    src: "/assets/images/".concat(user.Profile_picture),
     className: "gx-size-40",
     alt: "Abbott"
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-    className: "gx-status ".concat(user.status)
+    className: "gx-status gx-".concat(user.status)
   }))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "gx-chat-contact-col"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "h4 gx-name"
   }, user.name), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "gx-chat-info-des gx-text-truncate"
-  }, user.mood.substring(0, 40) + "..."))));
+  }))));
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (UserCell);
@@ -215,13 +284,13 @@ var ReceivedMessageCell = function ReceivedMessageCell(_ref) {
     className: "gx-chat-item"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(antd__WEBPACK_IMPORTED_MODULE_1__["Avatar"], {
     className: "gx-size-40 gx-align-self-end",
-    src: user.thumb,
+    src: "/assets/images/".concat(user.Profile_picture),
     alt: ""
   }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "gx-bubble-block"
   }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "gx-bubble"
-  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, user.name), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+  }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "gx-message"
   }, conversation.message), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "gx-time gx-text-muted gx-text-right gx-mt-2"
@@ -290,6 +359,13 @@ __webpack_require__.r(__webpack_exports__);
 var Conversation = function Conversation(_ref) {
   var conversationData = _ref.conversationData,
       selectedUser = _ref.selectedUser;
+  Object(react__WEBPACK_IMPORTED_MODULE_0__["useEffect"])(function () {
+    window.Echo.join("Chat_".concat(selectedUser.id)).here(function (users) {
+      console.log(users);
+    }).listen('MessageSent', function (e) {
+      console.log(e.message);
+    });
+  }, [selectedUser]);
   return /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
     className: "gx-chat-main-content"
   }, conversationData.map(function (conversation, index) {
@@ -316,7 +392,7 @@ var Conversation = function Conversation(_ref) {
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(/*! !../../../../../../node_modules/css-loader??ref--6-1!../../../../../../node_modules/postcss-loader/src??ref--6-2!./chat.css */ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./resources/js/src/routes/inBuiltApps/Chat/chat.css");
+var content = __webpack_require__(/*! !../../../../../../node_modules/css-loader??ref--5-1!../../../../../../node_modules/postcss-loader/src??ref--5-2!./chat.css */ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./resources/js/src/routes/inBuiltApps/Chat/chat.css");
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -350,113 +426,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ([{
   id: 1,
   name: 'Alex Dolgove',
-  thumb: "https://via.placeholder.com/150x150",
+  thumb: "DefaultUser.png",
   status: 'away',
-  mood: 'English versions from the 1914 translation by H. Rackham',
+  mood: '',
   lastMessage: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem',
   unreadMessage: '',
   lastMessageTime: '20 min ago',
   recent: false
-}, {
-  id: 2,
-  name: 'Domnic Brown',
-  thumb: "https://via.placeholder.com/150x150",
-  status: 'online',
-  mood: 'English versions from the 1914 translation by H. Rackham',
-  lastMessage: 'It is a long established fact',
-  unreadMessage: '4',
-  lastMessageTime: 'Yesterday',
-  recent: true
-}, {
-  id: 3,
-  name: 'Domnic Harris',
-  thumb: "https://via.placeholder.com/150x150",
-  status: 'offline',
-  mood: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem',
-  lastMessage: 'There are many variations of passages of ',
-  unreadMessage: '',
-  lastMessageTime: '20/11/17',
-  recent: false
-}, {
-  id: 4,
-  name: 'Garry Sobars',
-  thumb: "https://via.placeholder.com/150x150",
-  status: 'away',
-  mood: 'It is a long established fact',
-  lastMessage: 'English versions from the 1914 translation by H. Rackham',
-  unreadMessage: '3',
-  lastMessageTime: 'Yesterday',
-  recent: true
-}, {
-  id: 5,
-  name: 'Jeson Born',
-  thumb: "https://via.placeholder.com/150x150",
-  status: 'away',
-  mood: 'I must explain to you how all this mistaken idea of denouncing ',
-  lastMessage: 'It is a long established fact',
-  unreadMessage: '',
-  lastMessageTime: 'Monday',
-  recent: true
-}, {
-  id: 6,
-  name: 'Jimmy Jo',
-  thumb: "https://via.placeholder.com/150x150",
-  status: 'online',
-  mood: 'The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested',
-  lastMessage: 'All the Lorem Ipsum generators on the',
-  unreadMessage: '',
-  lastMessageTime: 'Friday',
-  recent: false
-}, {
-  id: 7,
-  name: 'John Smith',
-  thumb: "https://via.placeholder.com/150x150",
-  status: 'away',
-  mood: 'There are many variations of passages of ',
-  lastMessage: 'The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested',
-  unreadMessage: '',
-  lastMessageTime: 'Tuesday',
-  recent: true
-}, {
-  id: 8,
-  name: 'Kadir M',
-  thumb: "https://via.placeholder.com/150x150",
-  status: 'online',
-  mood: 'All the Lorem Ipsum generators on the',
-  lastMessage: 'I must explain to you how all this mistaken idea of denouncing ',
-  unreadMessage: '5',
-  lastMessageTime: 'Monday',
-  recent: false
-}, {
-  id: 9,
-  name: 'Jimmy Jon',
-  thumb: "https://via.placeholder.com/150x150",
-  status: 'offline',
-  mood: 'There are many variations of passages of ',
-  lastMessage: 'There are many variations of passages of ',
-  unreadMessage: '',
-  lastMessageTime: '30 Min ago',
-  recent: false
-}, {
-  id: 10,
-  name: 'Stella Johnson',
-  thumb: "https://via.placeholder.com/150x150",
-  status: 'offline',
-  mood: 'It is a long established fact',
-  lastMessage: 'English versions from the 1914 translation by H. Rackham',
-  unreadMessage: '',
-  lastMessageTime: 'Yesterday',
-  recent: false
-}, {
-  id: 11,
-  name: 'Steve Smith',
-  thumb: "https://via.placeholder.com/150x150",
-  status: 'online',
-  mood: 'The standard chunk of Lorem Ipsum used since the 1500s',
-  lastMessage: 'The standard chunk of Lorem Ipsum used since the 1500s',
-  unreadMessage: '9',
-  lastMessageTime: 'Monday',
-  recent: true
 }]);
 
 /***/ }),
@@ -844,6 +820,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_CircularProgress_index__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../../../components/CircularProgress/index */ "./resources/js/src/components/CircularProgress/index.js");
 /* harmony import */ var _chat_css__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./chat.css */ "./resources/js/src/routes/inBuiltApps/Chat/chat.css");
 /* harmony import */ var _chat_css__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(_chat_css__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var react_redux__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/es/index.js");
+/* harmony import */ var _appRedux_actions__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../../../appRedux/actions */ "./resources/js/src/appRedux/actions/index.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -885,6 +863,8 @@ function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.g
 
 
 
+
+
 var TabPane = antd__WEBPACK_IMPORTED_MODULE_1__["Tabs"].TabPane;
 
 var Chat = /*#__PURE__*/function (_Component) {
@@ -892,12 +872,28 @@ var Chat = /*#__PURE__*/function (_Component) {
 
   var _super = _createSuper(Chat);
 
-  function Chat() {
+  _createClass(Chat, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      var user = JSON.parse(localStorage.getItem('user'));
+      localStorage.getItem('tokens') && this.props.getFriends(user).then(function () {
+        _this2.setState({
+          contactList: _this2.props.friendList,
+          user: _this2.props.authUser
+        });
+      });
+    } //FIXME:: fix the filters of contact and users
+
+  }]);
+
+  function Chat(props) {
     var _this;
 
     _classCallCheck(this, Chat);
 
-    _this = _super.call(this);
+    _this = _super.call(this, props);
 
     _this.filterContact = function (userName) {
       if (userName === '') {
@@ -945,7 +941,7 @@ var Chat = /*#__PURE__*/function (_Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "gx-status-pos"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(antd__WEBPACK_IMPORTED_MODULE_1__["Avatar"], {
-        src: selectedUser.thumb,
+        src: "/assets/images/".concat(selectedUser.Profile_picture),
         className: "gx-rounded-circle gx-size-60",
         alt: ""
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
@@ -1000,12 +996,12 @@ var Chat = /*#__PURE__*/function (_Component) {
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "gx-chat-avatar gx-mx-auto"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(antd__WEBPACK_IMPORTED_MODULE_1__["Avatar"], {
-        src: "https://via.placeholder.com/150x150",
+        src: "/assets/images/".concat(_this.state.user.Profile_picture),
         className: "gx-size-60",
-        alt: "John Doe"
+        alt: ""
       })), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "gx-user-name h4 gx-my-2"
-      }, "Robert Johnson"))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, _this.state.user.name))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "gx-chat-sidenav-content"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_util_CustomScrollbars__WEBPACK_IMPORTED_MODULE_2__["default"], {
         className: "gx-chat-sidenav-scroll"
@@ -1044,7 +1040,7 @@ var Chat = /*#__PURE__*/function (_Component) {
         className: "gx-status-pos"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(antd__WEBPACK_IMPORTED_MODULE_1__["Avatar"], {
         id: "avatar-button",
-        src: "https://via.placeholder.com/150x150",
+        src: "/assets/images/".concat(_this.props.authUser.Profile_picture),
         className: "gx-size-50",
         alt: ""
       }), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
@@ -1055,11 +1051,11 @@ var Chat = /*#__PURE__*/function (_Component) {
         className: "gx-module-title"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h5", {
         className: "gx-mb-0"
-      }, "Robert Johnson")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, _this.props.authUser.name, " ")), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "gx-module-user-detail"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "gx-text-grey gx-link"
-      }, "robert@example.com")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+      }, " ", _this.props.authUser.email, " ")))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "gx-chat-search-wrapper"
       }, /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_SearchBox__WEBPACK_IMPORTED_MODULE_10__["default"], {
         styleName: "gx-chat-search-bar gx-lt-icon-search-bar-lg",
@@ -1165,6 +1161,7 @@ var Chat = /*#__PURE__*/function (_Component) {
     };
 
     _this.state = {
+      user: {},
       loader: false,
       userNotFound: 'No user found',
       drawerState: false,
@@ -1172,9 +1169,8 @@ var Chat = /*#__PURE__*/function (_Component) {
       selectedTabIndex: 1,
       userState: 1,
       searchChatUser: '',
-      contactList: _data_chatUsers__WEBPACK_IMPORTED_MODULE_7__["default"].filter(function (user) {
-        return !user.recent;
-      }),
+      contactList: props.friendList,
+      //users.filter((user) => !user.recent),
       selectedUser: null,
       message: '',
       chatUsers: _data_chatUsers__WEBPACK_IMPORTED_MODULE_7__["default"].filter(function (user) {
@@ -1189,13 +1185,13 @@ var Chat = /*#__PURE__*/function (_Component) {
   _createClass(Chat, [{
     key: "submitComment",
     value: function submitComment() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this.state.message !== '') {
         var updatedConversation = this.state.conversation.conversationData.concat({
           'type': 'sent',
           'message': this.state.message,
-          'sentAt': moment__WEBPACK_IMPORTED_MODULE_3___default()().format('hh:mm:ss A')
+          'sentAt': moment__WEBPACK_IMPORTED_MODULE_3___default()().format('hh:mm A')
         });
         this.setState({
           conversation: _objectSpread(_objectSpread({}, this.state.conversation), {}, {
@@ -1203,8 +1199,8 @@ var Chat = /*#__PURE__*/function (_Component) {
           }),
           message: '',
           conversationList: this.state.conversationList.map(function (conversationData) {
-            if (conversationData.id === _this2.state.conversation.id) {
-              return _objectSpread(_objectSpread({}, _this2.state.conversation), {}, {
+            if (conversationData.id === _this3.state.conversation.id) {
+              return _objectSpread(_objectSpread({}, _this3.state.conversation), {}, {
                 conversationData: updatedConversation
               });
             } else {
@@ -1268,7 +1264,23 @@ var Chat = /*#__PURE__*/function (_Component) {
   return Chat;
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
-/* harmony default export */ __webpack_exports__["default"] = (Chat);
+var mapStateToProps = function mapStateToProps(state) {
+  return {
+    friendList: state.commonQuery.friendList,
+    loading: state.commonData.loading,
+    authUser: state.auth.authUser
+  };
+};
+
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return {
+    getFriends: function getFriends(id) {
+      return dispatch(Object(_appRedux_actions__WEBPACK_IMPORTED_MODULE_14__["getFriendsList"])(id));
+    }
+  };
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (Object(react_redux__WEBPACK_IMPORTED_MODULE_13__["connect"])(mapStateToProps, mapDispatchToProps)(Chat));
 
 /***/ })
 

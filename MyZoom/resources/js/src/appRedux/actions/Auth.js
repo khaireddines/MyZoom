@@ -6,10 +6,11 @@ import {
     SIGNOUT_USER_SUCCESS,
     USER_DATA,
     USER_TOKENS_SET,
-    PASSWORD_GRANT_CLIENT
+    PASSWORD_GRANT_CLIENT,
+    FETCH_FRIENDS
 } from "../../constants/ActionTypes";
+//import { getFriendsList } from "./CommenQuery";
 import axios from "../../util/Api";
-
 
 export const setInitUrl = url => {
     return {
@@ -27,19 +28,22 @@ export const userSignUp = ({ email, password, name }) => {
                 password: password,
                 name: name
             })
-            .then(({ data,status }) => {
-
-                if (status===200) {
-                  dispatch({ type: FETCH_SUCCESS });
-                  dispatch(userSignIn({username:email,password:password}));
+            .then(({ data, status }) => {
+                if (status === 200) {
+                    dispatch({ type: FETCH_SUCCESS });
+                    dispatch(
+                        userSignIn({ username: email, password: password })
+                    );
                 } else {
                     console.log("payload: data.error", data);
                     dispatch({ type: FETCH_ERROR, payload: "Network Error" });
                 }
             })
             .catch(function(error) {
-                
-                dispatch({ type: FETCH_ERROR, payload: 'The email has already been taken.' });
+                dispatch({
+                    type: FETCH_ERROR,
+                    payload: "The email has already been taken."
+                });
                 console.log("Error****:", error.message);
             });
     };
@@ -65,6 +69,8 @@ export const userSignIn = ({ username, password }) => {
                     );
                     axios.defaults.headers.common["authorization"] =
                         "Bearer " + data.access_token;
+                    window.Echo.connector.pusher.config.auth.headers['Authorization'] =
+                     'Bearer ' + data.access_token;
                     dispatch(getUser());
                     dispatch({ type: FETCH_SUCCESS });
                     dispatch({
@@ -91,11 +97,12 @@ export const getUser = () => {
         axios
             .post("api/getUser")
             .then(({ data }) => {
-                
                 if (data) {
-                    localStorage.setItem("user",JSON.stringify(data));
                     dispatch({ type: FETCH_SUCCESS });
                     dispatch({ type: USER_DATA, payload: data });
+                    localStorage.setItem('user',JSON.stringify(data));
+                    // We subscribe the current user to his own broadcast room
+                    
                 } else {
                     dispatch({ type: FETCH_ERROR, payload: data });
                 }
@@ -114,5 +121,15 @@ export const userSignOut = () => {
         localStorage.removeItem("user");
         dispatch({ type: FETCH_SUCCESS });
         dispatch({ type: SIGNOUT_USER_SUCCESS });
+    };
+};
+export const getFriendsList = ({ id }) => {
+    return dispatch => {
+        dispatch({ type: FETCH_START });
+        return axios.post("/api/contactList", {id:id}).then(res => {
+            dispatch({ type: FETCH_FRIENDS, payload: res.data });
+            dispatch({ type: FETCH_SUCCESS });
+        });
+        
     };
 };

@@ -33,6 +33,7 @@ class MessageSent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
+        // TODO : You need to add the user id that will resive the msg
         return new PresenceChannel('Chat');
     }
 }

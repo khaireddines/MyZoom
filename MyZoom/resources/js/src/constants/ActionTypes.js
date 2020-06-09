@@ -6,8 +6,10 @@
 // Password grant client created successfully.
 export const PASSWORD_GRANT_CLIENT = {
     grant_type: "password",
-    client_id: 1,
-    client_secret: 'jTJROAEhmqHvikXymyh1wZT8Kt4Mrx3A4Ic0iIEq'
+    // Mac client_id: 1,
+    // Mac client_secret: 'jTJROAEhmqHvikXymyh1wZT8Kt4Mrx3A4Ic0iIEq'
+    client_id: 2,
+    client_secret:'hK3vCrxRvVlt0U9FB4VUdyl40aIF1gKvHRxqlRmB'
 };
 // Customizer const
 export const TOGGLE_COLLAPSED_NAV = 'TOGGLE_COLLAPSE_MENU';
@@ -33,4 +35,5 @@ export const SIGNOUT_USER_SUCCESS = 'SIGNOUT_USER_SUCCESS';
 export const INIT_URL = 'INIT_URL';
 export const USER_DATA = 'USER_DATA';
 export const USER_TOKENS_SET = 'USER_TOKENS_SET';
-
+//CustemQuery
+export const FETCH_FRIENDS = 'FETCH_FRIENDS';

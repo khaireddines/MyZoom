@@ -739,6 +739,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_AppModuleHeader_index__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../components/AppModuleHeader/index */ "./resources/js/src/components/AppModuleHeader/index.js");
 /* harmony import */ var _components_contact_AddContact__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../../components/contact/AddContact */ "./resources/js/src/components/contact/AddContact/index.js");
 /* harmony import */ var _util_IntlMessages__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../util/IntlMessages */ "./resources/js/src/util/IntlMessages.js");
+/* harmony import */ var _util_Api__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../../util/Api */ "./resources/js/src/util/Api.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -766,6 +767,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
 
 
 
@@ -943,28 +945,12 @@ var Contact = /*#__PURE__*/function (_Component) {
     };
 
     _this.onSaveContact = function (data) {
-      var isNew = true;
-
-      var contactList = _this.state.allContact.map(function (contact) {
-        if (contact.id === data.id) {
-          isNew = false;
-          return data;
-        } else {
-          return contact;
-        }
-      });
-
-      if (isNew) {
-        contactList.push(data);
-      }
-
-      _this.setState({
-        alertMessage: isNew ? 'Contact Added Successfully' : 'Contact Updated Successfully',
-        showMessage: true,
-        contactList: contactList,
-        allContact: contactList
+      _util_Api__WEBPACK_IMPORTED_MODULE_8__["default"].post('/api/addfriend', data).then(function (res) {
+        _this.setState({
+          alertMessage: res.data,
+          showMessage: true
+        });
       }); // this.onFilterOptionSelect(this.state.filterOption);
-
     };
 
     _this.onDeleteContact = function (data) {
@@ -1066,6 +1052,7 @@ var Contact = /*#__PURE__*/function (_Component) {
       showMessage: false,
       selectedSectionId: 1,
       drawerState: false,
+      // FIXME : you need to get the current user from the redux store
       user: {
         name: 'Robert Johnson',
         email: 'robert.johnson@example.com',
@@ -1177,7 +1164,8 @@ var Contact = /*#__PURE__*/function (_Component) {
       }))))), /*#__PURE__*/react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_contact_AddContact__WEBPACK_IMPORTED_MODULE_6__["default"], {
         open: addContactState,
         contact: {
-          'id': contactId++,
+          // TODO Change the id of the user dynamicly
+          'id': '',
           'name': '',
           'thumb': '',
           'email': '',

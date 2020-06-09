@@ -20,6 +20,7 @@ services:
         image: nginx:alpine
         container_name: webserver-service-Zoom
         working_dir: /application
+        restart: always
         volumes:
             - .:/application
             - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
@@ -31,9 +32,12 @@ services:
         build: docker/php-fpm
         container_name: php-fpm-service-Zoom
         working_dir: /application/
+        entrypoint: ./docker/php-fpm/init.sh
+        restart: always
         volumes:
             - .:/application
             - ./docker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+            - ./docker/php-fpm/websockets.conf:/etc/supervisor/conf.d/websockets.conf
         ports:
             - 6001:6001
 #    websocket:
@@ -51,12 +55,14 @@ services:
         depends_on: 
             - mysql
         container_name: adminer-service-Zoom
+        restart: always
         ports:
             - 8083:8080
 
     janus-webrtc:
         build: docker/januswebrtc-server
         container_name: JanusWebRTC
+        restart: always
         command: janus-gateway/janus
         ports: 
             - 8088:8088
