@@ -24,8 +24,10 @@ services:
         volumes:
             - .:/application
             - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+            - ./serverkeys:/etc/ssl
         ports:
-            - 81:80
+            - 80:80
+            - 443:443
             
     
     php-fpm:
@@ -64,7 +66,20 @@ services:
         container_name: JanusWebRTC
         restart: always
         command: janus-gateway/janus
+        #command: tail -f janus-gateway/janus
+        volumes: 
+            - ./serverkeys:/etc/ssl
+            - ./docker/januswebrtc-server/config:/opt/janus/etc/janus
         ports: 
             - 8088:8088
             - 8089:8089
-           
+    turn-server:
+        image: zolochevska/turn-server
+        container_name: turn-server
+        restart: always
+        volumes: 
+            - ./docker/turn-server/deploy-turnserver.sh:/app/deploy-turnserver.sh
+            - ./serverkeys:/app/ssl
+        ports: 
+            - 3478:3478/udp
+            - 3478:3478

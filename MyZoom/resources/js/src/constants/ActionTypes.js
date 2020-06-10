@@ -9,7 +9,7 @@ export const PASSWORD_GRANT_CLIENT = {
     // Mac client_id: 1,
     // Mac client_secret: 'jTJROAEhmqHvikXymyh1wZT8Kt4Mrx3A4Ic0iIEq'
     client_id: 2,
-    client_secret:'hK3vCrxRvVlt0U9FB4VUdyl40aIF1gKvHRxqlRmB'
+    client_secret:'yAVGNSQdQTVzSkrFBioexZd64te3eWvBhTxsFjNq'
 };
 // Customizer const
 export const TOGGLE_COLLAPSED_NAV = 'TOGGLE_COLLAPSE_MENU';

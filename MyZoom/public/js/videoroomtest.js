@@ -43,10 +43,10 @@
 // the whole session.
 //
 var server = null;
-if(window.location.protocol === 'http:')
-	server = "http://"+ window.location +":8088/janus";
-else
-	server = "https://"+ window.location +":8089/janus";
+/* if(window.location.protocol === 'http:')
+	server = "http://"+window.location.hostname+"/:8088/janus";
+else */
+	server = "https://acelens.me:8089/janus";
 
 var janus = null;
 var sfutest = null;

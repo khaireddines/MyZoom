@@ -25,7 +25,6 @@ class Chat extends Component {
         user:this.props.authUser
       });
     })
-    
   }
  //FIXME:: fix the filters of contact and users
   filterContact = (userName) => {
@@ -200,8 +199,8 @@ class Chat extends Component {
           </TabPane>
           <TabPane label={<IntlMessages id="chat.contacts"/>} tab={<IntlMessages id="chat.contacts"/>} key="2">
             <CustomScrollbars className="gx-chat-sidenav-scroll-tab-2">
-              {
-                this.state.contactList.length === 0 ?
+              { 
+                typeof this.state.contactList == 'string' ?
                   <div className="gx-p-5">{this.state.userNotFound}</div>
                   :
                   <ContactList contactList={this.state.contactList}
@@ -259,6 +258,7 @@ class Chat extends Component {
 
   constructor(props) {
     super(props);
+    
     this.state = {
       user:{},
       loader: false,
