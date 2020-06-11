@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::view('/{path?}/{path2?}', 'welcome');
-Route::view('/','test');
+Route::view('/{path?}/{path2?}', 'welcome');
+//Route::view('/','test');
 Route::get('/test/test/{msg}',function ($msg)
 {
     

@@ -47,10 +47,11 @@ window.Echo = new Echo({
     key: process.env.MIX_PUSHER_APP_KEY,
     wsHost: window.location.hostname,
     wsPort: 6001,
-    forceTLS: false,
-    encrypted: false,
+    wssPort: 6001,
+    forceTLS: true,
+    encrypted: true,
     disableStats:true,
-    enabledTransports: ['ws'],
+    enabledTransports: ['ws','wss'],
     auth: {
         headers: {
             Authorization: 'Bearer ' + ACCESS_TOKEN.access_token
