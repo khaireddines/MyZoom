@@ -17,7 +17,7 @@ class CreateMessagesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('file_id')->nullable();
-            $table->string('message_text');
+            $table->text('message_text');
             $table->dateTime('sent_at', 0);
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('file_id')->references('id')->on('files');

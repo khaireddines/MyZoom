@@ -285,6 +285,7 @@ class Chat extends Component {
     const {message_recived}=this.props;
     const {selectedUser,conversation}= this.state;
     if (prevProps.message_recived !== message_recived) {
+      if(selectedUser!=null)
       (message_recived.from==selectedUser.id)?this.showRecived_Message(message_recived):'';
       //add notification here
     }
@@ -310,6 +311,7 @@ class Chat extends Component {
     
   }
   submitComment() {
+    var audio = new Audio('/assets/sounds/sent.mp3');
     if (this.state.message !== '') {
       const updatedConversation = this.state.conversation.conversationData.concat({
         'type': 'sent',
@@ -319,6 +321,8 @@ class Chat extends Component {
       Axios.post('api/storeMessage',{
         with:this.state.conversation.id,
         msg:this.state.message
+      }).then(()=>{
+        audio.play();
       });
       this.setState({
         conversation: {

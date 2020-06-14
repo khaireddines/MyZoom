@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-// TODO : Store the messages chat 
+ 
 
 use App\Events\MessageSent;
 use App\Friendship;

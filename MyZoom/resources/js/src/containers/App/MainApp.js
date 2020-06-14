@@ -99,6 +99,7 @@ const MainApp = () => {
     };
     
     const { authUser } = useSelector(({ auth }) => auth);
+    var audio = new Audio('/assets/sounds/recived.mp3');
     useEffect(() => {
         if (authUser !=null) {
             window.Echo.join(`Chat_${authUser.id}`)
@@ -110,6 +111,7 @@ const MainApp = () => {
                     e => {
                         console.log(e);
                         dispatch({ type: MESSAGE_RECIVED, payload: e });
+                        audio.play();
                     }
                 );
         }
