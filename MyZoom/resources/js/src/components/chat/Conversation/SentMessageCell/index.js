@@ -11,7 +11,7 @@ const SentMessageCell = ({conversation,user}) => {
       <div className="gx-bubble-block">
         <div className="gx-bubble">
           <div className="gx-message">{conversation.message}</div>
-          <div className="gx-time gx-text-muted gx-text-right gx-mt-2">{conversation.sentAt}</div>
+          <div className="gx-time gx-text-muted gx-text-right gx-mt-2"><small>{conversation.sentAt}</small></div>
         </div>
       </div>
 

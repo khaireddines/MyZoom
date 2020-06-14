@@ -13,6 +13,7 @@ import CircularProgress from "../../../components/CircularProgress/index";
 import './chat.css';
 import { connect } from "react-redux";
 import { getFriendsList } from "../../../appRedux/actions";
+import Axios from "../../../util/Api";
 
 const TabPane = Tabs.TabPane;
 
@@ -27,6 +28,7 @@ class Chat extends Component {
     })
   }
  //FIXME:: fix the filters of contact and users
+ //FIXME:: get only friends list who are confirmed not all 
   filterContact = (userName) => {
     if (userName === '') {
       return users.filter(user => !user.recent);
@@ -228,16 +230,18 @@ class Chat extends Component {
   handleChangeIndex = index => {
     this.setState({selectedTabIndex: index});
   };
-  onSelectUser = (user) => {
+  onSelectUser = async(user) => {
+    let conversationData =await Axios.post('api/conversation',{id:user.id});
     this.setState({
       loader: true,
       selectedSectionId: user.id,
       drawerState: this.props.drawerState,
       selectedUser: user,
-      conversation: this.state.conversationList.find((data) => data.id === user.id)
+      conversation: conversationData.data
     });
     setTimeout(() => {
       this.setState({loader: false});
+      this.scrollPositionBottom();
     }, 1500);
   };
   showCommunication = () => {
@@ -273,33 +277,66 @@ class Chat extends Component {
       selectedUser: null,
       message: '',
       chatUsers: users.filter((user) => user.recent),
-      conversationList: conversationList,
+      conversationList: null,
       conversation: null
     } 
   }
-
+  componentDidUpdate(prevProps,prevState) {
+    const {message_recived}=this.props;
+    const {selectedUser,conversation}= this.state;
+    if (prevProps.message_recived !== message_recived) {
+      (message_recived.from==selectedUser.id)?this.showRecived_Message(message_recived):'';
+      //add notification here
+    }
+    if(prevState.conversation !== conversation){
+      this.scrollPositionBottom();
+    }
+  }
+  scrollPositionBottom(){
+    var element = document.getElementsByClassName("gx-chat-list-scroll");
+    if(element.length !=0)
+    {element[0].firstElementChild.scrollTop = element[0].firstElementChild.scrollHeight}
+  }
+  showRecived_Message(msgObj){
+    const updatedConversation = this.state.conversation.conversationData.concat({
+      'type': 'recived',
+      'message': msgObj.msg,
+      'sentAt': Moment().format('MMM D,Y h:mmA'),
+    });
+    this.setState({
+      conversation: {
+        ...this.state.conversation, conversationData: updatedConversation
+    }});
+    
+  }
   submitComment() {
     if (this.state.message !== '') {
       const updatedConversation = this.state.conversation.conversationData.concat({
         'type': 'sent',
         'message': this.state.message,
-        'sentAt': Moment().format('hh:mm A'),
+        'sentAt': Moment().format('MMM D,Y h:mmA'),
+      });
+      Axios.post('api/storeMessage',{
+        with:this.state.conversation.id,
+        msg:this.state.message
       });
       this.setState({
         conversation: {
           ...this.state.conversation, conversationData: updatedConversation
         },
         message: '',
-        conversationList: this.state.conversationList.map(conversationData => {
+        /* conversationList: this.state.conversationList.map(conversationData => {
           if (conversationData.id === this.state.conversation.id) {
             return {...this.state.conversation, conversationData: updatedConversation};
           } else {
             return conversationData;
           }
-        })
+        }) */
       });
+      
     }
   }
+  
 
   updateMessageValue(evt) {
     this.setState({
@@ -354,7 +391,8 @@ class Chat extends Component {
 const mapStateToProps = (state)=> ({
   friendList:state.commonQuery.friendList,
   loading:state.commonData.loading,
-  authUser:state.auth.authUser
+  authUser:state.auth.authUser,
+  message_recived:state.commonQuery.message_recived
 })
 const mapDispatchToProps =dispatch =>({
   getFriends:(id)=>dispatch(getFriendsList(id)),

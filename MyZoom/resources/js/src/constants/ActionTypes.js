@@ -37,3 +37,5 @@ export const USER_DATA = 'USER_DATA';
 export const USER_TOKENS_SET = 'USER_TOKENS_SET';
 //CustemQuery
 export const FETCH_FRIENDS = 'FETCH_FRIENDS';
+export const MESSAGE_RECIVED = 'MESSAGE_RECIVED';
+

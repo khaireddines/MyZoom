@@ -40,13 +40,13 @@ const SidebarLogo = () => {
           }}
         />
       </div> : null}
-
+         {/* FIXME:: add your logo */}
       <Link to="/" className="gx-site-logo">
         {navStyle === NAV_STYLE_NO_HEADER_MINI_SIDEBAR && width >= TAB_SIZE ?
-          <img alt="" src={require("../../assets/images/w-logo.png")}/> :
+          <img alt="" /> :
           themeType === THEME_TYPE_LITE ?
-            <img alt="" src={require("../../assets/images/logo-white.png")}/> :
-            <img alt="" src={require("../../assets/images/logo.png")}/>}
+            <img alt=""/> :
+            <img alt=""/>}
 
       </Link>
 

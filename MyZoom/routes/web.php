@@ -1,6 +1,7 @@
 <?php
 
 use App\Events\MessageSent;
+use App\Http\Controllers\PrivateChatController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -20,5 +21,5 @@ Route::view('/{path?}/{path2?}', 'welcome');
 Route::get('/test/test/{msg}',function ($msg)
 {
     
-   broadcast(new MessageSent($msg))->toOthers(); 
+   //broadcast(new MessageSent($msg))->toOthers(); 
 });

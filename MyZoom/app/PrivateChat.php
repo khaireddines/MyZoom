@@ -9,5 +9,9 @@ class PrivateChat extends Model
     protected $casts = [
         'Conversation' => 'array'
     ];
-    protected $guarded = [];
+    protected $fillable = [
+        'Owner',
+        'With',
+        'Conversation'
+    ];
 }

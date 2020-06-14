@@ -1,21 +1,79 @@
 <?php
 
 namespace App\Http\Controllers;
-// TODO : critical you need to work on this first 
+// TODO : Store the messages chat 
 
+use App\Events\MessageSent;
 use App\Friendship;
+use App\Message;
 use App\PrivateChat;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class PrivateChatController extends Controller
 {
-    /**
-     * Display a listing of the Contacts.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    
+    function record_sort($records, $field, $reverse = false)
+    {
+        $hash = array();
+
+        foreach ($records as $record) {
+            $hash[$record[$field]] = $record;
+        }
+        
+        ($reverse) ? krsort($hash) : ksort($hash);
+
+        $records = array();
+
+        foreach ($hash as $record) {
+            $date = Carbon::createFromTimeString($record['sentAt']);
+            $record['sentAt'] = $date->format('M d,Y h:iA');
+            $records[] = $record;
+        }
+        
+        return $records;
+    }
+
+    public function Conversation(Request $request)
+    {
+        $withHowm = $request->id;
+        $MessagesISent = PrivateChat::where('Owner', Auth::user()->id)
+            ->where('With', $withHowm)
+            ->get();
+        $MessagesIRecived = PrivateChat::where('Owner', $withHowm)
+            ->where('With', Auth::user()->id)
+            ->get();
+        $conversation = [
+            'id' => $withHowm,
+            'conversationData' => []
+        ];
+        $data = [];
+        if ($MessagesISent->isNotEmpty()) {
+            foreach ($MessagesISent as $key => $messageRef) {
+                $messageData = Message::where('id', $messageRef->Conversation)->first();
+                $data[] = [
+                    'type' => 'sent',
+                    'message' => $messageData->message_text,
+                    'sentAt' => $messageData->sent_at,
+                ];
+            }
+        }
+        if ($MessagesIRecived->isNotEmpty()) {
+            foreach ($MessagesIRecived as $key => $messageRef) {
+                $messageData = Message::where('id', $messageRef->Conversation)->first();
+                $data[] = [
+                    'type' => 'received',
+                    'message' => $messageData->message_text,
+                    'sentAt' => $messageData->sent_at,
+                ];
+            }
+        }
+        
+        $conversation['conversationData'] = $this->record_sort($data, 'sentAt');
+        return response($conversation);
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -35,7 +93,18 @@ class PrivateChatController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $newMsg = new Message([
+            'user_id'=> Auth::user()->id,
+            'message_text'=>$request->msg,
+            'sent_at'=>Carbon::now()
+        ]);
+        $newMsg->save();
+        PrivateChat::create([
+            'Owner'=>Auth::user()->id,
+            'With'=>$request->with,
+            'Conversation'=>$newMsg->id
+        ]);
+        broadcast(new MessageSent(Auth::user()->id,$request->with,$request->msg))->toOthers();
     }
 
     /**

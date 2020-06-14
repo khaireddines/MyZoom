@@ -17,7 +17,7 @@ class CreatePrivateChatsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('Owner');
             $table->unsignedBigInteger('With');
-            $table->unsignedBigInteger('Converstation');
+            $table->unsignedBigInteger('conversation');
             $table->foreign('Owner')->references('id')->on('users');
             $table->foreign('With')->references('id')->on('users');
             $table->foreign('Converstation')->references('id')->on('messages');

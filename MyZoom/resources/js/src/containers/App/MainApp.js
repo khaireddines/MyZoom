@@ -11,7 +11,7 @@ import BelowHeader from "../Topbar/BelowHeader/index";
 import Topbar from "../Topbar/index";
 import { footerText } from "../../util/config";
 import App from "../../routes/index";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
     NAV_STYLE_ABOVE_HEADER,
     NAV_STYLE_BELOW_HEADER,
@@ -27,13 +27,14 @@ import {
 } from "../../constants/ThemeSetting";
 import NoHeaderNotification from "../Topbar/NoHeaderNotification/index";
 import { useRouteMatch } from "react-router-dom";
+import { MESSAGE_RECIVED } from "../../constants/ActionTypes";
 
 const { Content, Footer } = Layout;
 
 const MainApp = () => {
     const { width, navStyle } = useSelector(({ settings }) => settings);
     const match = useRouteMatch();
-
+    const dispatch = useDispatch();
     const getContainerClass = navStyle => {
         switch (navStyle) {
             case NAV_STYLE_DARK_HORIZONTAL:
@@ -107,9 +108,9 @@ const MainApp = () => {
                 .listen(
                     "MessageSent",
                     e => {
-                        console.log(e.message);
-                    },
-                    2500
+                        console.log(e);
+                        dispatch({ type: MESSAGE_RECIVED, payload: e });
+                    }
                 );
         }
     }, [authUser]);

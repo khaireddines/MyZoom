@@ -71,6 +71,7 @@ class friendlistController extends Controller
                     if ($isfriendData->friend_request_accepted == true)
                         return response('Already friends', 200);
                     else
+                    //FIXME:: you need to add the confirmation part here
                         return response('Waiting Confirmation', 200);
                 } else {
                     Friendship::create([

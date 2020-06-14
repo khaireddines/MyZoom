@@ -11,7 +11,7 @@ const Conversation = ({ conversationData, selectedUser }) => {
     useEffect(() => {
         setUser(authUser);
     }, [authUser]);
-    useEffect(() => {
+    /* useEffect(() => {
         window.Echo.join(`Chat_${selectedUser.id}`)
             .here(users => {
                 console.log(users);
@@ -19,10 +19,10 @@ const Conversation = ({ conversationData, selectedUser }) => {
             .listen("MessageSent", e => {
                 console.log(e.message);
             });
-    }, [selectedUser]);
+    }, [selectedUser]); */
     return (<>
       {(user!=null) &&
-        <div className="gx-chat-main-content">
+        <div className="gx-chat-main-content" /* style={{backgroundImage:`url(/assets/images/chatbg.jpg)`}} */>
             {conversationData.map((conversation, index) =>
                 conversation.type === "sent" ? (
                     <SentMessageCell

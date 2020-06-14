@@ -15,15 +15,20 @@ class MessageSent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $message;
+    public $from;
+    public $toHowm;
+    public $msg;
+
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($message)
+    public function __construct($from,$toHowm,$msg)
     {
-        $this->message=$message;
+        $this->from=$from;
+        $this->toHowm=$toHowm;
+        $this->msg=$msg;
     }
 
     /**
@@ -33,7 +38,7 @@ class MessageSent implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        // TODO : You need to add the user id that will resive the msg
-        return new PresenceChannel('Chat');
+        
+        return new PresenceChannel('Chat_'.$this->toHowm);
     }
 }
