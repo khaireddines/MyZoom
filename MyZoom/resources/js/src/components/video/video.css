@@ -2,8 +2,8 @@
     margin: 0 auto !important;
 }
 .ant-card{
-    min-height: 17.5em !important;
-    max-height: 17.5em !important;
+    min-height: 17.5vw !important;
+    max-height: 17.5vw !important;
     margin-bottom: 2% !important;
     align-items: center;
     display: flex;
