@@ -9,7 +9,7 @@ const App = ({match}) => (
   <div className="gx-main-content-wrapper">
     <Switch>
       <Route exact path={`${match.url}sample`} component={asyncComponent(() => import('./SamplePage'))}/> 
-      <Route  path={`${match.url}social`} component={InBuiltApps}/> 
+      <Route  path={`${match.url}social`} component={asyncComponent(() => import('./inBuiltApps/'))}/> 
       
     </Switch>
   </div>

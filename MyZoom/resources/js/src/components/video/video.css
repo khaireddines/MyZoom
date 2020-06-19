@@ -1,0 +1,15 @@
+.center{
+    margin: 0 auto !important;
+}
+.ant-card{
+    min-height: 17.5em !important;
+    max-height: 17.5em !important;
+    margin-bottom: 2% !important;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    background-color: #555a61;
+}
+.ant-card-bordered {
+    border: 1px solid #7c878c;
+}

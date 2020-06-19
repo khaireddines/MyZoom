@@ -19,7 +19,9 @@ const SignUp = (props) => {
     e.preventDefault();
     props.form.validateFields((err, values) => {
       if (!err) {
-        dispatch(userSignUp(values));
+        dispatch(userSignUp(values)); 
+        let { history } = this.props
+        history.push('/');
       }
     });
   };

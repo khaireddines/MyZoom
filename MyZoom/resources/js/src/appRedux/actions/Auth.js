@@ -34,6 +34,7 @@ export const userSignUp = ({ email, password, name }) => {
                     dispatch(
                         userSignIn({ username: email, password: password })
                     );
+                    // TODO : remove this dispatcher and add a redirection to /login
                 } else {
                     console.log("payload: data.error", data);
                     dispatch({ type: FETCH_ERROR, payload: "Network Error" });

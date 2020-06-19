@@ -7,7 +7,7 @@ export function toggleCollapsedSideNav(navCollapsed) {
 }
 
 export function updateWindowWidth(width) {
-  return {type: WINDOW_WIDTH, width};
+  return /* {type: WINDOW_WIDTH, width} */;
 }
 
 export function setThemeType(themeType) {

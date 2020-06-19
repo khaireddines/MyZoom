@@ -8,10 +8,9 @@ use Illuminate\Support\Facades\Auth;
 
 class Message extends Model
 {
-    protected $fillable=[
+     protected $fillable=[
         'message_text',
         'user_id',
         'sent_at'
-    ];
-
+    ]; 
 }

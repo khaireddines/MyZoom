@@ -6,9 +6,9 @@ import {ConfigProvider} from "antd";
 import {IntlProvider} from "react-intl";
 
 import AppLocale from "../../lngProvider";
-import MainApp from "./MainApp";
-import SignIn from "../SignIn";
-import SignUp from "../SignUp";
+const MainApp =React.lazy(()=>import ("./MainApp"));
+const SignIn =React.lazy(()=>import ("../SignIn"));
+const SignUp =React.lazy(()=>import ("../SignUp"));
 import {setInitUrl} from "../../appRedux/actions/Auth";
 import {onLayoutTypeChange, onNavStyleChange, setThemeType} from "../../appRedux/actions/Setting";
 
