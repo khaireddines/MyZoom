@@ -4,9 +4,14 @@ import adapter from "webrtc-adapter";
 import { useSelector } from "react-redux";
 import "./VideoRoom.css";
 import VideoLayout from "../../components/video";
+import { Redirect } from "react-router-dom";
+
 
 const VideoRoom = props => {
-    const { authUser } = useSelector(({ auth }) => auth);
+    const { authUser,tokens } = useSelector(({ auth }) => auth);
+    if(tokens==null){
+        window.location.replace('/');
+    }
     let janus = null;
     const server = "https://acelens.me:8089/janus";
     const myroom = parseInt(props.roomID);
@@ -16,6 +21,8 @@ const VideoRoom = props => {
     const opaqueId = "videoroom-" + Janus.randomString(12);
     let SFUHandler = null;
     let screenType = "screen";
+    let peoplesIn=0;
+    const [Handler, setHandler] = useState(null)
     const createRoom = () => {
         var body = {
             request: "create",
@@ -35,53 +42,24 @@ const VideoRoom = props => {
         };
         SFUHandler.send({ message: body });
     };
-    const preShareScreen = () => {
-        if (navigator.mozGetUserMedia) {
-            // Firefox needs a different constraint for screen and window sharing
-            bootbox.dialog({
-                title: "Share whole screen or a window?",
-                message:
-                    "Firefox handles screensharing in a different way: are you going to share the whole screen, or would you rather pick a single window/application to share instead?",
-                buttons: {
-                    screen: {
-                        label: "Share screen",
-                        className: "btn-primary",
-                        callback: function() {
-                            screenType = "screen";
-                        }
-                    },
-                    window: {
-                        label: "Pick a window",
-                        className: "btn-success",
-                        callback: function() {
-                            screenType = "window";
-                        }
-                    }
+    const updateView=(grid)=>{
+        let children = document.getElementById('layout').children;
+        for (let i = 0; i < children.length; i++) {
+            children[i].classList.forEach(className => {
+                if (className.startsWith('ant-col-')) {
+                    children[i].classList.remove(className);
+                    children[i].classList.add(`ant-col-${grid}`);
                 }
-            });
+            })
         }
-    };
-    const publishShareScreen = () => {
-        preShareScreen();
-        SFUHandler.createOffer({
-            media: { video: screenType, audio: true, videoRecv: false },
-            success: jsep => {
-                var ShareScreen = {
-                    request: "configure",
-                    audio: true,
-                    video: true
-                };
-                SFUHandler.send({ message: ShareScreen, jsep: jsep });
-            }
-        });
-    };
+    }
     const publishOwnFeed = () => {
         SFUHandler.createOffer({
             media: {
                 audioRecv: false,
                 videoRecv: false,
                 audioSend: true,
-                videoSend: true
+                videoSend: false
             },
             success: jsep => {
                 var publish = {
@@ -122,13 +100,48 @@ const VideoRoom = props => {
                 Janus.log(msg);
                 var event = msg["videoroom"];
                 if (event) {
+                    if(event === "joined"){
+                        peoplesIn = msg["publishers"].length;
+                    }
                     if (event === "attached") {
                         // Subscriber created and attached
                         SFURemoteHandler.rfid = msg["id"];
                         SFURemoteHandler.rfdisplay = msg["display"];
-                        let videoTag=`
-                        <div class="ant-col ant-col-6" style="padding-left: 2px; padding-right: 2px;">
-                            <video id="remote${msg["id"]}" autoplay="" playsinline="" width="100%"></video>
+                        peoplesIn+=1;
+                        let grid;
+                        switch (peoplesIn) {
+                            case 1:
+                                grid=24;
+                                break;
+                            case 2:
+                                grid=12;
+                                break;
+                            case 3:
+                                grid=12;
+                            break;
+                            case 4:
+                                grid=12;
+                            break;
+                            case 5:
+                                grid=6;
+                            break;
+                            default:
+                                grid=6;
+                                break;
+                        }
+                        //updateView(grid);
+                        let videoTagold=`
+                        <div class="ant-col ant-col-${grid}" style="padding-left: 2px;padding-right: 2px;justify-content: center;align-items: center;display: flex;">
+                            <video id="remote${msg["id"]}" autoplay="" playsinline="" ></video>
+                            <div class="overlay-1YJlCn"><div class="size16-1P40sf overlayTitle-8IcS01 idle-U-LIlZ"><span class="overlayTitleText-2mmQzi">${SFURemoteHandler.rfdisplay}</span></div><div class="statusContainer-1gtabC"></div></div>
+                        </div>
+                        `;
+                        let videoTag = `
+                        <div>
+                            <div>
+                                <video id="remote${msg["id"]}" autoplay="" playsinline="" ></video>
+                                <div class="overlay-1YJlCn"><div class="size16-1P40sf overlayTitle-8IcS01 idle-U-LIlZ"><span class="overlayTitleText-2mmQzi">${SFURemoteHandler.rfdisplay}</span></div><div class="statusContainer-1gtabC"></div></div>
+                            </div>
                         </div>
                         `;
                         let frame = document.createElement("div");
@@ -168,10 +181,9 @@ const VideoRoom = props => {
                 );
             },
             oncleanup: () => {
-                document.getElementById(`remote${SFURemoteHandler.rfid}`).parentElement
+                document.getElementById(`remote${SFURemoteHandler.rfid}`).parentElement.parentElement
                 .remove();
-                
-                
+                peoplesIn-=1;
             }
         });
     };
@@ -189,6 +201,7 @@ const VideoRoom = props => {
                             opaqueId: opaqueId,
                             success: pluginHandler => {
                                 SFUHandler = pluginHandler;
+                                setHandler(pluginHandler);
                                 Janus.log(
                                     "Plugin attached! (" +
                                         SFUHandler.getPlugin() +
@@ -207,9 +220,6 @@ const VideoRoom = props => {
                                 /* SFUHandler.send({"message":{"request" : "listparticipants", "room": myroom }}) for list of participants */
                                 publishOwnFeed();
                                 //publishShareScreen();
-                                SFUHandler.send({
-                                    message: { request: "publish" }
-                                });
                             },
                             error: error => {
                                 Janus.error(
@@ -265,10 +275,10 @@ const VideoRoom = props => {
                                 Janus.debug(" ::: Got a local stream :::");
                                 mystream = stream;
                                 // attatch the stream to the video tag
-                                Janus.attachMediaStream(
+                                /* Janus.attachMediaStream(
                                     document.getElementById("myvideo"),
                                     stream
-                                );
+                                ); */
                             },
                             onremotestream: stream => {
                                 // that's a send only method
@@ -296,7 +306,6 @@ const VideoRoom = props => {
             }
         });
     }, []);
-
     return (
         <>
             {/* <h1>{props.roomID}</h1>
@@ -309,7 +318,7 @@ const VideoRoom = props => {
             <video id="myvideo" autoPlay playsInline muted="muted" />
             <video id="remotevideo" autoPlay playsInline /> */}
 
-            <VideoLayout />
+            {(Handler!=null)&&<VideoLayout SFUHandler={Handler}/>}
         </>
     );
 };

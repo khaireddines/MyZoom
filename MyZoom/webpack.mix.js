@@ -17,6 +17,4 @@ mix.react("resources/js/app.js", "public/js")
     .setResourceRoot("/")
     .version();
 
-if (mix.inProduction()) {
-    mix.version();
-}
+
