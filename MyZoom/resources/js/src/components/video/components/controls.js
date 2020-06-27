@@ -1,7 +1,7 @@
-import React from "react";
+import React,{ useState } from "react";
 import { Popover } from "antd";
 import "./controls.css";
-
+var classNames = require('classnames');
 const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
     let screenType = "screen";
     let publish = {
@@ -10,7 +10,43 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
         video: true,
         videocodec: "vp9"
     };
-
+    const [CameraActive, setCameraActive] = useState(false);
+    let CameraClassNames = classNames(
+        'centerButton-3CaNcJ',
+        'controlButton-2MhVEL',
+        'button-38aScr',
+        'lookBlank-3eh9lL',
+        'colorBrand-3pXr91', 
+        'grow-q77ONN',
+        {
+            'active':CameraActive
+        }
+    );
+    const [ShareScreenActive, setShareScreenActive] = useState(false);
+    let ShareScreenClassNames = classNames(
+        'centerButton-3CaNcJ', 
+        'controlButton-2MhVEL', 
+        'button-38aScr', 
+        'lookBlank-3eh9lL', 
+        'colorBrand-3pXr91', 
+        'grow-q77ONN',
+        {
+            'active':ShareScreenActive
+        }
+    );
+    const [MicrophoneActive, setMicrophoneActive] = useState(false);
+    let MicrophoneClassNames = classNames(
+        'centerButton-3CaNcJ', 
+        'controlButton-2MhVEL', 
+        'button-38aScr', 
+        'lookBlank-3eh9lL', 
+        'colorBrand-3pXr91', 
+        'grow-q77ONN',
+        {
+            // Active here mean button clicked and microphone muted !!
+            'active':MicrophoneActive
+        }
+    );
     const refreshVideo = () => {
         SFUHandler.createOffer({
             media: { addVideo: true },
@@ -43,11 +79,21 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
     const ToggleCamera = () => {
         let videoOff = SFUHandler.isVideoMuted();
         if (videoOff) {
+            setCameraActive(true);
+            setShareScreenActive(false);
             refreshVideo();
             SFUHandler.unmuteVideo();
-        } else {SFUHandler.muteVideo();
-            SFUHandler.send({
-                message: publish
+        } else {
+            SFUHandler.muteVideo();
+            SFUHandler.createOffer({
+                media: { removeVideo: true },
+                success: async jsep => {
+                    setCameraActive(false);
+                    await SFUHandler.send({
+                        message: { ...publish, video: false },
+                        jsep: jsep
+                    });
+                }
             });
         }
 
@@ -55,8 +101,16 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
     };
     const ToggleMicrophone = () => {
         let micOff = SFUHandler.isAudioMuted();
-        if (micOff) SFUHandler.unmuteAudio();
-        else SFUHandler.muteAudio();
+        if (micOff) 
+            {
+                SFUHandler.unmuteAudio();
+                setMicrophoneActive(false);
+            }
+        else 
+            {
+                SFUHandler.muteAudio();
+                setMicrophoneActive(true);
+            }
 
         micOff = SFUHandler.isAudioMuted();
     };
@@ -69,6 +123,7 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
         SFUHandler.createOffer({
             media: { removeVideo: true },
             success: jsep => {
+                setCameraActive(false);
                 SFUHandler.send({
                     message: publish,
                     jsep: jsep
@@ -78,10 +133,14 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
         SFUHandler.createOffer({
             media: { video: screenType, replaceVideo: true },
             success: jsep => {
+                setShareScreenActive(true);
                 SFUHandler.send({
                     message: publish,
                     jsep: jsep
                 });
+            },
+            error: ()=>{
+                setShareScreenActive(false);
             }
         });
     };
@@ -194,7 +253,7 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
                             <button
                                 aria-label="Turn On Camera"
                                 type="button"
-                                className="centerButton-3CaNcJ controlButton-2MhVEL button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN"
+                                className={CameraClassNames}
                                 onClick={ToggleCamera}
                             >
                                 <div className="contents-18-Yxp lineHeightReset-3dQm1W">
@@ -219,7 +278,7 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
                             <button
                                 aria-label="Share Your Screen"
                                 type="button"
-                                className="centerButton-3CaNcJ controlButton-2MhVEL button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN"
+                                className={ShareScreenClassNames}
                                 onClick={publishShareScreen}
                             >
                                 <div className="contents-18-Yxp lineHeightReset-3dQm1W">
@@ -247,7 +306,7 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
                             <button
                                 aria-label="Mute"
                                 type="button"
-                                className="centerButton-3CaNcJ controlButton-2MhVEL button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN"
+                                className={MicrophoneClassNames}
                                 onClick={ToggleMicrophone}
                             >
                                 <div className="contents-18-Yxp lineHeightReset-3dQm1W">

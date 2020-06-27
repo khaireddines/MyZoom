@@ -22,7 +22,7 @@ class RoomConversationController extends Controller
         foreach ($records as $record) {
             $hash[$record[$field]] = $record;
         }
-        
+
         ($reverse) ? krsort($hash) : ksort($hash);
 
         $records = array();
@@ -32,45 +32,55 @@ class RoomConversationController extends Controller
             $record['sentAt'] = $date->format('M d,Y h:iA');
             $records[] = $record;
         }
-        
+
         return $records;
+    }
+    public function EncodeNTimes($num, $times = 3)
+    {
+        $encodedNum = $num;
+        for ($i = 0; $i < $times; $i++) {
+            $encodedNum = base64_encode($encodedNum);
+        }
+        return $encodedNum;
     }
 
     public function ConversationRoom(Request $request)
     {
         $RoomId = $request->room_id;
-        $Room = ChatRoom::where('id',$RoomId)->get();
-        if ($Room->isEmpty()) {
-            return response("Room doesn't exist !!",404);
-        }
         $conversation = [
             'id' => $RoomId,
             'conversationData' => []
         ];
-        $data = [];
-        $MessagesISent = RoomConversation::where('WhoSent',Auth::user()->id)
-        ->where('room_id',$RoomId)
-        ->get();
-        $MessagesPeoplesSent = RoomConversation::whereNotIn('WhoSent',[Auth::user()->id])
-        ->where('room_id',$RoomId)
-        ->get();
-        if ($MessagesISent->isNotEmpty()) {
-            foreach ($MessagesISent as $key => $messageRef) {
-                $data[] = [
-                    'type' => 'sent',
-                    'message' => $messageRef->message_text,
-                    'sentAt' => $messageRef->sent_at,
-                ];
+        $Room = ChatRoom::where('Chat_room_url', 'videoChatRoom_' . $this->EncodeNTimes($RoomId))->get();
+        if ($Room->isEmpty()) {
+            return response("Room doesn't exist !!", 404);
+        } else {
+            $RoomDetails = $Room->first();
+            $data = [];
+            $MessagesISent = RoomConversation::where('WhoSent', Auth::user()->id)
+                ->where('room_id', $RoomDetails->id)
+                ->get();
+            $MessagesPeoplesSent = RoomConversation::whereNotIn('WhoSent', [Auth::user()->id])
+                ->where('room_id', $RoomDetails->id)
+                ->get();
+            if ($MessagesISent->isNotEmpty()) {
+                foreach ($MessagesISent as $key => $messageRef) {
+                    $data[] = [
+                        'type' => 'sent',
+                        'message' => $messageRef->message_text,
+                        'sentAt' => $messageRef->sent_at,
+                    ];
+                }
             }
-        }
-        if ($MessagesPeoplesSent->isNotEmpty()) {
-            foreach ($MessagesPeoplesSent as $key => $messageRef) {
-                $data[] = [
-                    'type' => 'received',
-                    'from' => User::where('id',$messageRef->WhoSent)->get(['id','name','Profile_picture']),
-                    'message' => $messageRef->message_text,
-                    'sentAt' => $messageRef->sent_at,
-                ];
+            if ($MessagesPeoplesSent->isNotEmpty()) {
+                foreach ($MessagesPeoplesSent as $key => $messageRef) {
+                    $data[] = [
+                        'type' => 'received',
+                        'from' => User::where('id', $messageRef->WhoSent)->get(['id', 'name', 'Profile_picture']),
+                        'message' => $messageRef->message_text,
+                        'sentAt' => $messageRef->sent_at,
+                    ];
+                }
             }
         }
         $conversation['conversationData'] = $this->record_sort($data, 'sentAt');
@@ -96,37 +106,36 @@ class RoomConversationController extends Controller
     public function store(Request $request)
     {
         $RoomId = $request->room_id;
-        $Room = ChatRoom::where('id',$RoomId)->get();
+        $Room = ChatRoom::where('Chat_room_url', 'videoChatRoom_' . $this->EncodeNTimes($RoomId))->get();
         if ($Room->isEmpty()) {
-            return response("Room doesn't exist !!",404);
-        }
+            return response("Room doesn't exist !!", 404);
+        } else
+            $RoomDetails = $Room->first();
         try {
             if ($request->fileUrl) {
                 $file = new File([
-                    'file_path'=>$request->fileUrl
+                    'file_path' => $request->fileUrl
                 ]);
                 $file->save();
                 RoomConversation::create([
-                    'room_id'=>$RoomId,
-                    'message_text'=>$request->msg,
-                    'file_id'=>$file->id,
-                    'WhoSent'=>Auth::user()->id,
-                    'sent_at'=>Carbon::now()
+                    'room_id' => $RoomDetails->id,
+                    'message_text' => $request->msg,
+                    'file_id' => $file->id,
+                    'WhoSent' => Auth::user()->id,
+                    'sent_at' => Carbon::now()
                 ]);
-                broadcast(new Send_ChatRoom_Message($RoomId,Auth::user(),$request->msg,$file))->toOthers();
-            }else
-            {
+                broadcast(new Send_ChatRoom_Message($RoomId, Auth::user(), $request->msg, $file))->toOthers();
+            } else {
                 RoomConversation::create([
-                'room_id'=>$RoomId,
-                'message_text'=>$request->msg,
-                'WhoSent'=>Auth::user()->id,
-                'sent_at'=>Carbon::now()
-            ]);
-            broadcast(new Send_ChatRoom_Message($RoomId,Auth::user(),$request->msg))->toOthers();
+                    'room_id' => $RoomDetails->id,
+                    'message_text' => $request->msg,
+                    'WhoSent' => Auth::user()->id,
+                    'sent_at' => Carbon::now()
+                ]);
+                broadcast(new Send_ChatRoom_Message($RoomId, Auth::user(), $request->msg))->toOthers();
             }
         } catch (\Throwable $th) {
-            //throw $th;
-
+            return response($th);
         }
     }
 

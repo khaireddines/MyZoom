@@ -28,6 +28,21 @@ class ChatRoomController extends Controller
         //
     }
 
+    public function UniqueNumber()
+    {
+        $numbers = range(111111, 999999);
+        shuffle($numbers);
+        $numbers=array_slice($numbers, 0, 2);
+        sort($numbers);
+        return $this->EncodeNTimes(mt_rand($numbers[0],$numbers[1]));
+    }
+    public function EncodeNTimes($num,$times=3)
+    {   $encodedNum=$num;
+        for ($i=0; $i < $times; $i++) { 
+            $encodedNum=base64_encode($encodedNum);
+        }
+        return $encodedNum;
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -35,12 +50,12 @@ class ChatRoomController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {   
         try {
             $chatRoom = ChatRoom::create([
                 'Name'=> $request->Name,
                 'RoomOwner'=> Auth::user()->id,
-                'Chat_room_url'=> $request->RoomUrl
+                'Chat_room_url'=> 'videoChatRoom_'.$this->UniqueNumber()
             ]);
             return response('Successfully',200);
         } catch (\Throwable $th) {

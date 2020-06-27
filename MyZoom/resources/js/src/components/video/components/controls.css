@@ -82,3 +82,10 @@ div,span{outline:0;}
 .overlayTitleText-2mmQzi{white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
 .statusContainer-1gtabC{-webkit-box-flex:0;-ms-flex:0 0 auto;flex:0 0 auto;}
 
+/*! Changing Active icons color */
+.active{
+    background: #fff !important;
+}
+.active div>svg{
+    color: #2f3136 !important;;
+}

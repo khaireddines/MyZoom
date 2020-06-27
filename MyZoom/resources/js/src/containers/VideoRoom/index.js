@@ -8,23 +8,27 @@ import VideoLayout from "../../components/video";
 import { Redirect } from "react-router-dom";
 
 
+const decodenum = string => {
+    return window.atob(window.atob(window.atob(string)));
+};
 const VideoRoom = props => {
-    const { authUser,tokens } = useSelector(({ auth }) => auth);
+    const { authUser, tokens } = useSelector(({ auth }) => auth);
     const dispatch = useDispatch();
-    if(tokens==null){
-        window.location.replace('/');
+    if (tokens == null) {
+        window.location.replace("/");
     }
     let janus = null;
     const server = "https://acelens.me:8089/janus";
-    const myroom = parseInt(props.roomID);
+    const myroom = parseInt(decodenum(props.roomID));
     const myusername = authUser.name;
     const myid = authUser.id;
     let mystream = null;
     const opaqueId = "videoroom-" + Janus.randomString(12);
     let SFUHandler = null;
     let screenType = "screen";
-    let peoplesIn=0;
-    const [Handler, setHandler] = useState(null)
+    let peoplesIn = 0;
+    const [exist, setExist] = useState(null);
+    const [Handler, setHandler] = useState(null);
     const createRoom = () => {
         var body = {
             request: "create",
@@ -35,18 +39,15 @@ const VideoRoom = props => {
         SFUHandler.send({ message: body });
     };
     const joinRoom = () => {
-        var audio = new Audio('/assets/sounds/recived.mp3');
+        var audio = new Audio("/assets/sounds/recived.mp3");
         window.Echo.join(`ChatRoom_${myroom}`)
-        .here(users => {
-            console.log(users);
-        })
-        .listen(
-            "Send_ChatRoom_Message",
-            e => {
+            .here(users => {
+                console.log(users);
+            })
+            .listen("Send_ChatRoom_Message", e => {
                 dispatch({ type: CHATROOM_MESSAGE_RECIVED, payload: e });
                 audio.play();
-            }
-        );
+            });
         var body = {
             request: "join",
             room: myroom,
@@ -56,18 +57,6 @@ const VideoRoom = props => {
         };
         SFUHandler.send({ message: body });
     };
-    // FIXME: deal with me later
-    const updateView=(grid)=>{
-        let children = document.getElementById('layout').children;
-        for (let i = 0; i < children.length; i++) {
-            children[i].classList.forEach(className => {
-                if (className.startsWith('ant-col-')) {
-                    children[i].classList.remove(className);
-                    children[i].classList.add(`ant-col-${grid}`);
-                }
-            })
-        }
-    }
     const publishOwnFeed = () => {
         SFUHandler.createOffer({
             media: {
@@ -115,37 +104,16 @@ const VideoRoom = props => {
                 Janus.log(msg);
                 var event = msg["videoroom"];
                 if (event) {
-                    if(event === "joined"){
+                    if (event === "joined") {
                         peoplesIn = msg["publishers"].length;
                     }
                     if (event === "attached") {
                         // Subscriber created and attached
                         SFURemoteHandler.rfid = msg["id"];
                         SFURemoteHandler.rfdisplay = msg["display"];
-                        peoplesIn+=1;
-                        let grid;
-                        switch (peoplesIn) {
-                            case 1:
-                                grid=24;
-                                break;
-                            case 2:
-                                grid=12;
-                                break;
-                            case 3:
-                                grid=12;
-                            break;
-                            case 4:
-                                grid=12;
-                            break;
-                            case 5:
-                                grid=6;
-                            break;
-                            default:
-                                grid=6;
-                                break;
-                        }
+
                         //updateView(grid);
-                        let videoTagold=`
+                        let videoTagold = `
                         <div class="ant-col ant-col-${grid}" style="padding-left: 2px;padding-right: 2px;justify-content: center;align-items: center;display: flex;">
                             <video id="remote${msg["id"]}" autoplay="" playsinline="" ></video>
                             <div class="overlay-1YJlCn"><div class="size16-1P40sf overlayTitle-8IcS01 idle-U-LIlZ"><span class="overlayTitleText-2mmQzi">${SFURemoteHandler.rfdisplay}</span></div><div class="statusContainer-1gtabC"></div></div>
@@ -160,10 +128,12 @@ const VideoRoom = props => {
                         </div>
                         `;
                         let frame = document.createElement("div");
-                        
+
                         frame.innerHTML = videoTag.trim();
                         console.log(frame.firstChild);
-                        document.getElementById("layout").appendChild(frame.firstChild);
+                        document
+                            .getElementById("layout")
+                            .appendChild(frame.firstChild);
                     }
                 }
                 if (jsep) {
@@ -189,20 +159,21 @@ const VideoRoom = props => {
                 }
             },
             onremotestream: stream => {
-                
-                 Janus.attachMediaStream(
+                Janus.attachMediaStream(
                     document.getElementById(`remote${SFURemoteHandler.rfid}`),
                     stream
                 );
             },
             oncleanup: () => {
-                document.getElementById(`remote${SFURemoteHandler.rfid}`).parentElement.parentElement
-                .remove();
-                peoplesIn-=1;
+                document
+                    .getElementById(`remote${SFURemoteHandler.rfid}`)
+                    .parentElement.parentElement.remove();
+                peoplesIn -= 1;
             }
         });
     };
     useEffect(() => {
+        console.log(myroom);
         Janus.init({
             debug: true,
             dependencies: Janus.useDefaultDependencies({ adapter }),
@@ -226,7 +197,7 @@ const VideoRoom = props => {
                                 );
                                 Janus.log("  -- This is a publisher/manager");
                                 // create the room
-                                createRoom(); // TODO : to be removed from here and added where the user will create a link for video chat
+                                //createRoom(); // TODO : to be removed from here and added where the user will create a link for video chat
                                 // check for the room before creating it using exists
                                 // Register the current user
                                 joinRoom();
@@ -254,6 +225,16 @@ const VideoRoom = props => {
                             onmessage: (msg, jsep) => {
                                 Janus.log(" ::: Got a message (publisher) :::");
                                 Janus.log(msg);
+                                if (msg['videoroom']==='event') {
+                                    if (msg['error_code']) {
+                                        if (msg['error_code']==426) 
+                                        setExist(false);
+                                        
+                                        
+                                    }else
+                                    setExist(true);
+                                    
+                                }
                                 if (jsep !== undefined && jsep !== null) {
                                     Janus.debug("Handling SDP as well...");
                                     Janus.debug(jsep);
@@ -333,7 +314,9 @@ const VideoRoom = props => {
             <video id="myvideo" autoPlay playsInline muted="muted" />
             <video id="remotevideo" autoPlay playsInline /> */}
 
-            {(Handler!=null)&&<VideoLayout myroom={myroom} SFUHandler={Handler}/>}
+            {(Handler != null && exist != null) && (
+                <VideoLayout myroom={myroom} SFUHandler={Handler} RoomExist={exist} />
+            )}
         </>
     );
 };
