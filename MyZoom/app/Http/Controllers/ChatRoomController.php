@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ChatRoom;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ChatRoomController extends Controller
 {
@@ -12,9 +13,9 @@ class ChatRoomController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        return response(ChatRoom::where('RoomOwner',$request->user_id)->get());
     }
 
     /**
@@ -35,7 +36,18 @@ class ChatRoomController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $chatRoom = ChatRoom::create([
+                'Name'=> $request->Name,
+                'RoomOwner'=> Auth::user()->id,
+                'Chat_room_url'=> $request->RoomUrl
+            ]);
+            return response('Successfully',200);
+        } catch (\Throwable $th) {
+            //throw $th => if any error 
+            // TODO : Treat the case of error 
+
+        }
     }
 
     /**
@@ -78,8 +90,8 @@ class ChatRoomController extends Controller
      * @param  \App\ChatRoom  $chatRoom
      * @return \Illuminate\Http\Response
      */
-    public function destroy(ChatRoom $chatRoom)
+    public function destroy(Request $request)
     {
-        //
+        ChatRoom::destroy($request->id);
     }
 }

@@ -2,19 +2,79 @@
 
 namespace App\Http\Controllers;
 
+use App\ChatRoom;
+use App\Events\Send_ChatRoom_Message;
+use App\File;
 use App\RoomConversation;
+use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Broadcast;
+
 
 class RoomConversationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    function record_sort($records, $field, $reverse = false)
     {
-        //
+        $hash = array();
+
+        foreach ($records as $record) {
+            $hash[$record[$field]] = $record;
+        }
+        
+        ($reverse) ? krsort($hash) : ksort($hash);
+
+        $records = array();
+
+        foreach ($hash as $record) {
+            $date = Carbon::createFromTimeString($record['sentAt']);
+            $record['sentAt'] = $date->format('M d,Y h:iA');
+            $records[] = $record;
+        }
+        
+        return $records;
+    }
+
+    public function ConversationRoom(Request $request)
+    {
+        $RoomId = $request->room_id;
+        $Room = ChatRoom::where('id',$RoomId)->get();
+        if ($Room->isEmpty()) {
+            return response("Room doesn't exist !!",404);
+        }
+        $conversation = [
+            'id' => $RoomId,
+            'conversationData' => []
+        ];
+        $data = [];
+        $MessagesISent = RoomConversation::where('WhoSent',Auth::user()->id)
+        ->where('room_id',$RoomId)
+        ->get();
+        $MessagesPeoplesSent = RoomConversation::whereNotIn('WhoSent',[Auth::user()->id])
+        ->where('room_id',$RoomId)
+        ->get();
+        if ($MessagesISent->isNotEmpty()) {
+            foreach ($MessagesISent as $key => $messageRef) {
+                $data[] = [
+                    'type' => 'sent',
+                    'message' => $messageRef->message_text,
+                    'sentAt' => $messageRef->sent_at,
+                ];
+            }
+        }
+        if ($MessagesPeoplesSent->isNotEmpty()) {
+            foreach ($MessagesPeoplesSent as $key => $messageRef) {
+                $data[] = [
+                    'type' => 'received',
+                    'from' => User::where('id',$messageRef->WhoSent)->get(['id','name','Profile_picture']),
+                    'message' => $messageRef->message_text,
+                    'sentAt' => $messageRef->sent_at,
+                ];
+            }
+        }
+        $conversation['conversationData'] = $this->record_sort($data, 'sentAt');
+        return response($conversation);
     }
 
     /**
@@ -35,7 +95,39 @@ class RoomConversationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $RoomId = $request->room_id;
+        $Room = ChatRoom::where('id',$RoomId)->get();
+        if ($Room->isEmpty()) {
+            return response("Room doesn't exist !!",404);
+        }
+        try {
+            if ($request->fileUrl) {
+                $file = new File([
+                    'file_path'=>$request->fileUrl
+                ]);
+                $file->save();
+                RoomConversation::create([
+                    'room_id'=>$RoomId,
+                    'message_text'=>$request->msg,
+                    'file_id'=>$file->id,
+                    'WhoSent'=>Auth::user()->id,
+                    'sent_at'=>Carbon::now()
+                ]);
+                broadcast(new Send_ChatRoom_Message($RoomId,Auth::user(),$request->msg,$file))->toOthers();
+            }else
+            {
+                RoomConversation::create([
+                'room_id'=>$RoomId,
+                'message_text'=>$request->msg,
+                'WhoSent'=>Auth::user()->id,
+                'sent_at'=>Carbon::now()
+            ]);
+            broadcast(new Send_ChatRoom_Message($RoomId,Auth::user(),$request->msg))->toOthers();
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+
+        }
     }
 
     /**

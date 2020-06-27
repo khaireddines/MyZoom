@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatRoomController;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,4 +24,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('contactList','friendlistController@contactList');
     Route::post('conversation','PrivateChatController@conversation');
     Route::post('storeMessage','PrivateChatController@store');
+
+    Route::post('NewChatRoom','ChatRoomController@store');
+    Route::post('ConversationRoom','RoomConversationController@ConversationRoom');
+    Route::post('StoreMessageChatRoom','RoomConversationController@store');
 });

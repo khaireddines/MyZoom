@@ -4,7 +4,7 @@ import ReceivedMessageCell from "./ReceivedMessageCell/index";
 import SentMessageCell from "./SentMessageCell/index";
 import { useSelector } from "react-redux";
 
-const Conversation = ({ conversationData, selectedUser }) => {
+const Conversation = ({ conversationData, selectedUser,multichat=false }) => {
     const [user, setUser] = useState(null);
 
     const { authUser } = useSelector(({ auth }) => auth);
@@ -31,11 +31,16 @@ const Conversation = ({ conversationData, selectedUser }) => {
                         user={user}
                     />
                 ) : (
-                    <ReceivedMessageCell
+                    (!multichat)?(<ReceivedMessageCell
                         key={index}
                         conversation={conversation}
                         user={selectedUser}
-                    />
+                    />):(<ReceivedMessageCell
+                        key={index}
+                        conversation={conversation}
+                        user={conversation.from[0]}
+                        multichat={true}
+                    />)
                 )
             )}
         </div>

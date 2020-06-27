@@ -6,9 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PrivateChat extends Model
 {
-    protected $casts = [
-        'Conversation' => 'array'
-    ];
+    protected $table = 'private_chats';
     protected $fillable = [
         'Owner',
         'With',

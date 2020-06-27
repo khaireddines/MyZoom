@@ -17,6 +17,7 @@ class CreateChatRoomsTable extends Migration
             $table->id();
             $table->string('Name');
             $table->unsignedBigInteger('RoomOwner');
+            $table->string('Chat_room_url');
             $table->foreign('RoomOwner')->references('id')->on('users');
             $table->timestamps();
         });

@@ -93,6 +93,7 @@ class PrivateChatController extends Controller
      */
     public function store(Request $request)
     {
+        // TODO : Add the test of isFile here !
         $newMsg = new Message([
             'user_id'=> Auth::user()->id,
             'message_text'=>$request->msg,

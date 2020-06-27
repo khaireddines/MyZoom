@@ -4,8 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ChatRoom extends Model
+class RoomConversation extends Model
 {
-    protected $table = 'chat_rooms';
+    protected $table = 'room_conversations';
     protected $guarded = [];
+    
 }

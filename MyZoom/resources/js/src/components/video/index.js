@@ -1,8 +1,7 @@
-import React, { useState } from "react";
-import { Avatar, Row, Col, Card, Layout, Menu, Button } from "antd";
+import React, { useState ,useEffect } from "react";
+import { Avatar, Card, Layout, Menu, Button } from "antd";
 import Controls from "./components/controls";
-import Conversation from "../../components/chat/Conversation/index";
-import CustomScrollbars from "../../util/CustomScrollbars";
+import Communication from "./components/communication";
 import {
     UserOutlined,
     VideoCameraOutlined,
@@ -10,9 +9,9 @@ import {
 } from "@ant-design/icons";
 import "./video.css";
 var classNames = require("classnames");
-const { SubMenu } = Menu;
+
 const { Header, Footer, Sider, Content } = Layout;
-const VideoLayout = ({ RoomName, SFUHandler }) => {
+const VideoLayout = ({ RoomName, SFUHandler,myroom }) => {
     const hideControls = (() => {
         var onmousestop = () => {
                 document
@@ -41,98 +40,19 @@ const VideoLayout = ({ RoomName, SFUHandler }) => {
     };
 
     let removeWhenCollapsedLeft = classNames({
-        siderleft: CollapsedLeft
+        siderleft: CollapsedLeft,
+        size: !CollapsedLeft
     });
     let removeWhenCollapsedRight = classNames({
-        siderleft: CollapsedRight
+        siderleft: CollapsedRight,
+        size: !CollapsedRight
     });
-    /** chat */
-    let conversationData=[{}];
-    let selectedUser={};
-    const [message, setMessage] = useState();
-    submitComment() {
-      var audio = new Audio('/assets/sounds/sent.mp3');
-      if (this.state.message !== '') {
-        const updatedConversation = this.state.conversation.conversationData.concat({
-          'type': 'sent',
-          'message': this.state.message,
-          'sentAt': Moment().format('MMM D,Y h:mmA'),
-        });
-        Axios.post('api/storeMessage',{
-          with:this.state.conversation.id,
-          msg:this.state.message
-        }).then(()=>{
-          audio.play();
-        });
-        this.setState({
-          conversation: {
-            ...this.state.conversation, conversationData: updatedConversation
-          },
-          message: '',
-          /* conversationList: this.state.conversationList.map(conversationData => {
-            if (conversationData.id === this.state.conversation.id) {
-              return {...this.state.conversation, conversationData: updatedConversation};
-            } else {
-              return conversationData;
-            }
-          }) */
-        });
-        
-      }
-    }
-    const Communication = () =>{
-      return <div className="gx-chat-main">
-      <div className="gx-chat-main-header">
-        <span className="gx-d-block gx-d-lg-none gx-chat-btn">
-          <i className="gx-icon-btn icon icon-chat"
-          /></span>
-        <div className="gx-chat-main-header-info">
-
-          <div className="gx-chat-avatar gx-mr-2">
-            <div className="gx-status-pos">
-              <Avatar src={`/assets/images/DefaultPicture.png`}
-                      className="gx-rounded-circle gx-size-60"
-                      alt=""
-                      />
-
-              <span className={`gx-status gx-online`}/>
-            </div>
-          </div>
-
-          <div className="gx-chat-contact-name">
-            
-          </div>
-        </div>
-
-      </div>
-
-      <CustomScrollbars className="gx-chat-list-scroll">
-        <Conversation conversationData={conversationData}
-                      selectedUser={selectedUser}/>
-      </CustomScrollbars>
-
-      <div className="gx-chat-main-footer">
-        <div className="gx-flex-row gx-align-items-center" style={{maxHeight: 51}}>
-          <div className="gx-col">
-            <div className="gx-form-group">
-                            <textarea
-                              id="required" className="gx-border-0 ant-input gx-chat-textarea"
-                    
-                              value={message}
-                              placeholder="Type and hit enter to send message"
-                            />
-            </div>
-          </div>
-          <i className="gx-icon-btn icon icon-sent" />
-        </div>
-      </div>
-    </div>
-    }
-    /**End Chat */
+    
     return (
         <Layout>
             <Sider
                 className={removeWhenCollapsedLeft}
+                breakpoint="lg"
                 collapsedWidth="0"
                 trigger={null}
                 collapsible
@@ -175,7 +95,7 @@ const VideoLayout = ({ RoomName, SFUHandler }) => {
                 collapsible
                 collapsed={CollapsedRight}
             >
-                <Communication></Communication>
+                <Communication myroom={myroom}></Communication>
             </Sider>
         </Layout>
     );

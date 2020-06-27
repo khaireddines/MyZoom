@@ -28,3 +28,13 @@
     max-width: 0px !important;
     min-width: 0px !important;
 }
+.size{
+    width:30vw !important;
+}
+.maxHeight{
+    height:100% !important;
+}
+
+.gx-chat-list-scroll div:first-child{
+    overflow-x: hidden !important;
+}

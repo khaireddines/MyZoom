@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Janus from "../../util/JanusES6.js";
 import adapter from "webrtc-adapter";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { CHATROOM_MESSAGE_RECIVED } from "../../constants/ActionTypes";
 import "./VideoRoom.css";
 import VideoLayout from "../../components/video";
 import { Redirect } from "react-router-dom";
@@ -9,6 +10,7 @@ import { Redirect } from "react-router-dom";
 
 const VideoRoom = props => {
     const { authUser,tokens } = useSelector(({ auth }) => auth);
+    const dispatch = useDispatch();
     if(tokens==null){
         window.location.replace('/');
     }
@@ -33,6 +35,18 @@ const VideoRoom = props => {
         SFUHandler.send({ message: body });
     };
     const joinRoom = () => {
+        var audio = new Audio('/assets/sounds/recived.mp3');
+        window.Echo.join(`ChatRoom_${myroom}`)
+        .here(users => {
+            console.log(users);
+        })
+        .listen(
+            "Send_ChatRoom_Message",
+            e => {
+                dispatch({ type: CHATROOM_MESSAGE_RECIVED, payload: e });
+                audio.play();
+            }
+        );
         var body = {
             request: "join",
             room: myroom,
@@ -42,6 +56,7 @@ const VideoRoom = props => {
         };
         SFUHandler.send({ message: body });
     };
+    // FIXME: deal with me later
     const updateView=(grid)=>{
         let children = document.getElementById('layout').children;
         for (let i = 0; i < children.length; i++) {
@@ -318,7 +333,7 @@ const VideoRoom = props => {
             <video id="myvideo" autoPlay playsInline muted="muted" />
             <video id="remotevideo" autoPlay playsInline /> */}
 
-            {(Handler!=null)&&<VideoLayout SFUHandler={Handler}/>}
+            {(Handler!=null)&&<VideoLayout myroom={myroom} SFUHandler={Handler}/>}
         </>
     );
 };

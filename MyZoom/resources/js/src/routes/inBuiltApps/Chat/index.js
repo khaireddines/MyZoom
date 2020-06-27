@@ -308,7 +308,6 @@ class Chat extends Component {
       conversation: {
         ...this.state.conversation, conversationData: updatedConversation
     }});
-    
   }
   submitComment() {
     var audio = new Audio('/assets/sounds/sent.mp3');
