@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatRoomController;
+use App\Http\Controllers\SubedRoomsController;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,6 +27,14 @@ Route::middleware('auth:api')->group(function () {
     Route::post('storeMessage','PrivateChatController@store');
 
     Route::post('NewChatRoom','ChatRoomController@store');
+    Route::post('AllRooms','ChatRoomController@AllRooms');
+    Route::post('PersonalRooms','ChatRoomController@PersonalRooms');
     Route::post('ConversationRoom','RoomConversationController@ConversationRoom');
     Route::post('StoreMessageChatRoom','RoomConversationController@store');
+
+    Route::post('SubscribeToRoom','SubedRoomsController@store');
+    //Delete the Room if the RoomOwner ==  The Current User
+    Route::post('UnsubscribeOrDeleteRoom','SubedRoomsController@destroy');
+    //Accept Subb Requests
+    Route::post('AcceptSub','SubedRoomsController@AcceptSub');
 });

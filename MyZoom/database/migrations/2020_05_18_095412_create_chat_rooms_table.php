@@ -15,9 +15,12 @@ class CreateChatRoomsTable extends Migration
     {
         Schema::create('chat_rooms', function (Blueprint $table) {
             $table->id();
+            $table->string('Unique_Invite_Link');
             $table->string('Name');
             $table->unsignedBigInteger('RoomOwner');
             $table->string('Chat_room_url');
+            $table->boolean('isPrivate')->default(false);
+            $table->string('RoomPassword')->nullable();
             $table->foreign('RoomOwner')->references('id')->on('users');
             $table->timestamps();
         });

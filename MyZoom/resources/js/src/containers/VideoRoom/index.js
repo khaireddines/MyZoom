@@ -9,7 +9,13 @@ import { Redirect } from "react-router-dom";
 
 
 const decodenum = string => {
-    return window.atob(window.atob(window.atob(string)));
+    let result;
+    try {
+        result=window.atob(window.atob(window.atob(string)))
+    } catch (error) {
+        result=0;
+    }
+    return result;
 };
 const VideoRoom = props => {
     const { authUser, tokens } = useSelector(({ auth }) => auth);

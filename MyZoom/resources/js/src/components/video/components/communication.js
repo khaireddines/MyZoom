@@ -124,7 +124,7 @@ class communication extends Component {
                                 />
                             </div>
                         </div>
-                        <i className="gx-icon-btn icon icon-sent" />
+                        <i className="gx-icon-btn icon icon-sent" onClick={this.submitComment} />
                     </div>
                 </div>
             </div>

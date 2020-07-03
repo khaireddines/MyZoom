@@ -3,8 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\ChatRoom;
+use App\SubedRooms;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+
 
 class ChatRoomController extends Controller
 {
@@ -13,21 +17,58 @@ class ChatRoomController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function PersonalRooms()
     {
-        return response(ChatRoom::where('RoomOwner',$request->user_id)->get());
+        $AllPersonalRooms = ChatRoom::where('RoomOwner',Auth::user()->id)->get();
+        $res = [];
+        if ($AllPersonalRooms->isNotEmpty()) {
+            foreach ($AllPersonalRooms as $key => $PersonalRoom) {
+                $res[]=[ 
+                    'id'=>$PersonalRoom->id,
+                    'Name'=>$PersonalRoom->Name,
+                    'RoomOwner'=>User::where('id',$PersonalRoom->RoomOwner)
+                                     ->first(['id','name','email','Profile_picture','status']),
+                    'isPrivate'=>$PersonalRoom->isPrivate,
+                    'RoomPassword'=>$PersonalRoom->RoomPassword,
+                    'Chat_room_url'=>$PersonalRoom->Chat_room_url
+                    ];
+            }
+        }
+        return response($res);
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    //All Rooms that the current user is Subed To And His status is Accepted
+    public function AllRooms()
     {
-        //
+        $res = [];
+        $SubbedRooms = SubedRooms::where('user',Auth::user()->id)->get();
+        if ($SubbedRooms->isEmpty()) {
+            return response($res);
+        }else
+        {
+            $RoomIds = [];
+            foreach ($SubbedRooms as $key => $subRoom) {
+                if ($subRoom->room_request_accepted) {
+                    $RoomIds[]=$subRoom->room;
+                }
+            }
+            $AllRooms = ChatRoom::whereIn('id',$RoomIds)->get();
+            if ($AllRooms->isNotEmpty()) {
+                foreach ($AllRooms as $key =>$Room) {
+                    $res[]=[ 
+                    'id'=>$Room->id,
+                    'Name'=>$Room->Name,
+                    'RoomOwner'=>User::where('id',$Room->RoomOwner)
+                                     ->first(['id','name','email','Profile_picture','status']),
+                    'isPrivate'=>$Room->isPrivate,
+                    'RoomPassword'=>$Room->RoomPassword,
+                    'Chat_room_url'=>$Room->Chat_room_url
+                    ];
+                }
+            }
+        }
+        
+        return response($res);
     }
-
     public function UniqueNumber()
     {
         $numbers = range(111111, 999999);
@@ -51,62 +92,35 @@ class ChatRoomController extends Controller
      */
     public function store(Request $request)
     {   
+        
         try {
-            $chatRoom = ChatRoom::create([
-                'Name'=> $request->Name,
-                'RoomOwner'=> Auth::user()->id,
-                'Chat_room_url'=> 'videoChatRoom_'.$this->UniqueNumber()
+            if ($request->isPrivate) 
+                $chatRoom = new ChatRoom([
+                    'Unique_Invite_Link'=>'InviteLink_'.(string) Str::random(25),
+                    'Name'=> $request->Name,
+                    'RoomOwner'=> Auth::user()->id,
+                    'Chat_room_url'=> 'videoChatRoom_'.$this->UniqueNumber(),
+                    'isPrivate'=>true,
+                    'RoomPassword'=>$request->RoomPassword
+                ]);
+            else
+                $chatRoom = new ChatRoom([
+                    'Unique_Invite_Link'=>'InviteLink_'.(string) Str::random(25),
+                    'Name'=> $request->Name,
+                    'RoomOwner'=> Auth::user()->id,
+                    'Chat_room_url'=> 'videoChatRoom_'.$this->UniqueNumber()
+                ]);
+            $chatRoom->save();
+            // Subscribing to own created Room
+            SubedRooms::create([
+                'user'=>Auth::user()->id,
+                'room'=> $chatRoom->id,
+                'room_request_accepted'=>true
             ]);
             return response('Successfully',200);
         } catch (\Throwable $th) {
-            //throw $th => if any error 
-            // TODO : Treat the case of error 
-
+            return $th;
+            
         }
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\ChatRoom  $chatRoom
-     * @return \Illuminate\Http\Response
-     */
-    public function show(ChatRoom $chatRoom)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\ChatRoom  $chatRoom
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(ChatRoom $chatRoom)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\ChatRoom  $chatRoom
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, ChatRoom $chatRoom)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\ChatRoom  $chatRoom
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Request $request)
-    {
-        ChatRoom::destroy($request->id);
     }
 }

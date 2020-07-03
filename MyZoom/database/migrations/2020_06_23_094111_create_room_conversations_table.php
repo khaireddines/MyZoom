@@ -20,7 +20,7 @@ class CreateRoomConversationsTable extends Migration
             $table->unsignedBigInteger('file_id')->nullable();
             $table->unsignedBigInteger('WhoSent');
             $table->dateTime('sent_at', 0);
-            $table->foreign('room_id')->references('id')->on('chat_rooms');
+            $table->foreign('room_id')->references('id')->on('chat_rooms')->onDelete('cascade');
             $table->foreign('WhoSent')->references('id')->on('users');
             $table->foreign('file_id')->references('id')->on('files');
             $table->timestamps();
