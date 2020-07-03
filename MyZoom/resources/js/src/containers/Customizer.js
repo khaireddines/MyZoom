@@ -1,5 +1,7 @@
 import React, {useState} from "react";
-import {Button, Drawer, Form, Radio} from "antd";
+import { Form } from '@ant-design/compatible';
+import '@ant-design/compatible/assets/index.css';
+import { Button, Drawer, Radio } from "antd";
 import {useDispatch, useSelector} from "react-redux";
 import Auxiliary from "../util/Auxiliary";
 import CustomScrollbars from "../util/CustomScrollbars";

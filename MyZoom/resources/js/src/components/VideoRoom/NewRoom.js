@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Input, Modal, Tooltip, Select, Space } from "antd";
+import { Input, Modal, Tooltip, Select } from "antd";
 import { InfoCircleOutlined, UserOutlined } from "@ant-design/icons";
 const { Option } = Select;
 class NewRoom extends Component {
@@ -49,7 +49,6 @@ class NewRoom extends Component {
                 <div className="gx-modal-box-row">
                     <div className="gx-modal-box-form-item">
                         <div className="gx-form-group">
-                            <Space direction="horizontal" size="small">
                                 <Input
                                     required
                                     style={{ width: "48%", marginRight: "4%" }}
@@ -81,10 +80,8 @@ class NewRoom extends Component {
                                         </Tooltip>
                                     }
                                 />
-                            </Space>
                         </div>
                         <div className="gx-form-group">
-                            <Space direction="horizontal" size="small">
                                 <Select
                                     defaultValue="Public"
                                     style={{ width: "48%", marginRight: "4%" }}
@@ -98,6 +95,7 @@ class NewRoom extends Component {
                                 {this.state.type === "Private" && (
                                     <Input.Password
                                         placeholder="password"
+                                        style={{ width: "48%" }}
                                         iconRender={visible =>
                                             visible ? (
                                                 <EyeTwoTone />
@@ -112,7 +110,6 @@ class NewRoom extends Component {
                                         }}
                                     />
                                 )}
-                            </Space>
                         </div>
                         {/* 
             <div className="gx-form-group">
