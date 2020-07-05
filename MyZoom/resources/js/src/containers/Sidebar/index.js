@@ -28,9 +28,10 @@ const Sidebar = () => {
   };
 
   useEffect(() => {
-    window.addEventListener('resize', () => {
+    //we Stopped the resize listiner 
+    /* window.addEventListener('resize', () => {
       dispatch(updateWindowWidth(window.innerWidth));
-    })
+    }) */
   }, [dispatch]);
 
 

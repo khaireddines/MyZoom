@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Input, Modal, Tooltip, Select } from "antd";
-import { InfoCircleOutlined, UserOutlined } from "@ant-design/icons";
+import { InfoCircleOutlined, UserOutlined, LinkOutlined } from "@ant-design/icons";
 const { Option } = Select;
 class NewRoom extends Component {
     constructor(props) {
@@ -9,7 +9,8 @@ class NewRoom extends Component {
         this.state = {
             name: "",
             type: "",
-            password: ""
+            password: "",
+            showPass:false
         };
     }
     
@@ -68,10 +69,11 @@ class NewRoom extends Component {
                                     disabled
                                     margin="none"
                                     prefix={
-                                        <UserOutlined className="site-form-item-icon" />
+                                        
+                                        <LinkOutlined />
                                     }
                                     suffix={
-                                        <Tooltip title="Extra information">
+                                        <Tooltip title="We will generate an invite link for you behind the seen.">
                                             <InfoCircleOutlined
                                                 style={{
                                                     color: "rgba(0,0,0,.45)"
@@ -86,23 +88,16 @@ class NewRoom extends Component {
                                     defaultValue="Public"
                                     style={{ width: "48%", marginRight: "4%" }}
                                     onChange={e => {
-                                        this.setState({ type: e.target.value });
+                                        this.setState({ type: e,showPass:!this.state.showPass });
                                     }}
                                 >
                                     <Option value="Public">Public</Option>
                                     <Option value="Private">Private</Option>
                                 </Select>
-                                {this.state.type === "Private" && (
+                                {(this.state.showPass) && (
                                     <Input.Password
                                         placeholder="password"
                                         style={{ width: "48%" }}
-                                        iconRender={visible =>
-                                            visible ? (
-                                                <EyeTwoTone />
-                                            ) : (
-                                                <EyeInvisibleOutlined />
-                                            )
-                                        }
                                         onChange={e => {
                                             this.setState({
                                                 password: e.target.value
@@ -118,6 +113,7 @@ class NewRoom extends Component {
                 onChange={(event) => this.setState({phone: event.target.value})}
                 value={phone}
                 margin="normal"
+             <UserOutlined className="site-form-item-icon" /> 
               />
             </div>
             <div className="gx-form-group">

@@ -92,14 +92,14 @@ class ChatRoomController extends Controller
      */
     public function store(Request $request)
     {   
-        
+        $number = $this->UniqueNumber();
         try {
             if ($request->isPrivate) 
                 $chatRoom = new ChatRoom([
                     'Unique_Invite_Link'=>'InviteLink_'.(string) Str::random(25),
                     'Name'=> $request->Name,
                     'RoomOwner'=> Auth::user()->id,
-                    'Chat_room_url'=> 'videoChatRoom_'.$this->UniqueNumber(),
+                    'Chat_room_url'=> 'videoChatRoom_'.$number,
                     'isPrivate'=>true,
                     'RoomPassword'=>$request->RoomPassword
                 ]);
@@ -108,7 +108,7 @@ class ChatRoomController extends Controller
                     'Unique_Invite_Link'=>'InviteLink_'.(string) Str::random(25),
                     'Name'=> $request->Name,
                     'RoomOwner'=> Auth::user()->id,
-                    'Chat_room_url'=> 'videoChatRoom_'.$this->UniqueNumber()
+                    'Chat_room_url'=> 'videoChatRoom_'.$number
                 ]);
             $chatRoom->save();
             // Subscribing to own created Room
@@ -117,7 +117,7 @@ class ChatRoomController extends Controller
                 'room'=> $chatRoom->id,
                 'room_request_accepted'=>true
             ]);
-            return response('Successfully',200);
+            return response($number,200);
         } catch (\Throwable $th) {
             return $th;
             

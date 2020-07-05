@@ -119,12 +119,12 @@ const VideoRoom = props => {
                         SFURemoteHandler.rfdisplay = msg["display"];
 
                         //updateView(grid);
-                        let videoTagold = `
+                        /* let videoTagold = `
                         <div class="ant-col ant-col-${grid}" style="padding-left: 2px;padding-right: 2px;justify-content: center;align-items: center;display: flex;">
                             <video id="remote${msg["id"]}" autoplay="" playsinline="" ></video>
                             <div class="overlay-1YJlCn"><div class="size16-1P40sf overlayTitle-8IcS01 idle-U-LIlZ"><span class="overlayTitleText-2mmQzi">${SFURemoteHandler.rfdisplay}</span></div><div class="statusContainer-1gtabC"></div></div>
                         </div>
-                        `;
+                        `; */
                         let videoTag = `
                         <div>
                             <div>
@@ -179,7 +179,6 @@ const VideoRoom = props => {
         });
     };
     useEffect(() => {
-        console.log(myroom);
         Janus.init({
             debug: true,
             dependencies: Janus.useDefaultDependencies({ adapter }),
