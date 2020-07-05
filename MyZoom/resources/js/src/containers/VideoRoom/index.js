@@ -8,7 +8,6 @@ import VideoLayout from "../../components/video";
 import { Redirect } from "react-router-dom";
 
 
-
 const decodenum = string => {
     let result;
     try {
