@@ -1,0 +1,16 @@
+.gx-chat-sidenav-scroll-tab-1 div:first-child,
+.gx-chat-list-scroll div:first-child,
+.gx-chat-sidenav-scroll-tab-2 div:first-child {
+    overflow-x: hidden !important;
+}
+.gx-chat-contact-name {
+    font-size: 15px !important;
+    font-weight: 400 !important;
+}
+.gx-chat-item {
+    padding-top: 0px;
+    padding-bottom: 5px;
+}
+.gx-chat-item:first-child {
+    padding-top: 5px;
+}

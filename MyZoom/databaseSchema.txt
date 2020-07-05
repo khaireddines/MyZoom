@@ -1,0 +1,38 @@
+member_table
+    user_id
+    user_name
+    user_email
+    user_password
+    member_data
+channel_member_table
+    channel_id
+    user_id
+channel_name_table
+    channel_id
+    channel_name
+    channel_creation_date
+message_table
+    message_id
+    date_time
+    channel_id
+    user_id
+    message_text
+    file_id
+files_table
+    file_id
+    file_path
+    
+message_table.channel_id --> 
+    channel_name_table.channel_id
+
+message_table.user_id -->
+    member_table.user_id
+
+message_table.ammend_id -->
+    ammend_table.ammend_id
+
+channel_member_table.channel_id -->
+    channel_name_table.channel_id
+    
+channel_member_table.user_id -->
+    member_table.user_id

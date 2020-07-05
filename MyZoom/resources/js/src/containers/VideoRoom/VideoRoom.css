@@ -1,0 +1,16 @@
+video{
+    transform: rotateY(180deg);
+    border-radius: 0.4%;
+    /* width: auto;
+    height: 93vh; */
+    /*height: 37vw;*/
+}
+.ant-layout-footer{
+    background-color: #26262b !important;
+    border: 0 !important;
+}
+.bottom-left {
+    position: absolute;
+    bottom: 8px;
+    left: 16px;
+  }

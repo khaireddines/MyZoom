@@ -1,0 +1,9 @@
+.ant-layout-sider-collapsed{
+    width: 73px !important;
+}
+.gx-layout-sider-scrollbar div:first-child{
+    overflow-x: hidden !important;
+}
+.gx-popover-lang-scroll div:first-child{
+    overflow-x: hidden !important;
+}

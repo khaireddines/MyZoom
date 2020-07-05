@@ -1,0 +1,40 @@
+.ant-card{
+    min-height: 17.5vw !important;
+    max-height: 17.5vw !important;
+    margin-bottom: 2% !important;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    background-color: #555a61;
+}
+.ant-card-bordered {
+    border: 1px solid #7c878c;
+}
+
+#layout{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(300px,1fr));
+    gap: 20px;
+    justify-content: center;
+    align-content: center;
+}
+#layout >div{
+    display: flex;
+    height: 250px;
+    justify-content: center;
+    align-items: center;
+}
+.siderleft{
+    max-width: 0px !important;
+    min-width: 0px !important;
+}
+.size{
+    width:30vw !important;
+}
+.maxHeight{
+    height:100% !important;
+}
+
+.gx-chat-list-scroll div:first-child{
+    overflow-x: hidden !important;
+}
