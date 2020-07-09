@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Input, Modal, Tooltip, Select } from "antd";
+import { Input, Modal, Tooltip, Select, message } from "antd";
 import { InfoCircleOutlined, UserOutlined, LinkOutlined } from "@ant-design/icons";
 const { Option } = Select;
 class NewRoom extends Component {
@@ -10,13 +10,14 @@ class NewRoom extends Component {
             name: "",
             type: "",
             password: "",
-            showPass:false
+            showPass: false,
+            
         };
     }
-    
+   
     render() {
         const { onSaveRoom, onRoomClose, open } = this.props;
-        const { name, type, password } = this.state;
+        const { name, type, password} = this.state;
 
         return (
             <Modal
@@ -24,7 +25,7 @@ class NewRoom extends Component {
                 toggle={onRoomClose}
                 visible={open}
                 closable={false}
-                onCancel={()=>{
+                onCancel={() => {
                     onRoomClose();
                     this.setState({
                         name: "",
@@ -43,87 +44,70 @@ class NewRoom extends Component {
                     this.setState({
                         name: "",
                         type: "",
-                        password: ""
+                        password: "",
                     });
                 }}
             >
                 <div className="gx-modal-box-row">
                     <div className="gx-modal-box-form-item">
                         <div className="gx-form-group">
-                                <Input
-                                    required
-                                    style={{ width: "48%", marginRight: "4%" }}
-                                    placeholder="Name"
-                                    onChange={e =>
-                                        this.setState({
-                                            name: e.target.value
-                                        })
-                                    }
-                                    defaultValue={name}
-                                    margin="none"
-                                />
-                                <Input
-                                    required
-                                    style={{ width: "48%" }}
-                                    placeholder="UniqueLink"
-                                    disabled
-                                    margin="none"
-                                    prefix={
-                                        
-                                        <LinkOutlined />
-                                    }
-                                    suffix={
-                                        <Tooltip title="We will generate an invite link for you behind the seen.">
-                                            <InfoCircleOutlined
-                                                style={{
-                                                    color: "rgba(0,0,0,.45)"
-                                                }}
-                                            />
-                                        </Tooltip>
-                                    }
-                                />
+                            <Input
+                                required
+                                style={{ width: "48%", marginRight: "4%" }}
+                                placeholder="Name"
+                                onChange={e =>
+                                    this.setState({
+                                        name: e.target.value
+                                    })
+                                }
+                                defaultValue={name}
+                                margin="none"
+                            />
+                            <Input
+                                required
+                                style={{ width: "48%" }}
+                                placeholder="UniqueLink"
+                                disabled
+                                margin="none"
+                                prefix={
+
+                                    <LinkOutlined />
+                                }
+                                suffix={
+                                    <Tooltip title="We will generate an invite link for you behind the seen.">
+                                        <InfoCircleOutlined
+                                            style={{
+                                                color: "rgba(0,0,0,.45)"
+                                            }}
+                                        />
+                                    </Tooltip>
+                                }
+                            />
                         </div>
                         <div className="gx-form-group">
-                                <Select
-                                    defaultValue="Public"
-                                    style={{ width: "48%", marginRight: "4%" }}
+                            <Select
+                                defaultValue="Public"
+                                style={{ width: "48%", marginRight: "4%" }}
+                                onChange={e => {
+                                    this.setState({ type: e, showPass: !this.state.showPass });
+                                }}
+                            >
+                                <Option value="Public">Public</Option>
+                                <Option value="Private">Private</Option>
+                            </Select>
+                            {(this.state.showPass) && (
+                                <Input.Password
+                                    placeholder="password"
+                                    style={{ width: "48%" }}
                                     onChange={e => {
-                                        this.setState({ type: e,showPass:!this.state.showPass });
+                                        this.setState({
+                                            password: e.target.value
+                                        });
                                     }}
-                                >
-                                    <Option value="Public">Public</Option>
-                                    <Option value="Private">Private</Option>
-                                </Select>
-                                {(this.state.showPass) && (
-                                    <Input.Password
-                                        placeholder="password"
-                                        style={{ width: "48%" }}
-                                        onChange={e => {
-                                            this.setState({
-                                                password: e.target.value
-                                            });
-                                        }}
-                                    />
-                                )}
+                                />
+                            )}
                         </div>
-                        {/* 
-            <div className="gx-form-group">
-              <Input
-                placeholder="Phone"
-                onChange={(event) => this.setState({phone: event.target.value})}
-                value={phone}
-                margin="normal"
-             <UserOutlined className="site-form-item-icon" /> 
-              />
-            </div>
-            <div className="gx-form-group">
-              <Input
-                placeholder="Designation"
-                onChange={(event) => this.setState({designation: event.target.value})}
-                value={designation}
-                autosize={{minRows: 2, maxRows: 6}}
-                margin="normal"/>
-            </div> */}
+                        
                     </div>
                 </div>
             </Modal>

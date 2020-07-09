@@ -69,7 +69,7 @@ class SubedRoomsController extends Controller
     {
         $room = ChatRoom::where('id',$request->SubedRoomId)->get();
         if ($room->isEmpty()) {
-            return response('Not Subscribed',200);
+            return response('Not Subscribed',202);
         }else{
             $room = $room->first();
             if ($room->RoomOwner== Auth::user()->id) 
@@ -79,7 +79,7 @@ class SubedRoomsController extends Controller
                 {SubedRooms::where('user',Auth::user()->id)
                           ->where('room',$request->SubedRoomId)
                           ->delete();
-                return response('unsubscribed Successfully',200);}
+                return response('unsubscribed Successfully',201);}
         }
     }
 }

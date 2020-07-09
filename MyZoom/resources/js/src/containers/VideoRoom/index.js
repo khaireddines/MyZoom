@@ -6,9 +6,9 @@ import { CHATROOM_MESSAGE_RECIVED } from "../../constants/ActionTypes";
 import "./VideoRoom.css";
 import VideoLayout from "../../components/video";
 import { Redirect } from "react-router-dom";
-
-
-
+import { Modal } from "antd";
+import {ExclamationCircleTwoTone} from "@ant-design/icons";
+const { info } = Modal;
 const decodenum = string => {
     let result;
     try {
@@ -239,6 +239,20 @@ const VideoRoom = props => {
                                         
                                     }else
                                     setExist(true);
+                                    
+                                }
+                                if(msg['videoroom']==="destroyed")
+                                {
+                                    const model=info({
+                                        title:'Ops! Room Got Deleted',
+                                        icon: <ExclamationCircleTwoTone />,
+                                        content: 'We Will redirect you back home after 2 sec'
+                                    })
+                                    setTimeout(() => {
+                                        model.destroy();
+                                        SFUHandler.send({message:{request:'leave'}});
+                                        window.location.replace('/');
+                                    }, 2000);
                                     
                                 }
                                 if (jsep !== undefined && jsep !== null) {

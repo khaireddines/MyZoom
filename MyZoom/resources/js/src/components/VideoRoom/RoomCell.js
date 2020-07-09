@@ -1,6 +1,6 @@
 import React from "react";
 import {Dropdown, Menu} from "antd";
-
+import { connect } from "react-redux";
 class RoomCell extends React.Component {
 
   onDeleteRoom = (Room) => {
@@ -14,13 +14,14 @@ class RoomCell extends React.Component {
   }
   }>
       <Menu.Item key="Delete">
-        Delete
+        {(this.props.authUser.id==this.props.Room.RoomOwner.id)?'Delete':'Unsubscribe'}
       </Menu.Item>
     
   </Menu>);
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
+    
   }
   
   render() {
@@ -68,5 +69,8 @@ class RoomCell extends React.Component {
     )
   }
 }
-
-export default RoomCell;
+const mapStateToProps = state => ({
+  authUser: state.auth.authUser
+});
+const mapDispatchToProps = dispatch => ({});
+export default connect(mapStateToProps,mapDispatchToProps)(RoomCell);

@@ -1,13 +1,14 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-import { Button, Drawer, message } from "antd";
+import { Button, Drawer, message, Modal } from "antd";
 import {
     UnlockOutlined,
     BarsOutlined,
     LockOutlined,
     DesktopOutlined,
     SmileOutlined,
-    SubnodeOutlined
+    SubnodeOutlined,
+    ExclamationCircleTwoTone
 } from "@ant-design/icons";
 import CustomScrollbars from "../../util/CustomScrollbars";
 import AppModuleHeader from "../../components/AppModuleHeader/index";
@@ -19,6 +20,7 @@ import NewRoom from "../../components/VideoRoom/NewRoom";
 import Janus from "../../util/JanusES6";
 import adapter from "webrtc-adapter";
 
+const { confirm } = Modal;
 const decodenum = string => {
     let result;
     try {
@@ -114,10 +116,10 @@ class ChatRooms extends Component {
                                         <span
                                             className={`gx-link ${
                                                 option.id ===
-                                                this.state.selectedSectionId
+                                                    this.state.selectedSectionId
                                                     ? "active"
                                                     : ""
-                                            }`}
+                                                }`}
                                             onClick={this.onFilterOptionSelect.bind(
                                                 this,
                                                 option
@@ -184,41 +186,51 @@ class ChatRooms extends Component {
                 break;
         }
     };
-    onSaveRoom = async data => {
-      //work on the data that will be sent to the server before sending !!
-      let payload={};
-      if (data.type==='Private') 
-        payload={
-          Name:data.name,
-          isPrivate: true,
-          RoomPassword:data.password
-        }
-      else
-        payload={
-          Name:data.name,
-          isPrivate: false,
-        }
-      let res=await axios.post("api/NewChatRoom", payload);
-      if (res.status == 200) {
-        this.CreateRoomInJanus(res.data);
-        /* this.setState({
-          alertMessage: "Room Added Successfully!!",
-          showMessage: true
-      }); */
-      }
-      console.log(data);
-      // this.onFilterOptionSelect(this.state.filterOption);
-    };
-    onDeleteRoom = data => {
-        this.setState({
-            alertMessage: "Room Deleted Successfully",
-            showMessage: true,
-            allRooms: this.state.allRooms.filter(
-                contact => contact.id !== data.id
-            ),
-            roomList: this.state.allRooms.filter(
-                contact => contact.id !== data.id
-            )
+    onSaveRoom(data) {
+        //work on the data that will be sent to the server before sending !!
+        let payload = {};
+        if (data.type === 'Private')
+            payload = {
+                Name: data.name,
+                isPrivate: true,
+                RoomPassword: data.password
+            }
+        else
+            payload = {
+                Name: data.name,
+                isPrivate: false,
+            }
+        axios.post("api/NewChatRoom", payload).then((res) => {
+            if (res.status == 200) {
+                message.info(<span id="message-id">Room Created Successfully</span>, 3)
+                this.CreateRoomInJanus(res.data);
+                this.GetRooms();
+            }
+        })
+    }
+
+    onDeleteRoom = RoomData => {
+        let RoomIdInJanus = RoomData.Chat_room_url.replace('videoChatRoom_', '');
+        let RoomId = RoomData.id;
+        let context = this;
+        confirm({
+            title: "Confirmation",
+            icon: <ExclamationCircleTwoTone twoToneColor="#f73e2d" />,
+            content: <span id="Confirmation-span">Are you sure ?
+            This Action will result in premently deleting everything related to this room !! </span>,
+            onOk() {
+                axios.post('api/UnsubscribeOrDeleteRoom',{SubedRoomId:RoomId}).then((res)=>{
+                    if (res.status==200) {
+                        context.DestroyRoomInJanus(RoomIdInJanus);
+                    }
+                    message.success(<span id="delete-done">{res.data}</span>,3);
+                    context.GetPersonalRooms();
+                    context.GetRooms();
+                });
+                
+            },
+            okText: "I Understand",
+            okType: 'danger'
         });
     };
     filterRoom = RoomName => {
@@ -307,7 +319,7 @@ class ChatRooms extends Component {
             selectedContact: null,
             selectedContacts: 0,
             addRoomState: false,
-            SFUHandler:null
+            SFUHandler: null
         };
     }
     render() {
@@ -357,20 +369,18 @@ class ChatRooms extends Component {
                                         {noRoomFoundMessage}
                                     </div>
                                 ) : (
-                                    <RoomList
-                                        roomList={roomList}
-                                        onDeleteRoom={this.onDeleteRoom.bind(
-                                            this
-                                        )}
-                                    />
-                                )}
+                                        <RoomList
+                                            roomList={roomList}
+                                            onDeleteRoom={this.onDeleteRoom.bind(this)}
+                                        />
+                                    )}
                             </CustomScrollbars>
                         </div>
                     </div>
                 </div>
                 <NewRoom
                     open={addRoomState}
-                    onSaveRoom={this.onSaveRoom}
+                    onSaveRoom={this.onSaveRoom.bind(this)}
                     onRoomClose={this.onRoomClose}
                 />
                 {showMessage &&
@@ -382,20 +392,26 @@ class ChatRooms extends Component {
             </div>
         );
     }
-    CreateRoomInJanus(RoomID){
-      const myroom = parseInt(decodenum(RoomID));
-      var body = {
-          request: "create",
-          room: myroom,
-          is_private: false,
-          videocodec: "vp9"
-      };
-    this.state.SFUHandler.send({ message: body });
-    
-
+    CreateRoomInJanus(RoomID) {
+        const myroom = parseInt(decodenum(RoomID));
+        var body = {
+            request: "create",
+            room: myroom,
+            is_private: false,
+            videocodec: "vp9"
+        };
+        this.state.SFUHandler.send({ message: body });
+    }
+    DestroyRoomInJanus(RoomID) {
+        const myroom = parseInt(decodenum(RoomID));
+        var body = {
+            request : "destroy",
+            room: myroom
+        };
+        this.state.SFUHandler.send({ message: body });
     }
     componentDidMount() {
-      this.GetRooms();
+        this.GetRooms();
         Janus.init({
             debug: true,
             dependencies: Janus.useDefaultDependencies({ adapter }),
@@ -409,24 +425,24 @@ class ChatRooms extends Component {
                             opaqueId: opaqueId,
                             success: pluginHandler => {
                                 SFUHandler = pluginHandler;
-                                this.setState({SFUHandler:pluginHandler});
+                                this.setState({ SFUHandler: pluginHandler });
                                 Janus.log(
                                     "Plugin attached! (" +
-                                        SFUHandler.getPlugin() +
-                                        ", id=" +
-                                        SFUHandler.getId() +
-                                        ")"
+                                    SFUHandler.getPlugin() +
+                                    ", id=" +
+                                    SFUHandler.getId() +
+                                    ")"
                                 );
                             },
                             onmessage: (msg, jsep) => {
-                              Janus.log(msg);
+                                Janus.log(msg);
                             },
                             error: error => {
                                 Janus.error(
                                     "  -- Error attaching plugin...",
                                     error
                                 );
-                                
+
                             }
                         });
                     },
