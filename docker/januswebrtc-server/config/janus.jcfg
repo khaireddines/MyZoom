@@ -261,14 +261,14 @@ nat: {
 	# If you'd rather keep the private IP address in place, rather than
 	# replacing it (and so have both of them as advertised candidates),
 	# then set the 'keep_private_host' property to true.
-	nat_1_1_mapping = "13.95.136.190"
+	nat_1_1_mapping = "188.165.125.103"
 	#keep_private_host = true
 
 	# You can configure a TURN server in two different ways: specifying a
 	# statically configured TURN server, and thus provide the address of the
 	# TURN server, the transport (udp/tcp/tls) to use, and a set of valid
 	# credentials to authenticate...
-	turn_server = "13.95.136.190"
+	turn_server = "188.165.125.103"
 	turn_port = 3478
 	turn_type = "udp"
 	turn_user = "acelens"
