@@ -75,13 +75,22 @@ services:
             - 8088:8088
             - 8089:8089
             
-    turn-server:
-        image: zolochevska/turn-server
-        container_name: turn-server
-        restart: always
-        volumes: 
-            - ./docker/turn-server/deploy-turnserver.sh:/app/deploy-turnserver.sh
-            - ./serverkeys:/app/ssl
-        ports: 
-            - 3478:3478/udp
-            - 3478:3478
+#    turn-server:
+#        image: zolochevska/turn-server
+#        container_name: turn-server
+#        restart: always
+#        volumes: 
+#            - ./docker/turn-server/deploy-turnserver.sh:/app/deploy-turnserver.sh
+#            - ./serverkeys:/app/ssl
+#        ports: 
+#            - 3478:3478/udp
+#            - 3478:3478
+#    coturn:
+#        build: docker/turn-server
+#        restart: always
+#        volumes:
+#            - ./docker/turn-server/turnserver.conf:/etc/turnserver.conf
+#            - ./serverkeys:/app/ssl
+#        ports: 
+#            - 3478:3478/udp
+#            - 3478:3478

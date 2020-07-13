@@ -1,6 +1,7 @@
 import React from "react";
-import {Dropdown, Menu} from "antd";
+import {Dropdown, Menu, message, Tooltip} from "antd";
 import { connect } from "react-redux";
+import copy from "copy-to-clipboard";
 class RoomCell extends React.Component {
 
   onDeleteRoom = (Room) => {
@@ -21,14 +22,27 @@ class RoomCell extends React.Component {
 
   constructor(props) {
     super(props);
-    
+    this.state={
+      HiddenPassword:this.props.Room.RoomPassword.substr(0,2)+'*****',
+      FullPassword:this.props.Room.RoomPassword,
+      Reveal:false,
+    }
+  }
+  ToggelReveal(oldReveal){
+    this.setState({
+      Reveal:!oldReveal
+    })
+  }
+  copyText(Password) {
+    copy(Password);
+    message.success("Password Copied (^ç^) ");
   }
   
   render() {
     const {Room} = this.props;
     
     const {Name, isPrivate, RoomOwner,Chat_room_url, RoomPassword} = Room;
-    
+    const {HiddenPassword, FullPassword,Reveal}=this.state;
     return (
 
       <div className="gx-contact-item">
@@ -39,14 +53,24 @@ class RoomCell extends React.Component {
               <span className="gx-toolbar-separator">&nbsp;</span>
               <span className="gx-text-truncate gx-job-title">{(isPrivate)?'Private':'Public'}</span>
               {(isPrivate==true)&&(<><span className="gx-toolbar-separator">&nbsp;</span>
-              <span className="gx-text-truncate gx-job-title">{RoomPassword}</span></>)}
+              <Tooltip title="Copy">
+                <span className="gx-text-truncate gx-job-title"
+                style={{cursor: "pointer"}}
+                onClick={()=>this.copyText(FullPassword)} 
+                onMouseEnter={()=>this.ToggelReveal(Reveal)}
+                onMouseLeave={()=>this.ToggelReveal(Reveal)}
+                >{(Reveal)?FullPassword:HiddenPassword}</span>
+              </Tooltip>
+              </>)}
             </p>
 
             <div className="gx-text-muted">
             <span className="gx-email gx-d-inline-block gx-mr-2">
             Room Moderator : 
             </span>
-              <span className="gx-phone gx-d-inline-block">{RoomOwner.name}</span>
+              <span className="gx-phone gx-d-inline-block">
+                {(this.props.authUser.id==this.props.Room.RoomOwner.id)?"That's Mine ^ç^":RoomOwner.name}
+                </span>
             </div>
             <div className="gx-text-muted">
             <span className="gx-email gx-d-inline-block gx-mr-2">

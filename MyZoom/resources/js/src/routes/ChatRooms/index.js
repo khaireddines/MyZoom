@@ -203,7 +203,7 @@ class ChatRooms extends Component {
         axios.post("api/NewChatRoom", payload).then((res) => {
             if (res.status == 200) {
                 message.info(<span id="message-id">Room Created Successfully</span>, 3)
-                this.CreateRoomInJanus(res.data);
+                this.CreateRoomInJanus(res.data,payload);
                 this.GetRooms();
             }
         })
@@ -392,22 +392,29 @@ class ChatRooms extends Component {
             </div>
         );
     }
-    CreateRoomInJanus(RoomID) {
+    CreateRoomInJanus(RoomID,payload) {
+        const { isPrivate,RoomPassword }=payload;
         const myroom = parseInt(decodenum(RoomID));
         var body = {
             request: "create",
             room: myroom,
             is_private: false,
-            videocodec: "vp9"
+            videocodec: "vp9",
+            permanent:true
         };
+        if (isPrivate) {
+            body={...body,pin:RoomPassword}
+        }
         this.state.SFUHandler.send({ message: body });
     }
     DestroyRoomInJanus(RoomID) {
         const myroom = parseInt(decodenum(RoomID));
         var body = {
             request : "destroy",
-            room: myroom
+            room: myroom,
+            permanent:true
         };
+        
         this.state.SFUHandler.send({ message: body });
     }
     componentDidMount() {

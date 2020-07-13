@@ -65,6 +65,41 @@ class SubedRoomsController extends Controller
         }
         
     }
+    public function JoinRequests(Request $request)
+    {
+        $MyRooms = ChatRoom::where('RoomOwner',Auth::user()->id)
+        ->get(['id']);
+        $RoomsTab=[];
+        
+        if ($MyRooms->isNotEmpty()) {
+            foreach ($MyRooms as $key => $Room) {
+                if($Room->user != Auth::user()->id)
+                    {$RoomsTab[]=$Room->id;}
+            }
+            $SubRequests= SubedRooms::whereIn('room',$RoomsTab)
+            ->where('room_request_accepted',false)
+            ->get();
+            dd($SubRequests);
+        }
+    }
+    public function SubRequests(Request $request)
+    {
+        $MyRooms = ChatRoom::where('RoomOwner',Auth::user()->id)
+        ->get(['id']);
+        $RoomsTab=[];
+        if ($MyRooms->isNotEmpty()) {
+            foreach ($MyRooms as $key => $Room) {
+                $RoomsTab[]=$Room->id;
+            }
+        }
+        $MySubs = SubedRooms::where('user',Auth::user()->id)
+        ->whereNotIn('room',$RoomsTab)
+        ->where('room_request_accepted',false)
+        ->get();
+        if ($MySubs->isNotEmpty()) {
+            dd($MySubs);
+        }
+    }
     public function destroy(Request $request)
     {
         $room = ChatRoom::where('id',$request->SubedRoomId)->get();
