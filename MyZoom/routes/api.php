@@ -37,6 +37,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('UnsubscribeOrDeleteRoom','SubedRoomsController@destroy');
     //Accept Subb Requests
     Route::post('AcceptSub','SubedRoomsController@AcceptSub');
+    //Reject Subb Requests
+    Route::post('RejectSub','SubedRoomsController@RejectSub');
     //Sub Requests List
     Route::post('JoinRequests','SubedRoomsController@JoinRequests');
     //Current User Join Requests List

@@ -19,6 +19,8 @@ import RoomList from "../../components/VideoRoom/RoomList";
 import NewRoom from "../../components/VideoRoom/NewRoom";
 import Janus from "../../util/JanusES6";
 import adapter from "webrtc-adapter";
+import JoinRoom from "../../components/VideoRoom/JoinRoom";
+import UserList from "../../components/VideoRoom/UserList";
 
 const { confirm } = Modal;
 const decodenum = string => {
@@ -101,6 +103,7 @@ class ChatRooms extends Component {
                             <Button
                                 className="gx-btn-block ant-btn"
                                 aria-label="sub"
+                                onClick={this.onJoinRoom}
                             >
                                 <i className="icon icon-signin gx-mr-2" />
                                 <span>Subscribe To A Room</span>
@@ -143,10 +146,17 @@ class ChatRooms extends Component {
     onRoomClose = () => {
         this.setState({ addRoomState: false });
     };
+    onJoinRoom=()=>{
+        this.setState({ JoinRoomState: true });
+    };
+    onJoinRoomClose = () => {
+        this.setState({ JoinRoomState: false });
+    };
     onFilterOptionSelect = option => {
         switch (option.name) {
             case "All Rooms": {
                 this.setState({
+                    type:'room',
                     selectedSectionId: option.id,
                     filterOption: option.name,
                     roomList: this.state.allRooms
@@ -155,16 +165,18 @@ class ChatRooms extends Component {
             }
             case "Public Rooms": {
                 this.setState({
+                    type:'room',
                     selectedSectionId: option.id,
                     filterOption: option.name,
                     roomList: this.state.allRooms.filter(
                         Room => !Room.isPrivate
-                    ) // change the list of rooms
+                    ) 
                 });
                 break;
             }
             case "Private Rooms": {
                 this.setState({
+                    type:'room',
                     selectedSectionId: option.id,
                     filterOption: option.name,
                     roomList: this.state.allRooms.filter(Room => Room.isPrivate)
@@ -174,6 +186,7 @@ class ChatRooms extends Component {
             case "My Rooms": {
                 this.GetPersonalRooms().then(Res => {
                     this.setState({
+                        type:'room',
                         selectedSectionId: option.id,
                         filterOption: option.name,
                         roomList: Res.data,
@@ -181,6 +194,16 @@ class ChatRooms extends Component {
                     });
                 });
                 break;
+            }
+            case "Join Requests":{
+                this.GetJoinRequests().then(Res=>{
+                    this.setState({
+                        type:'users',
+                        usersList:Res.data,
+                        filterOption: option.name,
+                        selectedSectionId: option.id,
+                    })
+                })
             }
             default:
                 break;
@@ -206,9 +229,22 @@ class ChatRooms extends Component {
                 this.CreateRoomInJanus(res.data,payload);
                 this.GetRooms();
             }
+            if (res.status == 500) {
+                message.error(<span id="error-id2">Ops! something went wrong.Try again later</span>, 3)
+            }
         })
     }
-
+    onSaveJoinRoom(data){
+        axios.post("api/SubscribeToRoom",data).then((res)=>{
+            if (res.status == 200) {
+                message.info(<span id="message-id2">{res.data}</span>, 3);
+            }
+            if (res.status == 500) {
+                message.error(<span id="error-id2">Ops! something went wrong.Try again later</span>, 3)
+            }
+        })
+        
+    }
     onDeleteRoom = RoomData => {
         let RoomIdInJanus = RoomData.Chat_room_url.replace('videoChatRoom_', '');
         let RoomId = RoomData.id;
@@ -296,6 +332,7 @@ class ChatRooms extends Component {
     GetRooms = async () => {
         let Res = await axios.post("api/AllRooms");
         this.setState({
+            type:'room',
             roomList: Res.data,
             allRooms: Res.data
         });
@@ -303,10 +340,45 @@ class ChatRooms extends Component {
     GetPersonalRooms = async () => {
         return await axios.post("api/PersonalRooms");
     };
+    GetJoinRequests = async () => {
+        return await axios.post("api/JoinRequests");
+    };
+    onAcceptUserRequest=(data)=>{
+        axios.post('api/AcceptSub',{Room:data.roomdata.idroom,User:data.userdata.iduser}).then((Res)=>{
+            if (Res.code == 500) 
+                message.error(<span id="delete-done">Ops! something went wrong.</span>,3);
+            else
+            {
+                message.success(<span id="delete-done">{Res.data}</span>,3);
+                this.GetJoinRequests().then(Res=>{
+                    this.setState({
+                        usersList:Res.data
+                    });
+                });
+            }
+        })          
+    }
+    onDeleteUserRequest=(data)=>{
+        axios.post('api/RejectSub',{Room:data.roomdata.idroom,User:data.userdata.iduser}).then((Res)=>{
+            if (Res.code == 500) 
+                message.error(<span id="delete-done">Ops! something went wrong.</span>,3);
+            else
+            {
+                message.success(<span id="delete-done">{Res.data}</span>,3);
+                this.GetJoinRequests().then(Res=>{
+                    this.setState({
+                        usersList:Res.data
+                    });
+                })
+            }
+        })
+              
+    }
     constructor(props) {
         super(props);
         this.state = {
-            noRoomFoundMessage: "ops! No Rooms Found",
+            noRoomFoundMessage: "Ops! No Rooms Found",
+            noRequestsFoundMessage:"Ops! No New Request Found",
             alertMessage: "",
             showMessage: false,
             selectedSectionId: 1,
@@ -319,17 +391,24 @@ class ChatRooms extends Component {
             selectedContact: null,
             selectedContacts: 0,
             addRoomState: false,
-            SFUHandler: null
+            JoinRoomState: false,
+            SFUHandler: null,
+            type: 'room',
+            usersList: []
         };
     }
     render() {
         const {
             roomList,
+            usersList,
             addRoomState,
             drawerState,
             alertMessage,
             showMessage,
-            noRoomFoundMessage
+            noRoomFoundMessage,
+            noRequestsFoundMessage,
+            JoinRoomState,
+            type
         } = this.state;
         return (
             <div className="gx-main-content">
@@ -364,7 +443,7 @@ class ChatRooms extends Component {
                         </div>
                         <div className="gx-module-box-content">
                             <CustomScrollbars className="gx-module-content-scroll">
-                                {roomList.length === 0 ? (
+                                {(type ==='room')?(roomList.length === 0 ? (
                                     <div className="gx-h-100 gx-d-flex gx-align-items-center gx-justify-content-center">
                                         {noRoomFoundMessage}
                                     </div>
@@ -373,7 +452,17 @@ class ChatRooms extends Component {
                                             roomList={roomList}
                                             onDeleteRoom={this.onDeleteRoom.bind(this)}
                                         />
-                                    )}
+                                    )):(usersList.length === 0 ? (
+                                        <div className="gx-h-100 gx-d-flex gx-align-items-center gx-justify-content-center">
+                                            {noRequestsFoundMessage}
+                                        </div>
+                                    ) :(
+                                            <UserList
+                                                DataList={usersList}
+                                                onAcceptUserRequest={this.onAcceptUserRequest.bind(this)}
+                                                onDeleteUserRequest={this.onDeleteUserRequest.bind(this)}
+                                            />
+                                    ))}
                             </CustomScrollbars>
                         </div>
                     </div>
@@ -383,6 +472,13 @@ class ChatRooms extends Component {
                     onSaveRoom={this.onSaveRoom.bind(this)}
                     onRoomClose={this.onRoomClose}
                 />
+                <JoinRoom
+                    open={JoinRoomState}
+                    onSaveJoinRoom={this.onSaveJoinRoom.bind(this)}
+                    onJoinRoomClose={this.onJoinRoomClose}
+                />
+
+                
                 {showMessage &&
                     message.info(
                         <span id="message-id">{alertMessage}</span>,

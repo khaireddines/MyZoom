@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ChatRoom;
 use App\SubedRooms;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -65,12 +66,26 @@ class SubedRoomsController extends Controller
         }
         
     }
+    public function RejectSub(Request $request)
+    {
+        $room = ChatRoom::where('id',$request->Room)->get();
+        if ($room->isNotEmpty()) {
+            $room = $room->first();
+            if ($room->RoomOwner == Auth::user()->id) {
+                SubedRooms::where('user',$request->User)
+                ->where('room',$request->Room)
+                ->delete();
+                return response('Request Rejected',200);
+            }else
+                return response('Unauthorized Request',200);
+        }
+    }
     public function JoinRequests(Request $request)
     {
         $MyRooms = ChatRoom::where('RoomOwner',Auth::user()->id)
         ->get(['id']);
         $RoomsTab=[];
-        
+        $result=[];
         if ($MyRooms->isNotEmpty()) {
             foreach ($MyRooms as $key => $Room) {
                 if($Room->user != Auth::user()->id)
@@ -79,8 +94,30 @@ class SubedRoomsController extends Controller
             $SubRequests= SubedRooms::whereIn('room',$RoomsTab)
             ->where('room_request_accepted',false)
             ->get();
-            dd($SubRequests);
+            if ($SubRequests->isNotEmpty()) {
+                foreach ($SubRequests as $key => $sub) {
+                    $user = User::where('id',$sub->user)->first(['id','Profile_picture','name','email']);
+                    $room = ChatRoom::where('id',$sub->room)->first(['id','Name','isPrivate']);
+                    $userdata=[
+                        'iduser'=>$user->id,
+                        'Profile_picture'=>$user->Profile_picture,
+                        'nameuser'=>$user->name,
+                        'email'=>$user->email,
+                    ];
+                    $roomdata=[
+                        'idroom'=>$room->id,
+                        'nameroom'=>$room->Name,
+                        'isPrivate'=>$room->isPrivate,
+                    ];
+                    $result[]=[
+                        'userdata'=>$userdata,
+                        'roomdata'=>$roomdata
+                    ];
+                }
+                
+            }
         }
+        return response($result,200);
     }
     public function SubRequests(Request $request)
     {

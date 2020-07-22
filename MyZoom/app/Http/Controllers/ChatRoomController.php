@@ -30,7 +30,8 @@ class ChatRoomController extends Controller
                                      ->first(['id','name','email','Profile_picture','status']),
                     'isPrivate'=>$PersonalRoom->isPrivate,
                     'RoomPassword'=>$PersonalRoom->RoomPassword,
-                    'Chat_room_url'=>$PersonalRoom->Chat_room_url
+                    'Chat_room_url'=>$PersonalRoom->Chat_room_url,
+                    'Unique_Invite_Link'=>$PersonalRoom->Unique_Invite_Link
                     ];
             }
         }
@@ -61,7 +62,8 @@ class ChatRoomController extends Controller
                                      ->first(['id','name','email','Profile_picture','status']),
                     'isPrivate'=>$Room->isPrivate,
                     'RoomPassword'=>$Room->RoomPassword,
-                    'Chat_room_url'=>$Room->Chat_room_url
+                    'Chat_room_url'=>$Room->Chat_room_url,
+                    'Unique_Invite_Link'=>$Room->Unique_Invite_Link
                     ];
                 }
             }
