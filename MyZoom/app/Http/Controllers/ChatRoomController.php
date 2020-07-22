@@ -68,7 +68,6 @@ class ChatRoomController extends Controller
                 }
             }
         }
-        
         return response($res);
     }
     public function UniqueNumber()
