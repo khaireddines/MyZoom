@@ -6,8 +6,9 @@ import { CHATROOM_MESSAGE_RECIVED } from "../../constants/ActionTypes";
 import "./VideoRoom.css";
 import VideoLayout from "../../components/video";
 import { Redirect } from "react-router-dom";
-import { Modal } from "antd";
+import { Modal, Result, Button, Input, message } from "antd";
 import {ExclamationCircleTwoTone} from "@ant-design/icons";
+const { Search } = Input;
 const { info } = Modal;
 const decodenum = string => {
     let result;
@@ -34,8 +35,9 @@ const VideoRoom = props => {
     let SFUHandler = null;
     let screenType = "screen";
     let peoplesIn = 0;
-    const [exist, setExist] = useState(null);
-    const [Handler, setHandler] = useState(null);
+    const [ exist, setExist ] = useState(null);
+    const [ IsPrivate, setIsPrivate ] = useState(null);
+    const [ Handler, setHandler ] = useState(null);
     const createRoom = () => {
         var body = {
             request: "create",
@@ -45,6 +47,17 @@ const VideoRoom = props => {
         };
         SFUHandler.send({ message: body });
     };
+    const RejoinWithPin = (pin) =>{
+        var body = {
+            request: "join",
+            room: myroom,
+            ptype: "publisher",
+            display: myusername,
+            id: myid,
+            pin:pin
+        };
+        Handler.send({ message: body });
+    }
     const joinRoom = () => {
         var audio = new Audio("/assets/sounds/recived.mp3");
         window.Echo.join(`ChatRoom_${myroom}`)
@@ -235,11 +248,21 @@ const VideoRoom = props => {
                                     if (msg['error_code']) {
                                         if (msg['error_code']==426) 
                                         setExist(false);
+                                        if (msg['error_code']==429) 
+                                        setIsPrivate(true);    
+                                        if (msg['error_code']==433) 
+                                        message.error('Unauthorized Password !!, Please try again');    
+                                        
                                         
                                         
                                     }else
                                     setExist(true);
                                     
+                                }
+                                if (msg['videoroom']==="joined") {
+                                    setIsPrivate(null);
+                                    setHandler(SFUHandler);
+                                    setExist(true);
                                 }
                                 if(msg['videoroom']==="destroyed")
                                 {
@@ -324,17 +347,21 @@ const VideoRoom = props => {
     }, []);
     return (
         <>
-            {/* <h1>{props.roomID}</h1>
-            <h1>{server}</h1>
-            <h1>{myroom}</h1>
-            <h1>{myusername}</h1>
-            <h1>{myid}</h1>
-            <h1>{opaqueId}</h1>
-            
-            <video id="myvideo" autoPlay playsInline muted="muted" />
-            <video id="remotevideo" autoPlay playsInline /> */}
-
-            {(Handler != null && exist != null) && (
+            {(IsPrivate != null) ?(
+                <Result
+                status="403"
+                title="Room Password"
+                subTitle="Sorry, you are not authorized to access unless you provide a password."
+                extra=
+                    {<>
+                        <Search placeholder="Room Password"
+                        onSearch={pin => RejoinWithPin(pin)} 
+                        enterButton 
+                        style={{ width: '30%' }}
+                        />
+                    </>}
+              />
+            ):(Handler != null && exist != null) && (
                 <VideoLayout myroom={myroom} SFUHandler={Handler} RoomExist={exist} />
             )}
         </>

@@ -4,21 +4,23 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y \
 	&& apt-get -y install aptitude git \
 	&& aptitude -y install libmicrohttpd-dev libjansson-dev \
-	libssl-dev libsrtp2-dev libsofia-sip-ua-dev libglib2.0-dev \
+	libssl-dev wget libsofia-sip-ua-dev libglib2.0-dev \
 	libopus-dev libogg-dev libcurl4-openssl-dev liblua5.3-dev \
 	libconfig-dev pkg-config gengetopt libtool automake meson ninja-build
-# Installing Dependencies
-#RUN git clone https://github.com/sctplab/usrsctp \
-#	&& cd usrsctp \
-#	&& ./bootstrap \
-#	&& ./configure --prefix=/usr \
-#	&& make \
-#	&& make install
+
 # Installing CMake
 RUN apt-get install -y software-properties-common \
 	&& add-apt-repository --remove ppa:george-edison55/cmake-3.x \
 	&& apt-get update \
 	&& apt-get install -y cmake
+# Installing Dependencies
+RUN wget https://github.com/cisco/libsrtp/archive/v2.2.0.tar.gz \
+	&& tar xfv v2.2.0.tar.gz \
+	&& cd libsrtp-2.2.0 \
+	&& ./configure --prefix=/usr --enable-openssl \
+	&& make shared_library \
+	&& make install
+
 
 RUN git clone https://libwebsockets.org/repo/libwebsockets \
 	&& cd libwebsockets \
@@ -46,5 +48,7 @@ RUN git clone https://github.com/meetecho/janus-gateway.git \
 	&& make \
 	&& make install \
 	&& make configs
+
+
 
 
