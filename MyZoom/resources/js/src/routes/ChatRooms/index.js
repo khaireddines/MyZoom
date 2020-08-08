@@ -489,11 +489,12 @@ class ChatRooms extends Component {
         );
     }
     CreateRoomInJanus(RoomID,payload) {
-        const { isPrivate,RoomPassword }=payload;
+        const { isPrivate, RoomPassword, Name }=payload;
         const myroom = parseInt(decodenum(RoomID));
         var body = {
             request: "create",
             room: myroom,
+            description: Name,
             is_private: false,
             videocodec: "vp9",
             permanent:true

@@ -1,0 +1,9 @@
+.gx-chat-user-item.active{
+    background-color: #e6faff !important;
+}
+span.icons-controle>span:hover{
+    color: #038fde;
+}
+span.onAction>span{
+    color: red;
+}

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Janus from "../../util/JanusES6.js";
 import adapter from "webrtc-adapter";
 import { useSelector, useDispatch } from "react-redux";
-import { CHATROOM_MESSAGE_RECIVED } from "../../constants/ActionTypes";
+import { CHATROOM_MESSAGE_RECIVED, PEOPLES_HERE, WHO_LEFT } from "../../constants/ActionTypes";
 import "./VideoRoom.css";
 import VideoLayout from "../../components/video";
 import { Redirect } from "react-router-dom";
@@ -38,6 +38,7 @@ const VideoRoom = props => {
     const [ exist, setExist ] = useState(null);
     const [ IsPrivate, setIsPrivate ] = useState(null);
     const [ Handler, setHandler ] = useState(null);
+    const [ RoomName, setRoomName ] = useState(null);
     const createRoom = () => {
         var body = {
             request: "create",
@@ -48,21 +49,24 @@ const VideoRoom = props => {
         SFUHandler.send({ message: body });
     };
     const RejoinWithPin = (pin) =>{
+        localStorage.setItem('pin',pin);
         var body = {
             request: "join",
             room: myroom,
             ptype: "publisher",
-            display: myusername,
+            display: JSON.stringify(authUser),
             id: myid,
             pin:pin
         };
         Handler.send({ message: body });
+        publishOwnFeedWithPin();
     }
     const joinRoom = () => {
         var audio = new Audio("/assets/sounds/recived.mp3");
         window.Echo.join(`ChatRoom_${myroom}`)
             .here(users => {
-                console.log(users);
+                //console.log(users); //deal with the picture here !
+
             })
             .listen("Send_ChatRoom_Message", e => {
                 dispatch({ type: CHATROOM_MESSAGE_RECIVED, payload: e });
@@ -72,10 +76,29 @@ const VideoRoom = props => {
             request: "join",
             room: myroom,
             ptype: "publisher",
-            display: myusername,
+            display: JSON.stringify(authUser),
             id: myid
         };
         SFUHandler.send({ message: body });
+    };
+    const publishOwnFeedWithPin = () =>{
+        Handler.createOffer({
+            media: {
+                audioRecv: false,
+                videoRecv: false,
+                audioSend: true,
+                videoSend: false
+            },
+            success: jsep => {
+                var publish = {
+                    request: "configure",
+                    audio: true,
+                    video: true,
+                    videocodec: "vp9"
+                };
+                Handler.send({ message: publish, jsep: jsep });
+            }
+        });
     };
     const publishOwnFeed = () => {
         SFUHandler.createOffer({
@@ -96,7 +119,8 @@ const VideoRoom = props => {
             }
         });
     };
-    const newRemoteFeed = id => {
+    const newRemoteFeed = (id,pin) => {
+        pin = pin || null;
         var SFURemoteHandler = null;
         janus.attach({
             plugin: "janus.plugin.videoroom",
@@ -116,8 +140,13 @@ const VideoRoom = props => {
                     room: myroom,
                     ptype: "subscriber",
                     feed: id,
-                    videocodec: "vp9"
+                    videocodec: "vp9",
+                    
                 };
+                if (pin != null) {
+                    subscribe = {...subscribe,pin:pin}
+                    console.log(subscribe)
+                }
                 SFURemoteHandler.send({ message: subscribe });
             },
             onmessage: (msg, jsep) => {
@@ -130,7 +159,7 @@ const VideoRoom = props => {
                     if (event === "attached") {
                         // Subscriber created and attached
                         SFURemoteHandler.rfid = msg["id"];
-                        SFURemoteHandler.rfdisplay = msg["display"];
+                        SFURemoteHandler.rfdisplay = JSON.parse(msg["display"]);
 
                         //updateView(grid);
                         /* let videoTagold = `
@@ -143,17 +172,40 @@ const VideoRoom = props => {
                         <div>
                             <div>
                                 <video id="remote${msg["id"]}" autoplay="" playsinline="" ></video>
-                                <div class="overlay-1YJlCn"><div class="size16-1P40sf overlayTitle-8IcS01 idle-U-LIlZ"><span class="overlayTitleText-2mmQzi">${SFURemoteHandler.rfdisplay}</span></div><div class="statusContainer-1gtabC"></div></div>
+                                <div class="overlay-1YJlCn"><div class="size16-1P40sf overlayTitle-8IcS01 idle-U-LIlZ"><span class="overlayTitleText-2mmQzi">${SFURemoteHandler.rfdisplay.name}</span></div><div class="statusContainer-1gtabC"></div></div>
                             </div>
                         </div>
                         `;
+                        let personCell = `
+                            <div class="gx-chat-user-item " id="personCell${msg["id"]}">
+                            <div class="gx-chat-user-row">
+                            <div class="gx-chat-avatar">
+                            <div class="gx-status-pos">
+                            <span class="ant-avatar gx-size-40 ant-avatar-circle ant-avatar-image">
+                            <img src="/assets/images/${SFURemoteHandler.rfdisplay.Profile_picture}" alt="Abbott"></span>
+                            <span class="gx-status gx-undefined"></span></div></div>
+                            <div class="gx-chat-contact-col">
+                            <div class="h4 gx-name">${SFURemoteHandler.rfdisplay.name}</div>
+                            <div class="gx-chat-info-des gx-text-truncate">
+                            </div></div></div></div>
+                            `;
+                        let mypayload={
+                            id:msg['id'],
+                            img:SFURemoteHandler.rfdisplay.Profile_picture,
+                            name:SFURemoteHandler.rfdisplay.name,
+                            remoteHandler:SFURemoteHandler
+                        }
+                        dispatch({ type: PEOPLES_HERE, payload: mypayload });
                         let frame = document.createElement("div");
-
+                        let personCellFrame = document.createElement("span");
+                        personCellFrame.innerHTML = personCell.trim();
                         frame.innerHTML = videoTag.trim();
-                        console.log(frame.firstChild);
                         document
                             .getElementById("layout")
                             .appendChild(frame.firstChild);
+                        /* document
+                            .getElementById("people_here")
+                            .appendChild(personCellFrame.firstChild); */
                     }
                 }
                 if (jsep) {
@@ -188,6 +240,13 @@ const VideoRoom = props => {
                 document
                     .getElementById(`remote${SFURemoteHandler.rfid}`)
                     .parentElement.parentElement.remove();
+                let Mypayload={
+                    id:SFURemoteHandler.rfid,
+                }
+                dispatch({type : WHO_LEFT, payload:Mypayload})
+                /* document
+                    .getElementById(`personCell${SFURemoteHandler.rfid}`)
+                    .remove(); */
                 peoplesIn -= 1;
             }
         });
@@ -220,10 +279,11 @@ const VideoRoom = props => {
                                 // check for the room before creating it using exists
                                 // Register the current user
                                 joinRoom();
+                                //publishOwnFeed();
                                 /* SFUHandler.send({"message":{
                                     "request" : "list"}}) to check for the list of available channels */
                                 /* SFUHandler.send({"message":{"request" : "listparticipants", "room": myroom }}) for list of participants */
-                                publishOwnFeed();
+                                
                                 //publishShareScreen();
                             },
                             error: error => {
@@ -249,19 +309,20 @@ const VideoRoom = props => {
                                         if (msg['error_code']==426) 
                                         setExist(false);
                                         if (msg['error_code']==429) 
-                                        setIsPrivate(true);    
-                                        if (msg['error_code']==433) 
+                                        setIsPrivate(true);
+                                        if (msg['error_code']==433)
                                         message.error('Unauthorized Password !!, Please try again');    
                                         
                                         
                                         
                                     }else
-                                    setExist(true);
-                                    
+                                        setExist(true);
                                 }
                                 if (msg['videoroom']==="joined") {
                                     setIsPrivate(null);
+                                    setRoomName(msg['description']);
                                     setHandler(SFUHandler);
+                                    publishOwnFeed();
                                     setExist(true);
                                 }
                                 if(msg['videoroom']==="destroyed")
@@ -306,7 +367,12 @@ const VideoRoom = props => {
                                                 video +
                                                 ")"
                                         );
-                                        newRemoteFeed(id); // , display, audio, video
+                                        if (localStorage.getItem('pin') != null) {
+                                            newRemoteFeed(id,localStorage.getItem('pin'));
+                                        } else {
+                                            newRemoteFeed(id);
+                                        }
+                                         // , display, audio, video
                                     }
                                 }
                             },
@@ -327,6 +393,7 @@ const VideoRoom = props => {
                                     " ::: Got a cleanup notification: we are unpublished now :::"
                                 );
                                 mystream = null;
+                                localStorage.removeItem('pin');
                             }
                         });
                     },
@@ -339,6 +406,7 @@ const VideoRoom = props => {
                     },
                     destroyed: function() {
                         // I should get rid of this
+
                         window.location.reload();
                     }
                 });
@@ -361,8 +429,8 @@ const VideoRoom = props => {
                         />
                     </>}
               />
-            ):(Handler != null && exist != null) && (
-                <VideoLayout myroom={myroom} SFUHandler={Handler} RoomExist={exist} />
+            ):(Handler != null && exist != null && RoomName != null) && (
+                <VideoLayout RoomName={RoomName} myroom={myroom} SFUHandler={Handler} RoomExist={exist} />
             )}
         </>
     );

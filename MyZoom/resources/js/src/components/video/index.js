@@ -9,6 +9,7 @@ import {
     UploadOutlined
 } from "@ant-design/icons";
 import "./video.css";
+import HereList from "./components/hereList";
 var classNames = require("classnames");
 
 const { Header, Footer, Sider, Content } = Layout;
@@ -61,22 +62,7 @@ const VideoLayout = ({ RoomName, SFUHandler, myroom, RoomExist }) => {
                         collapsible
                         collapsed={CollapsedLeft}
                     >
-                        <div className="logo" />
-                        <Menu
-                            theme="light"
-                            mode="inline"
-                            defaultSelectedKeys={["1"]}
-                        >
-                            <Menu.Item key="1" icon={<UserOutlined />}>
-                                nav 1
-                            </Menu.Item>
-                            <Menu.Item key="2" icon={<VideoCameraOutlined />}>
-                                nav 2
-                            </Menu.Item>
-                            <Menu.Item key="3" icon={<UploadOutlined />}>
-                                nav 3
-                            </Menu.Item>
-                        </Menu>
+                        <HereList />
                     </Sider>
                     <Layout
                         onMouseOver={hideControls}
@@ -98,7 +84,7 @@ const VideoLayout = ({ RoomName, SFUHandler, myroom, RoomExist }) => {
                         </Content>
                         <Footer style={{ padding: "3px 32px" }}>
                             <Controls
-                                RoomName="myRoom"
+                                RoomName={RoomName}
                                 LeftSider={toggleCollapsedLeft}
                                 RightSider={toggleCollapsedRight}
                                 SFUHandler={SFUHandler}
