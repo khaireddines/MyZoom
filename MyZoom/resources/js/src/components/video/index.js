@@ -81,6 +81,8 @@ const VideoLayout = ({ RoomName, SFUHandler, myroom, RoomExist }) => {
                             }}
                         >
                             {/** here goes the video layouts */}
+                            
+                            
                         </Content>
                         <Footer style={{ padding: "3px 32px" }}>
                             <Controls

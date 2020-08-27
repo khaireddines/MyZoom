@@ -75,7 +75,7 @@ button,div{outline:0;}
 .size16-1P40sf{font-size:16px;line-height:20px;}
 div,span{margin:0;padding:0;border:0;font-weight:inherit;font-style:inherit;font-family:inherit;font-size:100%;vertical-align:baseline;}
 div,span{outline:0;}
-.overlay-1YJlCn{-ms-flex-align:center;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;position: relative;bottom: 3em;padding:0 8px;line-height:0;-webkit-transition:opacity .2s ease-in-out;transition:opacity .2s ease-in-out;}
+.overlay-1YJlCn{-ms-flex-align:center;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;position: absolute;left: 1em;bottom: 1em;padding:0 8px;line-height:0;-webkit-transition:opacity .2s ease-in-out;transition:opacity .2s ease-in-out;}
 .overlay-1YJlCn,.overlayTitle-8IcS01{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;align-items:center;}
 .overlayTitle-8IcS01{border-radius:8px;background:rgba(0,0,0,.3);color:#fff;padding:6px 12px;-webkit-box-flex:0;-ms-flex:0 1 auto;flex:0 1 auto;margin-right:8px;-ms-flex-align:center;min-width:0;}
 .overlayTitle-8IcS01.idle-U-LIlZ{opacity:1;}

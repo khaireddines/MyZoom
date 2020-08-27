@@ -139,6 +139,7 @@
   "sidebar.listType.cardListView": "Cards List View",
   "sidebar.extraPages.404": "404 Error Page",
   "sidebar.extraPages.500": "500 Error Page",
+  "sidebar.ConferenceRoomPage":"Conference Rooms",
   "sidebar.extraPages": "Extra Pages",
   "app.userAuth": "User Auth",
   "app.userAuth.login": "Login",

@@ -7,7 +7,7 @@ import "./VideoRoom.css";
 import VideoLayout from "../../components/video";
 import { Redirect } from "react-router-dom";
 import { Modal, Result, Button, Input, message } from "antd";
-import {ExclamationCircleTwoTone} from "@ant-design/icons";
+import {ExclamationCircleTwoTone, LoginOutlined} from "@ant-design/icons";
 const { Search } = Input;
 const { info } = Modal;
 const decodenum = string => {
@@ -59,7 +59,7 @@ const VideoRoom = props => {
             pin:pin
         };
         Handler.send({ message: body });
-        publishOwnFeedWithPin();
+        //publishOwnFeedWithPin();
     }
     const joinRoom = () => {
         var audio = new Audio("/assets/sounds/recived.mp3");
@@ -160,7 +160,7 @@ const VideoRoom = props => {
                         // Subscriber created and attached
                         SFURemoteHandler.rfid = msg["id"];
                         SFURemoteHandler.rfdisplay = JSON.parse(msg["display"]);
-
+                        SFURemoteHandler.isVideoMuted();
                         //updateView(grid);
                         /* let videoTagold = `
                         <div class="ant-col ant-col-${grid}" style="padding-left: 2px;padding-right: 2px;justify-content: center;align-items: center;display: flex;">
@@ -172,23 +172,36 @@ const VideoRoom = props => {
                         <div>
                             <div>
                                 <video id="remote${msg["id"]}" autoplay="" playsinline="" ></video>
-                                <div class="overlay-1YJlCn"><div class="size16-1P40sf overlayTitle-8IcS01 idle-U-LIlZ"><span class="overlayTitleText-2mmQzi">${SFURemoteHandler.rfdisplay.name}</span></div><div class="statusContainer-1gtabC"></div></div>
+                                <div class="overlay-1YJlCn" style="
+                                position: relative !important;
+                                left: 0em !important;
+                                bottom: 3em !important;"><div class="size16-1P40sf overlayTitle-8IcS01 idle-U-LIlZ"><span class="overlayTitleText-2mmQzi">${SFURemoteHandler.rfdisplay.name}</span></div><div class="statusContainer-1gtabC"></div></div>
                             </div>
                         </div>
                         `;
-                        let personCell = `
-                            <div class="gx-chat-user-item " id="personCell${msg["id"]}">
-                            <div class="gx-chat-user-row">
-                            <div class="gx-chat-avatar">
-                            <div class="gx-status-pos">
-                            <span class="ant-avatar gx-size-40 ant-avatar-circle ant-avatar-image">
-                            <img src="/assets/images/${SFURemoteHandler.rfdisplay.Profile_picture}" alt="Abbott"></span>
-                            <span class="gx-status gx-undefined"></span></div></div>
-                            <div class="gx-chat-contact-col">
-                            <div class="h4 gx-name">${SFURemoteHandler.rfdisplay.name}</div>
-                            <div class="gx-chat-info-des gx-text-truncate">
-                            </div></div></div></div>
-                            `;
+                        let newVideoTag = `
+                        <div>
+                            <div class="ant-card ant-card-bordered" id="card${msg["id"]}" style="
+                            height: -webkit-fill-available;
+                            width: -webkit-fill-available;"
+                            ><div class="ant-card-body">
+                            <span class="ant-avatar ant-avatar-circle ant-avatar-image">
+                            <img src="/assets/images/DefaultUser.png" />
+                            </span>
+                            <div class="overlay-1YJlCn"><div class="size16-1P40sf overlayTitle-8IcS01 idle-U-LIlZ">
+                            <span class="overlayTitleText-2mmQzi">${SFURemoteHandler.rfdisplay.name}</span></div>
+                            <div class="statusContainer-1gtabC"></div></div></div>
+                            </div>
+                                <div id="video${msg["id"]}" style="display:none">
+                                    <video id="remote${msg["id"]}" autoplay="" playsinline="" ></video>
+                                    <div class="overlay-1YJlCn" style="
+                                    position: relative !important;
+                                    left: 0em !important;
+                                    bottom: 3em !important;"><div class="size16-1P40sf overlayTitle-8IcS01 idle-U-LIlZ"><span class="overlayTitleText-2mmQzi">${SFURemoteHandler.rfdisplay.name}</span></div><div class="statusContainer-1gtabC"></div></div>
+                                </div>
+                        </div>
+                        `;
+                        
                         let mypayload={
                             id:msg['id'],
                             img:SFURemoteHandler.rfdisplay.Profile_picture,
@@ -197,9 +210,7 @@ const VideoRoom = props => {
                         }
                         dispatch({ type: PEOPLES_HERE, payload: mypayload });
                         let frame = document.createElement("div");
-                        let personCellFrame = document.createElement("span");
-                        personCellFrame.innerHTML = personCell.trim();
-                        frame.innerHTML = videoTag.trim();
+                        frame.innerHTML = newVideoTag.trim();
                         document
                             .getElementById("layout")
                             .appendChild(frame.firstChild);
@@ -211,6 +222,7 @@ const VideoRoom = props => {
                 if (jsep) {
                     Janus.debug("Handling SDP as well...", jsep);
                     // Answer and attach
+                    
                     SFURemoteHandler.createAnswer({
                         jsep: jsep,
                         // Add data:true here if you want to subscribe to datachannels as well
@@ -223,11 +235,13 @@ const VideoRoom = props => {
                                 message: body,
                                 jsep: jsep
                             });
+                            
                         },
                         error: error => {
                             Janus.log("WebRTC error:", error);
                         }
                     });
+                    
                 }
             },
             onremotestream: stream => {
@@ -235,6 +249,14 @@ const VideoRoom = props => {
                     document.getElementById(`remote${SFURemoteHandler.rfid}`),
                     stream
                 );
+                var videoTracks = stream.getVideoTracks();
+				if(!videoTracks || videoTracks.length === 0) {
+                    document.getElementById(`video${SFURemoteHandler.rfid}`).style.display='none';
+                    document.getElementById(`card${SFURemoteHandler.rfid}`).style.display='';
+                }else{
+                    document.getElementById(`card${SFURemoteHandler.rfid}`).style.display='none';
+                    document.getElementById(`video${SFURemoteHandler.rfid}`).style.display='';
+                }
             },
             oncleanup: () => {
                 document
@@ -413,6 +435,13 @@ const VideoRoom = props => {
             }
         });
     }, []);
+    setTimeout(() => {
+        if (document.getElementById("passwordfield")) {
+            document.getElementById("passwordfield").type="password";
+        }
+    }, 3000);
+       
+    
     return (
         <>
             {(IsPrivate != null) ?(
@@ -423,8 +452,9 @@ const VideoRoom = props => {
                 extra=
                     {<>
                         <Search placeholder="Room Password"
+                        id="passwordfield"
                         onSearch={pin => RejoinWithPin(pin)} 
-                        enterButton 
+                        enterButton= {<LoginOutlined style={{fontSize:"20px"}} />}
                         style={{ width: '30%' }}
                         />
                     </>}

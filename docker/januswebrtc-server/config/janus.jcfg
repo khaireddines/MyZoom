@@ -268,7 +268,7 @@ nat: {
 	# statically configured TURN server, and thus provide the address of the
 	# TURN server, the transport (udp/tcp/tls) to use, and a set of valid
 	# credentials to authenticate...
-	turn_server = "13.95.136.190"
+	turn_server = "acelens.me"
 	turn_port = 3478
 	turn_type = "udp"
 	turn_user = "acelens"

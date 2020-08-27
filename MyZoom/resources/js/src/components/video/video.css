@@ -1,6 +1,6 @@
 .ant-card{
     min-height: 17.5vw !important;
-    max-height: 17.5vw !important;
+    /* max-height: 17.5vw !important; */
     margin-bottom: 2% !important;
     align-items: center;
     display: flex;
@@ -10,7 +10,15 @@
 .ant-card-bordered {
     border: 1px solid #7c878c;
 }
-
+.ant-card-body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.ant-avatar{
+    width: 80px;
+    height: 80px;
+}
 #layout{
     display: grid;
     grid-template-columns: repeat(auto-fit,minmax(300px,1fr));

@@ -14,6 +14,7 @@ import {
 } from "../../constants/ThemeSetting";
 import "./sidebar.css";
 import IntlMessages from "../../util/IntlMessages";
+import { VideoCameraOutlined } from "@ant-design/icons";
 
 const SidebarContent = () => {
 
@@ -50,9 +51,9 @@ const SidebarContent = () => {
             mode="inline"
             >
 
-            <Menu.Item key="sample">
-              <Link to="/sample"><i className="icon icon-widgets"/>
-                <IntlMessages id="sidebar.samplePage"/></Link>
+            <Menu.Item key="ConferenceRoom">
+              <Link to="/ConferenceRoom"><VideoCameraOutlined style={{fontSize: "20px"}} />
+                <IntlMessages id="sidebar.ConferenceRoomPage"/></Link>
             </Menu.Item>
             <Menu.Item key="social/chat">
               <Link to="/social/chat"><i className="icon icon-chat-bubble"/>
