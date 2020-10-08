@@ -99,7 +99,7 @@ class RoomCell extends React.Component {
                 <>
                   <span className="gx-toolbar-separator">&nbsp;</span>
                   <span className="gx-email gx-d-inline-block gx-mr-2">
-                  Room Link : 
+                  Room Invite Link : 
                   </span>
                   <span className="gx-phone gx-d-inline-block">
                     <a onClick={()=>this.copyText(Unique_Invite_Link,'link')}>{Unique_Invite_Link}</a>

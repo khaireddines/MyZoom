@@ -8,6 +8,7 @@ import VideoLayout from "../../components/video";
 import { Redirect } from "react-router-dom";
 import { Modal, Result, Button, Input, message } from "antd";
 import {ExclamationCircleTwoTone, LoginOutlined} from "@ant-design/icons";
+import IsExistRoom from "../../components/video/components/IsExistRoom.js";
 const { Search } = Input;
 const { info } = Modal;
 const decodenum = string => {
@@ -459,9 +460,9 @@ const VideoRoom = props => {
                         />
                     </>}
               />
-            ):(Handler != null && exist != null && RoomName != null) && (
+            ):(Handler != null && exist != null && RoomName != null) ? (
                 <VideoLayout RoomName={RoomName} myroom={myroom} SFUHandler={Handler} RoomExist={exist} />
-            )}
+            ):(exist != null && exist == false)&& <IsExistRoom />}
         </>
     );
 };

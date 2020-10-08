@@ -34,7 +34,8 @@ class NewRoom extends Component {
                     });
                 }}
                 onOk={() => {
-                    if (name === "") return;
+                    if (name === "") {message.error('Please provide a Room name');return;}
+                    if (this.state.showPass==true && password ==="") {message.error('Please provide a password');return;}
                     onRoomClose();
                     onSaveRoom({
                         name: name,

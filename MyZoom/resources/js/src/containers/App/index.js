@@ -112,7 +112,7 @@ const App = () => {
       if (tokens === null) {
         history.push('/signin');
       } else if (initURL === '' || initURL === '/' || initURL === '/signin') {
-        history.push('/sample');
+        history.push('/ConferenceRoom');
       } else {
         history.push(initURL);
       }
