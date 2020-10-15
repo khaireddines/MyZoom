@@ -49,6 +49,7 @@ const SignUp = (props) => {
               <p><IntlMessages id="app.userAuth.getAccount"/></p>
             </div>
             <div className="gx-app-logo">
+              {/* //FIXME LOGO */}
               <img alt="example" src={require("../assets/images/logo.png")}/>
             </div>
           </div>
@@ -74,7 +75,10 @@ const SignUp = (props) => {
               </FormItem>
               <FormItem>
                 {getFieldDecorator('password', {
-                  rules: [{required: true, message: 'Please input your Password!'}],
+                  rules: [
+                    {required: true, message: 'Please input your Password!'},
+                    {len:8,message:'Password weak, 8 character length recommended!'}
+                  ],
                 })(
                   <Input type="password" placeholder="Password"/>
                 )}

@@ -47,6 +47,7 @@ const SignIn = (props) => {
               <p><IntlMessages id="app.userAuth.getAccount"/></p>
             </div>
             <div className="gx-app-logo">
+              {/* //FIXME LOGO */}
               <img alt="example" src={require("../assets/images/logo.png")}/>
             </div>
           </div>
@@ -68,16 +69,6 @@ const SignIn = (props) => {
                 })(
                   <Input type="password" placeholder="Password"/>
                 )}
-              </FormItem>
-              <FormItem>
-                {getFieldDecorator('remember', {
-                  valuePropName: 'checked',
-                  initialValue: true,
-                })(
-                  <Checkbox><IntlMessages id="appModule.iAccept"/></Checkbox>
-                )}
-                <span className="gx-signup-form-forgot gx-link"><IntlMessages
-                  id="appModule.termAndCondition"/></span>
               </FormItem>
               <FormItem>
                 <Button type="primary" className="gx-mb-0" htmlType="submit">

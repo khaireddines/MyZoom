@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import {Button, Checkbox, Drawer, message, Modal} from "antd";
 import CustomScrollbars from "../../../util/CustomScrollbars";
+import contactList from "./data/contactList";
 import ContactList from "../../../components/contact/ContactList";
 import AppModuleHeader from "../../../components/AppModuleHeader/index";
 import AddContact from "../../../components/contact/AddContact";
@@ -205,11 +206,20 @@ class Contact extends Component {
       addContactState: false,
     }
   }
+
+  updateContactUser(evt) {
+    this.setState({
+      searchUser: evt.target.value,
+    });
+    this.filterContact(evt.target.value)
+  }
+
   onToggleDrawer() {
     this.setState({
       drawerState: !this.state.drawerState
     });
   }
+
   render() {
     const {user, contactList, addContactState, drawerState, alertMessage, showMessage, noContentFoundMessage} = this.state;
     return (
