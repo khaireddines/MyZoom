@@ -253,7 +253,7 @@ class ChatRooms extends Component {
             title: "Confirmation",
             icon: <ExclamationCircleTwoTone twoToneColor="#f73e2d" />,
             content: <span id="Confirmation-span">Are you sure ?
-            This Action will result in premently deleting everything related to this room !! </span>,
+            This Action will result in permanently deleting everything related to this room !! </span>,
             onOk() {
                 axios.post('api/UnsubscribeOrDeleteRoom',{SubedRoomId:RoomId}).then((res)=>{
                     if (res.status==200) {

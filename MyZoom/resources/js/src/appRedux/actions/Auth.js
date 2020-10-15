@@ -127,7 +127,7 @@ export const userSignOut = () => {
 export const getFriendsList = ({ id }) => {
     return dispatch => {
         dispatch({ type: FETCH_START });
-        return axios.post("/api/contactList", {id:id}).then(res => {
+        return axios.post("/api/contactList", {FriendsOrRequests:true}).then(res => {
             dispatch({ type: FETCH_FRIENDS, payload: res.data });
             dispatch({ type: FETCH_SUCCESS });
         });

@@ -4,8 +4,7 @@ import {Avatar, Checkbox, Dropdown, Menu} from "antd";
 import AddContact from "../../AddContact/index";
 
 const options = [
-  'Edit',
-  'Delete',
+  'Unfriend'
 ];
 
 class ContactCell extends React.Component {
@@ -23,7 +22,7 @@ class ContactCell extends React.Component {
   menus = () => (<Menu onClick={(e) => {
     if (e.key === 'Edit') {
       this.onEditContact()
-    } else {
+    } else if (e.key === 'Unfriend'){
       this.onDeleteContact(this.props.contact)
     }
   }
@@ -43,32 +42,20 @@ class ContactCell extends React.Component {
   }
 
   render() {
-    const {contact, addFavourite, onContactSelect, onSaveContact} = this.props;
+    const {contact, onSaveContact} = this.props;
     const {addContactState} = this.state;
-    const {name, thumb, email, phone, designation, starred} = contact;
-
+    const {name, email, Profile_picture} = contact;
     return (
 
       <div className="gx-contact-item">
         <div className="gx-module-list-icon">
-          <Checkbox className="gx-icon-btn"
-                    checked={contact.selected}
-                    value="checkedF"
-                    onClick={() => {
-                      onContactSelect(contact)
-                    }}/>
-          <div className="gx-d-none gx-d-sm-flex" onClick={() => {
-            addFavourite(contact)
-          }}>
-            {starred ? <i className="gx-icon-btn icon icon-star"/> : <i className="gx-icon-btn icon icon-star-o"/>}
-          </div>
           <div className="gx-ml-2 gx-d-none gx-d-sm-flex">
-            {(thumb === null || thumb === '') ?
+            {(Profile_picture === null || Profile_picture === '') ?
               <Avatar size="large">
                 {name.charAt(0).toUpperCase()}
               </Avatar>
               :
-              <Avatar size="large" alt={name} src={thumb}/>
+              <Avatar size="large" alt={name}  src={`../assets/images/${Profile_picture}`} />
             }
           </div>
         </div>
@@ -77,21 +64,18 @@ class ContactCell extends React.Component {
           <div className="gx-module-contact-content">
             <p className="gx-mb-1">
               <span className="gx-text-truncate gx-contact-name"> {name} </span>
-              <span className="gx-toolbar-separator">&nbsp;</span>
-              <span className="gx-text-truncate gx-job-title">{designation}</span>
             </p>
 
             <div className="gx-text-muted">
             <span className="gx-email gx-d-inline-block gx-mr-2">
-                {email},
+                {email}
             </span>
-              <span className="gx-phone gx-d-inline-block">{phone}</span>
             </div>
           </div>
 
           <div className="gx-module-contact-right">
 
-            <Dropdown overlay={this.menus()} placement="bottomRight" trigger={['click']}>
+            <Dropdown overlay={this.menus()} placement="bottomRight" trigger={['hover']}>
               <i className="gx-icon-btn icon icon-ellipse-v"/>
             </Dropdown>
 

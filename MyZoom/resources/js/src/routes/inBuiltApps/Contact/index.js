@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Button, Checkbox, Drawer, message} from "antd";
+import {Button, Checkbox, Drawer, message, Modal} from "antd";
 import CustomScrollbars from "../../../util/CustomScrollbars";
 import contactList from "./data/contactList";
 import ContactList from "../../../components/contact/ContactList";
@@ -7,25 +7,30 @@ import AppModuleHeader from "../../../components/AppModuleHeader/index";
 import AddContact from "../../../components/contact/AddContact";
 import IntlMessages from "../../../util/IntlMessages";
 import axios from "../../../util/Api";
-
-
-let contactId = 723812738;
-
+import {
+  UnlockOutlined,
+  BarsOutlined,
+  LockOutlined,
+  DesktopOutlined,
+  SmileOutlined,
+  SubnodeOutlined,
+  ExclamationCircleTwoTone
+} from "@ant-design/icons";
+import './Contact.css';
+let iconStyle = {
+  marginRight: "16px",
+  fontSize: "20px"
+};
+const { confirm } = Modal;
 const filterOptions = [
   {
     id: 1,
-    name: 'All contacts',
-    icon: 'all-contacts'
+    name: 'All Contacts',
+    icon: <SmileOutlined style={iconStyle} />
   }, {
     id: 2,
-    name: 'Frequently contacted',
-    icon: 'frequent'
-
-  }, {
-
-    id: 3,
-    name: 'Starred contacts',
-    icon: 'star'
+    name: 'Friend Requests',
+    icon: <SubnodeOutlined style={iconStyle} />
   }
 ];
 
@@ -55,7 +60,8 @@ class Contact extends Component {
                     className={`gx-link ${option.id === this.state.selectedSectionId ? 'active' : ''}`} onClick={
                     this.onFilterOptionSelect.bind(this, option)
                   }>
-                    <i className={`icon icon-${option.icon}`}/>
+                   
+                    {option.icon}
                     <span>{option.name}</span>
                   </span>
                 </li>
@@ -69,20 +75,6 @@ class Contact extends Component {
 
   };
 
-  addFavourite = (data) => {
-    this.setState({
-      alertMessage: data.starred ? 'Contact removed as star' : 'Contact marked as star',
-      showMessage: true,
-      contactList: this.state.contactList.map((contact) => contact.id === data.id ? {
-        ...contact,
-        starred: !data.starred
-      } : contact),
-      allContact: this.state.allContact.map((contact) => contact.id === data.id ? {
-        ...contact,
-        starred: !data.starred
-      } : contact)
-    })
-  };
   onContactSelect = (data) => {
     data.selected = !data.selected;
     let selectedContacts = 0;
@@ -116,7 +108,7 @@ class Contact extends Component {
   };
   onFilterOptionSelect = (option) => {
     switch (option.name) {
-      case 'All contacts': {
+      case 'All Contacts': {
         this.setState({
           selectedSectionId: option.id,
           filterOption: option.name,
@@ -124,19 +116,11 @@ class Contact extends Component {
         });
         break;
       }
-      case 'Frequently contacted': {
+      case 'Friend Requests': {
         this.setState({
           selectedSectionId: option.id,
           filterOption: option.name,
           contactList: this.state.allContact.filter((contact) => contact.frequently)
-        });
-        break;
-      }
-      case 'Starred contacts': {
-        this.setState({
-          selectedSectionId: option.id,
-          filterOption: option.name,
-          contactList: this.state.allContact.filter((contact) => contact.starred)
         });
         break;
       }
@@ -156,23 +140,22 @@ class Contact extends Component {
     // this.onFilterOptionSelect(this.state.filterOption);
   };
   onDeleteContact = (data) => {
-    this.setState({
-      alertMessage: 'Contact Deleted Successfully',
-      showMessage: true,
-      allContact: this.state.allContact.filter((contact) => contact.id !== data.id),
-      contactList: this.state.allContact.filter((contact) => contact.id !== data.id)
-    })
+    confirm({
+      title: "Confirmation",
+      icon: <ExclamationCircleTwoTone twoToneColor="#f73e2d" />,
+      content: <span id="Confirmation-span">Are you sure ?
+      This Action will result in deleting this contact !! </span>,
+      onOk() {
+        axios.post('api/RejectOrDeleteFriendship',{FriendId:data.id}).then(res =>{
+          message.success(<span id="message-id">{res.data}</span>, 3);
+          this.getAllContact();
+        })
+      },
+      okText: "I Understand",
+      okType: 'danger'
+  });
   };
-  onDeleteSelectedContact = () => {
-    const contacts = this.state.allContact.filter((contact) => !contact.selected);
-    this.setState({
-      alertMessage: 'Contact Deleted Successfully',
-      showMessage: true,
-      allContact: contacts,
-      contactList: contacts,
-      selectedContacts: 0
-    })
-  };
+  
   filterContact = (userName) => {
     const {filterOption} = this.state;
     if (userName === '') {
@@ -180,7 +163,7 @@ class Contact extends Component {
     } else {
       const filterContact = this.state.allContact.filter((contact) =>
         contact.name.toLowerCase().indexOf(userName.toLowerCase()) > -1);
-      if (filterOption === 'All contacts') {
+      if (filterOption === 'All Contacts') {
         this.setState({contactList: filterContact});
       } else if (filterOption === 'Frequently contacted') {
         this.setState({contactList: filterContact.filter((contact) => contact.frequently)});
@@ -195,59 +178,41 @@ class Contact extends Component {
       showMessage: false,
     });
   };
-  getAllContact = () => {
-    let contactList = this.state.allContact.map((contact) => contact ? {
-      ...contact,
-      selected: true
-    } : contact);
+  getAllContact = async () => {
+    let Res = await axios.post("api/contactList",{FriendsOrRequests:true});
     this.setState({
-      selectedContacts: contactList.length,
-      allContact: contactList,
-      contactList: contactList
+        type:'contacts',
+        allContact: Res.data,
+        contactList: Res.data
     });
   };
-  getUnselectedAllContact = () => {
-    let contactList = this.state.allContact.map((contact) => contact ? {
-      ...contact,
-      selected: false
-    } : contact);
+  getAllFriendshipRequests = async () =>{
+    let Res = await axios.post("api/contactList",{FriendsOrRequests:false});
     this.setState({
-      selectedContacts: 0,
-      allContact: contactList,
-      contactList: contactList
+        type:'requests',
+        allContact: Res.data,
+        contactList: Res.data
     });
-  };
-
+  }
+  componentDidMount(){
+    this.getAllContact();
+  }
   constructor() {
     super();
     this.state = {
-      noContentFoundMessage: 'No Contact found in selected folder',
+      noContentFoundMessage: 'No Contact found !!',
+      type:'contacts',
       alertMessage: '',
       showMessage: false,
       selectedSectionId: 1,
       drawerState: false,
-      // FIXME : you need to get the current user from the redux store
-      user: {
-        name: 'Robert Johnson',
-        email: 'robert.johnson@example.com',
-        avatar: "https://via.placeholder.com/150x150"
-      },
       searchUser: '',
-      filterOption: 'All contacts',
-      allContact: contactList,
-      contactList: contactList,
+      filterOption: 'All Contacts',
+      allContact: [],
+      contactList: [],
       selectedContact: null,
       selectedContacts: 0,
       addContactState: false,
-    }
-  }
-
-  onAllContactSelect() {
-    const selectAll = this.state.selectedContacts < this.state.contactList.length;
-    if (selectAll) {
-      this.getAllContact();
-    } else {
-      this.getUnselectedAllContact();
     }
   }
 
@@ -265,7 +230,7 @@ class Contact extends Component {
   }
 
   render() {
-    const {user, contactList, addContactState, drawerState, selectedContacts, alertMessage, showMessage, noContentFoundMessage} = this.state;
+    const {user, contactList, addContactState, drawerState, alertMessage, showMessage, noContentFoundMessage} = this.state;
     return (
       <div className="gx-main-content">
         <div className="gx-app-module">
@@ -291,37 +256,22 @@ class Contact extends Component {
               </span>
 
               <AppModuleHeader placeholder="Search contact" notification={false} apps={false}
-                               user={this.state.user}
                                onChange={this.updateContactUser.bind(this)}
                                value={this.state.searchUser}/>
             </div>
             <div className="gx-module-box-content">
 
-              <div className="gx-module-box-topbar">
-                <Checkbox color="primary" className="gx-icon-btn"
-                          indeterminate={selectedContacts > 0 && selectedContacts < contactList.length}
-                          checked={selectedContacts > 0}
-                          onChange={this.onAllContactSelect.bind(this)}
-                          value="SelectMail"/>
-
-
-                {selectedContacts > 0 &&
-                <i className="gx-icon-btn icon icon-trash" onClick={this.onDeleteSelectedContact.bind(this)}/>}
-
-              </div>
+              
               <CustomScrollbars className="gx-module-content-scroll">
                 {contactList.length === 0 ?
                   <div className="gx-h-100 gx-d-flex gx-align-items-center gx-justify-content-center">
                     {noContentFoundMessage}
                   </div>
                   : <ContactList contactList={contactList}
-                                 addFavourite={this.addFavourite.bind(this)}
-                                 onContactSelect={this.onContactSelect.bind(this)}
                                  onDeleteContact={this.onDeleteContact.bind(this)}
-                                 onSaveContact={this.onSaveContact.bind(this)}/>
+                                 onSaveContact={this.onSaveContact.bind(this)}
+                                 type={this.state.type} />
                 }
-
-
               </CustomScrollbars>
 
             </div>
@@ -329,18 +279,10 @@ class Contact extends Component {
         </div>
 
         <AddContact open={addContactState} contact={{
-          // TODO Change the id of the user dynamicly
-          'id': '',
-          'name': '',
-          'thumb': '',
-          'email': '',
-          'phone': '',
-          'designation': '',
-          'selected': false,
-          'starred': false,
-          'frequently': false,
+          'email': ''
         }} onSaveContact={this.onSaveContact}
-                    onContactClose={this.onContactClose} onDeleteContact={this.onDeleteContact}/>
+           onContactClose={this.onContactClose} 
+           onDeleteContact={this.onDeleteContact}/>
 
         {showMessage && message.info(<span id="message-id">{alertMessage}</span>, 3, this.handleRequestClose)}
       </div>
