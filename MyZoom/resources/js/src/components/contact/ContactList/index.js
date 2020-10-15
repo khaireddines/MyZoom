@@ -2,12 +2,12 @@ import React from "react";
 
 import ContactCell from "./ContactCell/index";
 
-const ContactList = ({contactList, onSaveContact, onDeleteContact}) => {
+const ContactList = ({contactList, onSaveContact, onDeleteContact, type, onAcceptContact}) => {
   return (
     <div className="gx-contact-main-content">
       {contactList.map((contact, index) =>
         <ContactCell key={index} contact={contact} onDeleteContact={onDeleteContact}
-                     onSaveContact={onSaveContact}
+                     onSaveContact={onSaveContact} type={type} onAcceptContact={onAcceptContact}
                      />
       )}
 

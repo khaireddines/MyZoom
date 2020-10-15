@@ -3,11 +3,22 @@ import {Avatar, Checkbox, Dropdown, Menu} from "antd";
 
 import AddContact from "../../AddContact/index";
 
-const options = [
-  'Unfriend'
-];
-
 class ContactCell extends React.Component {
+
+  getOption = () =>{ 
+    let options = [];
+    if (this.props.type === 'requests') {
+      options = [
+        'Accept',
+        'Reject'
+      ];
+    } else if (this.props.type === 'contacts'){
+      options = [
+        'Unfriend'
+      ];
+    }
+    return options;
+  }
 
   onContactClose = () => {
     this.setState({addContactState: false});
@@ -16,18 +27,20 @@ class ContactCell extends React.Component {
     this.setState({addContactState: false});
     this.props.onDeleteContact(contact);
   };
-  onEditContact = () => {
-    this.setState({addContactState: true});
+  onAcceptContact = (contact) => {
+    this.props.onAcceptContact(contact);
   };
   menus = () => (<Menu onClick={(e) => {
-    if (e.key === 'Edit') {
-      this.onEditContact()
+    if (e.key === 'Accept') {
+      this.onAcceptContact(this.props.contact)
     } else if (e.key === 'Unfriend'){
+      this.onDeleteContact(this.props.contact)
+    } else if (e.key === 'Reject'){
       this.onDeleteContact(this.props.contact)
     }
   }
   }>
-    {options.map(option =>
+    {this.getOption().map(option =>
       <Menu.Item key={option}>
         {option}
       </Menu.Item>,
@@ -42,7 +55,7 @@ class ContactCell extends React.Component {
   }
 
   render() {
-    const {contact, onSaveContact} = this.props;
+    const {contact, onSaveContact, type} = this.props;
     const {addContactState} = this.state;
     const {name, email, Profile_picture} = contact;
     return (

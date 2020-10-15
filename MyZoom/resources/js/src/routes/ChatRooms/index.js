@@ -155,11 +155,13 @@ class ChatRooms extends Component {
     onFilterOptionSelect = option => {
         switch (option.name) {
             case "All Rooms": {
-                this.setState({
-                    type:'room',
-                    selectedSectionId: option.id,
-                    filterOption: option.name,
-                    roomList: this.state.allRooms
+                this.GetRooms().then(Res =>{
+                    this.setState({
+                        type:'room',
+                        selectedSectionId: option.id,
+                        filterOption: option.name,
+                        roomList: this.state.allRooms
+                    });
                 });
                 break;
             }

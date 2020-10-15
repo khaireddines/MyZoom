@@ -1,7 +1,6 @@
 import React, {Component} from "react";
 import {Button, Checkbox, Drawer, message, Modal} from "antd";
 import CustomScrollbars from "../../../util/CustomScrollbars";
-import contactList from "./data/contactList";
 import ContactList from "../../../components/contact/ContactList";
 import AppModuleHeader from "../../../components/AppModuleHeader/index";
 import AddContact from "../../../components/contact/AddContact";
@@ -74,32 +73,6 @@ class Contact extends Component {
     </div>
 
   };
-
-  onContactSelect = (data) => {
-    data.selected = !data.selected;
-    let selectedContacts = 0;
-    const contactList = this.state.contactList.map(contact => {
-        if (contact.selected) {
-          selectedContacts++;
-        }
-        if (contact.id === data.id) {
-          if (contact.selected) {
-            selectedContacts++;
-          }
-          return data;
-        } else {
-          return contact;
-        }
-      }
-    );
-    this.setState({
-      selectedContacts: selectedContacts,
-      contactList: contactList
-    });
-
-  };
-
-
   onAddContact = () => {
     this.setState({addContactState: true});
   };
@@ -109,18 +82,22 @@ class Contact extends Component {
   onFilterOptionSelect = (option) => {
     switch (option.name) {
       case 'All Contacts': {
-        this.setState({
-          selectedSectionId: option.id,
-          filterOption: option.name,
-          contactList: this.state.allContact
-        });
+        this.getAllContact().then(Res => {
+          this.setState({
+            selectedSectionId: option.id,
+            filterOption: option.name,
+            contactList: this.state.allContact
+          });
+        })
         break;
       }
       case 'Friend Requests': {
-        this.setState({
-          selectedSectionId: option.id,
-          filterOption: option.name,
-          contactList: this.state.allContact.filter((contact) => contact.frequently)
+        this.getAllFriendshipRequests().then(Res =>{
+          this.setState({
+            selectedSectionId: option.id,
+            filterOption: option.name,
+            contactList: this.state.allContact
+          });
         });
         break;
       }
@@ -139,7 +116,17 @@ class Contact extends Component {
     })
     // this.onFilterOptionSelect(this.state.filterOption);
   };
+  // Accept Contact
+  onAcceptContact = (data) => {
+    let Res = axios.post('api/AcceptFriendship',{FriendId:data.id}).then(Res => {
+      message.success(<span id='Accept-id'>Friendship Accepted</span>,3);
+      this.getAllFriendshipRequests();
+    });
+  }
+  // Delete & Reject Contact
   onDeleteContact = (data) => {
+    const {type}=this.state;
+    let contaxt = this;
     confirm({
       title: "Confirmation",
       icon: <ExclamationCircleTwoTone twoToneColor="#f73e2d" />,
@@ -148,14 +135,18 @@ class Contact extends Component {
       onOk() {
         axios.post('api/RejectOrDeleteFriendship',{FriendId:data.id}).then(res =>{
           message.success(<span id="message-id">{res.data}</span>, 3);
-          this.getAllContact();
+          if (type === 'requests') {
+            contaxt.getAllFriendshipRequests();
+          } else {
+            contaxt.getAllContact();
+          }
+          
         })
       },
       okText: "I Understand",
       okType: 'danger'
   });
   };
-  
   filterContact = (userName) => {
     const {filterOption} = this.state;
     if (userName === '') {
@@ -165,11 +156,8 @@ class Contact extends Component {
         contact.name.toLowerCase().indexOf(userName.toLowerCase()) > -1);
       if (filterOption === 'All Contacts') {
         this.setState({contactList: filterContact});
-      } else if (filterOption === 'Frequently contacted') {
-        this.setState({contactList: filterContact.filter((contact) => contact.frequently)});
-
-      } else if (filterOption === 'Starred contacts') {
-        this.setState({contactList: filterContact.filter((contact) => contact.starred)});
+      } else if (filterOption === 'Friend Requests') {
+        this.setState({contactList: filterContact});
       }
     }
   };
@@ -182,6 +170,7 @@ class Contact extends Component {
     let Res = await axios.post("api/contactList",{FriendsOrRequests:true});
     this.setState({
         type:'contacts',
+        noContentFoundMessage: 'No Contact Found !!',
         allContact: Res.data,
         contactList: Res.data
     });
@@ -190,6 +179,7 @@ class Contact extends Component {
     let Res = await axios.post("api/contactList",{FriendsOrRequests:false});
     this.setState({
         type:'requests',
+        noContentFoundMessage: 'No Requests Found !!',
         allContact: Res.data,
         contactList: Res.data
     });
@@ -200,7 +190,7 @@ class Contact extends Component {
   constructor() {
     super();
     this.state = {
-      noContentFoundMessage: 'No Contact found !!',
+      noContentFoundMessage: 'No Contact Found !!',
       type:'contacts',
       alertMessage: '',
       showMessage: false,
@@ -215,20 +205,11 @@ class Contact extends Component {
       addContactState: false,
     }
   }
-
-  updateContactUser(evt) {
-    this.setState({
-      searchUser: evt.target.value,
-    });
-    this.filterContact(evt.target.value)
-  }
-
   onToggleDrawer() {
     this.setState({
       drawerState: !this.state.drawerState
     });
   }
-
   render() {
     const {user, contactList, addContactState, drawerState, alertMessage, showMessage, noContentFoundMessage} = this.state;
     return (
@@ -269,6 +250,7 @@ class Contact extends Component {
                   </div>
                   : <ContactList contactList={contactList}
                                  onDeleteContact={this.onDeleteContact.bind(this)}
+                                 onAcceptContact={this.onAcceptContact.bind(this)}
                                  onSaveContact={this.onSaveContact.bind(this)}
                                  type={this.state.type} />
                 }
