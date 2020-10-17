@@ -47,4 +47,8 @@ Route::middleware('auth:api')->group(function () {
     Route::post('JoinRequests','SubedRoomsController@JoinRequests');
     //Current User Join Requests List
     Route::post('SubRequests','SubedRoomsController@SubRequests');
+
+    //Private_Chat in Rooms
+    Route::post('PrivateChatNewMsg','PrivateChatInRoomController@store');
+    Route::post('PrivateChatConversation','PrivateChatInRoomController@conversation');
 });

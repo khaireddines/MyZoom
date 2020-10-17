@@ -64,6 +64,7 @@ const VideoRoom = props => {
     }
     const joinRoom = () => {
         var audio = new Audio("/assets/sounds/recived.mp3");
+        // FIXME: websocket problem
         window.Echo.join(`ChatRoom_${myroom}`)
             .here(users => {
                 //console.log(users); //deal with the picture here !

@@ -62,7 +62,7 @@ const VideoLayout = ({ RoomName, SFUHandler, myroom, RoomExist }) => {
                         collapsible
                         collapsed={CollapsedLeft}
                     >
-                        <HereList />
+                        <HereList myroom={myroom} />
                     </Sider>
                     <Layout
                         onMouseOver={hideControls}

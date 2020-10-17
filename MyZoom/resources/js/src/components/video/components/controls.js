@@ -1,7 +1,30 @@
 import React,{ useState } from "react";
 import { Popover } from "antd";
+import {
+    CommentOutlined,
+    TeamOutlined,
+    FullscreenOutlined,
+    FullscreenExitOutlined,
+    AudioOutlined,
+    AudioMutedOutlined,
+    VideoCameraOutlined,
+    FundViewOutlined,
+    FundProjectionScreenOutlined
+} from "@ant-design/icons";
 import "./controls.css";
 var classNames = require('classnames');
+let iconStyle = {
+    fontSize: "24px",
+    color: "#b9bbbe"
+};
+let videoiconStyleWhite ={
+    fontSize: "24px",
+    color: "#fff"
+};
+let videoiconStyleBlack ={
+    fontSize: "24px",
+    color: "#2f3136"
+};
 const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
     let screenType = "screen";
     let publish = {
@@ -67,11 +90,13 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
             }
         });
     };
-
+    const [FullScreenActive, setFullScreenActive] = useState(false);
     const ToggleFullscreen = () => {
         if (document.fullscreenElement) {
+            setFullScreenActive(false);
             document.exitFullscreen();
         } else {
+            setFullScreenActive(true);
             document.documentElement.requestFullscreen();
         }
     };
@@ -192,6 +217,7 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
                                         aria-hidden="false"
                                         width="24"
                                         height="24"
+                                        style={{color:'rgb(185, 187, 190)'}}
                                         viewBox="0 0 24 24"
                                     >
                                         <path
@@ -216,29 +242,14 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
                     style={{ flex: "0 1 50%" }}
                 >
                     <div>
-                    <Popover placement="topLeft" content={<div>Invite Person</div>} trigger="hover">
+                    <Popover placement="topLeft" content={<div>Social</div>} trigger="hover">
                         <button
                             aria-label="Invite"
                             type="button"
                             className="leftTrayIcon-vpfJk5 button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN"
                             onClick={LeftSider}
                         >
-                            <div className="contents-18-Yxp lineHeightReset-3dQm1W">
-                                <svg
-                                    className="controlIcon-35oS15"
-                                    aria-hidden="false"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        fill="currentColor"
-                                        fillRule="evenodd"
-                                        clipRule="evenodd"
-                                        d="M21 3H24V5H21V8H19V5H16V3H19V0H21V3ZM10 12C12.205 12 14 10.205 14 8C14 5.795 12.205 4 10 4C7.795 4 6 5.795 6 8C6 10.205 7.795 12 10 12ZM10 13C5.289 13 2 15.467 2 19V20H18V19C18 15.467 14.711 13 10 13Z"
-                                    ></path>
-                                </svg>
-                            </div>
+                            <TeamOutlined style={iconStyle} />
                         </button>
                         </Popover>
                     </div>
@@ -256,7 +267,9 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
                                 className={CameraClassNames}
                                 onClick={ToggleCamera}
                             >
-                                <div className="contents-18-Yxp lineHeightReset-3dQm1W">
+                                {(CameraActive)?<VideoCameraOutlined style={videoiconStyleBlack} />
+                                :<VideoCameraOutlined style={videoiconStyleWhite} />}
+                                {/* <div className="contents-18-Yxp lineHeightReset-3dQm1W">
                                     <svg
                                         className="controlIcon-35oS15 centerIcon-2G6o-T"
                                         aria-hidden="false"
@@ -269,7 +282,7 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
                                             d="M21.526 8.149C21.231 7.966 20.862 7.951 20.553 8.105L18 9.382V7C18 5.897 17.103 5 16 5H4C2.897 5 2 5.897 2 7V17C2 18.104 2.897 19 4 19H16C17.103 19 18 18.104 18 17V14.618L20.553 15.894C20.694 15.965 20.847 16 21 16C21.183 16 21.365 15.949 21.526 15.851C21.82 15.668 22 15.347 22 15V9C22 8.653 21.82 8.332 21.526 8.149Z"
                                         ></path>
                                     </svg>
-                                </div>
+                                </div> */}
                             </button>
                             </Popover>
                         </div>
@@ -281,7 +294,9 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
                                 className={ShareScreenClassNames}
                                 onClick={publishShareScreen}
                             >
-                                <div className="contents-18-Yxp lineHeightReset-3dQm1W">
+                                {(ShareScreenActive)?<FundViewOutlined style={videoiconStyleBlack} />
+                                :<FundProjectionScreenOutlined style={videoiconStyleWhite} /> }
+                                {/* <div className="contents-18-Yxp lineHeightReset-3dQm1W">
                                     <svg
                                         className="controlIcon-35oS15 centerIcon-2G6o-T"
                                         width="24"
@@ -297,7 +312,7 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
                                             d="M2 4.5C2 3.397 2.897 2.5 4 2.5H20C21.103 2.5 22 3.397 22 4.5V15.5C22 16.604 21.103 17.5 20 17.5H13V19.5H17V21.5H7V19.5H11V17.5H4C2.897 17.5 2 16.604 2 15.5V4.5ZM13.2 14.3375V11.6C9.864 11.6 7.668 12.6625 6 15C6.672 11.6625 8.532 8.3375 13.2 7.6625V5L18 9.6625L13.2 14.3375Z"
                                         ></path>
                                     </svg>
-                                </div>
+                                </div> */}
                             </button>
                             </Popover>
                         </div>
@@ -309,28 +324,9 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
                                 className={MicrophoneClassNames}
                                 onClick={ToggleMicrophone}
                             >
-                                <div className="contents-18-Yxp lineHeightReset-3dQm1W">
-                                    <svg
-                                        className="controlIcon-35oS15 centerIcon-2G6o-T"
-                                        aria-hidden="false"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            fillRule="evenodd"
-                                            clipRule="evenodd"
-                                            d="M14.99 11C14.99 12.66 13.66 14 12 14C10.34 14 9 12.66 9 11V5C9 3.34 10.34 2 12 2C13.66 2 15 3.34 15 5L14.99 11ZM12 16.1C14.76 16.1 17.3 14 17.3 11H19C19 14.42 16.28 17.24 13 17.72V21H11V17.72C7.72 17.23 5 14.41 5 11H6.7C6.7 14 9.24 16.1 12 16.1ZM12 4C11.2 4 11 4.66667 11 5V11C11 11.3333 11.2 12 12 12C12.8 12 13 11.3333 13 11V5C13 4.66667 12.8 4 12 4Z"
-                                            fill="currentColor"
-                                        ></path>
-                                        <path
-                                            fillRule="evenodd"
-                                            clipRule="evenodd"
-                                            d="M14.99 11C14.99 12.66 13.66 14 12 14C10.34 14 9 12.66 9 11V5C9 3.34 10.34 2 12 2C13.66 2 15 3.34 15 5L14.99 11ZM12 16.1C14.76 16.1 17.3 14 17.3 11H19C19 14.42 16.28 17.24 13 17.72V22H11V17.72C7.72 17.23 5 14.41 5 11H6.7C6.7 14 9.24 16.1 12 16.1Z"
-                                            fill="currentColor"
-                                        ></path>
-                                    </svg>
-                                </div>
+                                {(MicrophoneActive)?<AudioMutedOutlined style={videoiconStyleBlack} />
+                                :<AudioOutlined style={videoiconStyleWhite} />}
+                               
                             </button>
                             </Popover>
                         </div>
@@ -368,31 +364,14 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
                     style={{ flex: "0 1 50%" }}
                 >
                     <div>
-                    <Popover content={<div>Chat</div>} trigger="hover">
+                    <Popover content={<div>Group Chat</div>} trigger="hover">
                         <button
                             aria-label="Pop Out"
                             type="button"
                             className="rightTrayIcon-3hFoUP button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN"
                             onClick={RightSider}
                         >
-                            <div className="contents-18-Yxp lineHeightReset-3dQm1W">
-                                <svg
-                                    className="controlIcon-35oS15"
-                                    aria-hidden="false"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        d="M10 5V3H5.375C4.06519 3 3 4.06519 3 5.375V18.625C3 19.936 4.06519 21 5.375 21H18.625C19.936 21 21 19.936 21 18.625V14H19V19H5V5H10Z"
-                                        fill="currentColor"
-                                    ></path>
-                                    <path
-                                        d="M21 2.99902H14V4.99902H17.586L9.29297 13.292L10.707 14.706L19 6.41302V9.99902H21V2.99902Z"
-                                        fill="currentColor"
-                                    ></path>
-                                </svg>
-                            </div>
+                            <CommentOutlined style={iconStyle} />
                         </button>
                         </Popover>
                     </div>
@@ -404,32 +383,8 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
                             className="rightTrayIcon-3hFoUP button-38aScr lookBlank-3eh9lL colorBrand-3pXr91 grow-q77ONN"
                             onClick={ToggleFullscreen}
                         >
-                            <div className="contents-18-Yxp lineHeightReset-3dQm1W">
-                                <svg
-                                    className="controlIcon-35oS15"
-                                    aria-hidden="false"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        fill="currentColor"
-                                        d="M19,3H14V5h5v5h2V5A2,2,0,0,0,19,3Z"
-                                    ></path>
-                                    <path
-                                        fill="currentColor"
-                                        d="M19,19H14v2h5a2,2,0,0,0,2-2V14H19Z"
-                                    ></path>
-                                    <path
-                                        fill="currentColor"
-                                        d="M3,5v5H5V5h5V3H5A2,2,0,0,0,3,5Z"
-                                    ></path>
-                                    <path
-                                        fill="currentColor"
-                                        d="M5,14H3v5a2,2,0,0,0,2,2h5V19H5Z"
-                                    ></path>
-                                </svg>
-                            </div>
+                            {(FullScreenActive)?<FullscreenExitOutlined style={iconStyle} />
+                            :<FullscreenOutlined style={iconStyle} />}
                         </button>
                         </Popover>
                     </div>

@@ -3,6 +3,7 @@ import Axios from "../../../util/Api";
 import Conversation from "../../../components/chat/Conversation/index";
 import CustomScrollbars from "../../../util/CustomScrollbars";
 import Moment from "moment";
+import { Empty, Divider } from "antd";
 import { connect } from "react-redux";
 import { userSignIn } from "../../../appRedux/actions";
 class communication extends Component {
@@ -97,17 +98,28 @@ class communication extends Component {
     render() {
         const { message, conversation } = this.state;
         return (
-            <div className="gx-chat-main" style={{ height: "100%" }}>
-                {conversation != null && (
-                    <CustomScrollbars className="gx-chat-list-scroll maxHeight">
+            <div className="gx-chat-main" style={{ 
+                height: "100%", 
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+                }}>
+                {conversation != null && ( (conversation.conversationData.length ==0)?
+                (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={
+                    <span>
+                        <p>No Conversation Yet</p>
+                    </span>
+                  } />)
+                  :<><Divider orientation="right">Public Group Chat</Divider>
+                  <CustomScrollbars className="gx-chat-list-scroll maxHeight">
                         <Conversation
                             conversationData={conversation.conversationData}
                             multichat={true}
                         />
                     </CustomScrollbars>
-                )}
+                    </>)}
 
-                <div className="gx-chat-main-footer">
+                <div className="gx-chat-main-footer" style={{position: 'absolute',bottom: '0px'}}>
                     <div
                         className="gx-flex-row gx-align-items-center"
                         style={{ maxHeight: 51 }}

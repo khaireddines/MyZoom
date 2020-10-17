@@ -7,3 +7,12 @@ span.icons-controle>span:hover{
 span.onAction>span{
     color: red;
 }
+.privateSection > :first-child{
+    bottom: 22% !important;
+}
+.privatechat {
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
