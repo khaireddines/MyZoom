@@ -17,11 +17,17 @@ class friendlistController extends Controller
     public function ContactList(Request $request)
     {
         $type = $request->FriendsOrRequests;
-        $friends = Friendship::where('user', Auth::user()->id)
-        ->orWhere('hisFriend', Auth::user()->id)
-        ->get(['user', 'hisFriend', 'friend_request_accepted']);
+        if ($type) {
+            $friends = Friendship::where('user', Auth::user()->id)
+            ->orWhere('hisFriend', Auth::user()->id)
+            ->get(['user', 'hisFriend', 'friend_request_accepted']);
+        }else{
+            $friends = Friendship::where('hisFriend', Auth::user()->id)
+            ->where('friend_request_accepted',false)
+            ->get(['user', 'hisFriend', 'friend_request_accepted']);
+        }
         if ($friends->isEmpty()) {
-            return response('No friends Found', 200);
+            return response([], 200);
         } else {
             $friendsArray = [];
             foreach ($friends as $index => $friend) {

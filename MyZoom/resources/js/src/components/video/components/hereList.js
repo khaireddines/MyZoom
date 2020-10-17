@@ -11,9 +11,8 @@ let iconStyle = {
     marginRight: "16px",
     fontSize: "20px"
 };
-let ifEmpty=classNames({
-    'privatechat':(this.peoples_here_render.length ==0)?true:false
-})
+var classNames = require('classnames');
+
 class HereList extends Component {
     scrollPositionBottom() {
         var element = document.getElementsByClassName("gx-chat-list-scroll");
@@ -128,11 +127,14 @@ class HereList extends Component {
     render() {
         const { peoples_here_render, selectedSectionId, conversation, selectedUser, message, loading } = this.state;
         const { conversationData } = conversation;
+        let isEmpty = classNames({
+            'privatechat':(peoples_here_render.length == 0)?true:false
+        });
         return (
 
             <>
                 <Divider orientation="left">People</Divider>
-                <div className={ifEmpty} style={{ height: '30%', overflowY: 'scroll' }}>
+                <div className={isEmpty} style={{ height: '30%', overflowY: 'scroll' }}>
                     {(peoples_here_render.length == 0)?
                     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={
                         <span>
