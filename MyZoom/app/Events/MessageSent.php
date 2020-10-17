@@ -16,7 +16,7 @@ class MessageSent implements ShouldBroadcastNow
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $from;
-    public $toHowm;
+    public $toWhom;
     public $msg;
 
     /**
@@ -24,10 +24,10 @@ class MessageSent implements ShouldBroadcastNow
      *
      * @return void
      */
-    public function __construct($from,$toHowm,$msg)
+    public function __construct($from,$toWhom,$msg)
     {
         $this->from=$from;
-        $this->toHowm=$toHowm;
+        $this->toWhom=$toWhom;
         $this->msg=$msg;
     }
 
@@ -39,6 +39,6 @@ class MessageSent implements ShouldBroadcastNow
     public function broadcastOn()
     {
         
-        return new PresenceChannel('Chat_'.$this->toHowm);
+        return new PresenceChannel('Chat_'.$this->toWhom);
     }
 }

@@ -22,3 +22,6 @@ Broadcast::channel('Chat_{id}', function ($user,$id) {
 Broadcast::channel('ChatRoom_{id}', function ($user,$id) {
     return $user;
 });
+Broadcast::channel('PrivateChatInRooms_{id}', function ($user,$id) {
+    return $user;
+});

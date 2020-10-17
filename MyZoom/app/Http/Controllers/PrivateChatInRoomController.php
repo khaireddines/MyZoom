@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\ChatRoom;
+use App\Events\PrivateChatInRooms;
 use App\private_chat_in_room;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -112,7 +113,7 @@ class PrivateChatInRoomController extends Controller
         ]);
         $newMsg->save();
         // fire broadcast message here
-        // broadcast(new MessageSent(Auth::user()->id,$request->with,$request->msg))->toOthers();
+        broadcast(new PrivateChatInRooms(Auth::user()->id,request('with'),request('msg')))->toOthers();
     }
 
    

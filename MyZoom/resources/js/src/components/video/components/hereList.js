@@ -78,6 +78,7 @@ class HereList extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            Me:this.props.Me,
             loading:false,
             selectedSectionId: null,
             peoples_here: [],
@@ -93,8 +94,39 @@ class HereList extends Component {
     }
     componentDidMount(prevProps, prevState) {
         
+        window.Echo.join(`PrivateChatInRooms_${this.state.Me.id}`)
+        .here(users => {
+            console.log(users);
+        })
+        .listen("PrivateChatInRooms", message_recived => {
+            //error here 
+            if (this.state.selectedUser != null) {
+                (message_recived.from==this.state.selectedUser.id)?this.showRecived_Message(message_recived):'';
+            }
+        });
+                
     }
+    scrollPositionBottom(){
+        var element = document.getElementsByClassName("gx-chat-list-scroll");
+        if(element.length !=0)
+        {element[0].firstElementChild.scrollTop = element[0].firstElementChild.scrollHeight}
+      }
+    showRecived_Message(msgObj){
+        const updatedConversation = this.state.conversation.conversationData.concat({
+          'type': 'recived',
+          'message': msgObj.msg,
+          'sentAt': Moment().format('MMM D,Y h:mmA'),
+        });
+        this.setState({
+          conversation: {
+            ...this.state.conversation, conversationData: updatedConversation
+        }});
+      }
     componentDidUpdate(prevProps, prevState) {
+        const {conversation}= this.state;
+        if(prevState.conversation !== conversation){
+            this.scrollPositionBottom();
+        }
         if (this.props.newPerson != prevProps.newPerson) {
             this.state.peoples_here.push(this.props.newPerson);
             setTimeout(() => {
@@ -205,8 +237,9 @@ class HereList extends Component {
 }
 
 const mapStateToProps = state => ({
+    Me:state.auth.authUser,
     newPerson: state.commonQuery.peoples_here,
-    whoLeft: state.commonQuery.who_left
+    whoLeft: state.commonQuery.who_left,
 });
 const mapDispatchToProps = dispatch => ({});
 export default connect(mapStateToProps, mapDispatchToProps)(HereList);
