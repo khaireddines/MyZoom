@@ -40,6 +40,7 @@ const VideoRoom = props => {
     const [ IsPrivate, setIsPrivate ] = useState(null);
     const [ Handler, setHandler ] = useState(null);
     const [ RoomName, setRoomName ] = useState(null);
+
     const createRoom = () => {
         var body = {
             request: "create",
@@ -462,7 +463,7 @@ const VideoRoom = props => {
                     </>}
               />
             ):(Handler != null && exist != null && RoomName != null) ? (
-                <VideoLayout RoomName={RoomName} myroom={myroom} SFUHandler={Handler} RoomExist={exist} />
+                <VideoLayout RoomName={RoomName} myroom={myroom}  SFUHandler={Handler} RoomExist={exist} />
             ):(exist != null && exist == false)&& <IsExistRoom />}
         </>
     );

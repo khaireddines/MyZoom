@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', 'Auth\RegisterController@newUser');
 Route::middleware('auth:api')->group(function () {
     Route::post('getUser', function () {return  Auth::user();});
+    Route::post('RoomOwnerId','ChatRoomController@RoomOwnerId');
+    Route::post('GetRoomPin','ChatRoomController@GetRoomPin');
 
     Route::post('addfriend','friendlistController@store');
     Route::post('AcceptFriendship','friendlistController@AcceptFriendship');

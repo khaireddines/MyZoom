@@ -93,7 +93,7 @@ class communication extends Component {
             });
         }
     }
-
+ 
     /**End Chat */
     render() {
         const { message, conversation } = this.state;
@@ -107,7 +107,7 @@ class communication extends Component {
                 {conversation != null && ( (conversation.conversationData.length ==0)?
                 (<Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={
                     <span>
-                        <p>No Conversation Yet</p>
+                        No Conversation Yet
                     </span>
                   } />)
                   :<><Divider orientation="right">Public Group Chat</Divider>

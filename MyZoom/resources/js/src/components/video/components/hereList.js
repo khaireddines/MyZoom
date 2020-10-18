@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Divider, Avatar, Empty, Spin } from "antd";
+import { Divider, Avatar, Empty, Spin, Badge } from "antd";
 import Moment from "moment";
 import { AudioOutlined, FundViewOutlined, FrownOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
@@ -14,14 +14,14 @@ let iconStyle = {
 var classNames = require('classnames');
 
 class HereList extends Component {
-    scrollPositionBottom() {
-        var element = document.getElementsByClassName("gx-chat-list-scroll");
-        if (element.length != 0) { element[0].firstElementChild.scrollTop = element[0].firstElementChild.scrollHeight }
-    }
     onSelectUser = async (user) => {
+        //FIXME: Scrolling Problem after onclick user !
         let conversationData = await Axios.post('api/PrivateChatConversation', { 
             id: user.id,
             RoomId: this.state.RoomId
+        })
+        this.setState({
+            ActiveMessages:{[user.id]:''}
         });
         this.setState({
             loading: true,
@@ -29,10 +29,11 @@ class HereList extends Component {
             selectedUser: {...user,Profile_picture:user.img},
             conversation: conversationData.data
         });
+        
         setTimeout(() => {
             this.setState({ loading: false });
             this.scrollPositionBottom();
-        }, 1500);
+        }, 500);
     };
     _handleKeyPress = (e) => {
         if (e.key === 'Enter') {
@@ -89,17 +90,52 @@ class HereList extends Component {
                 "id": 0,
                 "conversationData": []
             },
-            RoomId: this.props.myroom
+            RoomId: this.props.myroom,
+            RoomOwnerId:null,
+            ActiveMessages:[],
+            SFUHandler:this.props.SFUHandler,
+            pin:null
         }
     }
+    RoomOwnerId=async()=>{
+        let Res = await Axios.post('api/RoomOwnerId',{RoomId:this.state.RoomId});
+        this.setState({
+            RoomOwnerId:Res.data
+        });
+    }
+    GetRoomPin=async()=>{
+        let Res = await Axios.post('api/GetRoomPin',{RoomId:this.state.RoomId});
+        this.setState({
+            pin:Res.data
+        });
+    }
+    enable_recording=()=>{
+        this.GetRoomPin();
+        let EnableRecord = {
+            "request" : "enable_recording",
+            "room" : this.state.myroom,
+            "secret" : this.state.pin,
+            "record" : 'true',
+        }
+        this.state.SFUHandler.send({message:EnableRecord});
+    }
+    
     componentDidMount(prevProps, prevState) {
-        
+        this.RoomOwnerId();
+        var audiorecieve = new Audio('/assets/sounds/recived.mp3');
         window.Echo.join(`PrivateChatInRooms_${this.state.Me.id}`)
         .here(users => {
             console.log(users);
         })
         .listen("PrivateChatInRooms", message_recived => {
-            //error here 
+            if (this.state.selectedUser ==null || message_recived.from !=this.state.selectedUser.id) {
+                this.setState({
+                    ActiveMessages:{
+                        ...this.state.ActiveMessages, [message_recived.from]:"active"
+                    }
+                })
+                audiorecieve.play();
+            }
             if (this.state.selectedUser != null) {
                 (message_recived.from==this.state.selectedUser.id)?this.showRecived_Message(message_recived):'';
             }
@@ -118,9 +154,10 @@ class HereList extends Component {
           'sentAt': Moment().format('MMM D,Y h:mmA'),
         });
         this.setState({
-          conversation: {
+            conversation: {
             ...this.state.conversation, conversationData: updatedConversation
         }});
+        
       }
     componentDidUpdate(prevProps, prevState) {
         const {conversation}= this.state;
@@ -155,9 +192,16 @@ class HereList extends Component {
 
         }
     }
-    
+    ToggleMuteUser = (User)=>{
+        let UserRemoteSFUHandler = User.remoteHandler;
+        UserRemoteSFUHandler.send({message:{"request" : "configure","audio" :false}});
+        //console.log(UserRemoteSFUHandler.isAudioMuted());
+    }
+    TogglePermitShareScreen = (User)=>{
+        console.log(User);
+    }
     render() {
-        const { peoples_here_render, selectedSectionId, conversation, selectedUser, message, loading } = this.state;
+        const { peoples_here_render, selectedSectionId, conversation, selectedUser, message, loading, ActiveMessages, RoomOwnerId, Me } = this.state;
         const { conversationData } = conversation;
         let isEmpty = classNames({
             'privatechat':(peoples_here_render.length == 0)?true:false
@@ -165,6 +209,9 @@ class HereList extends Component {
         return (
 
             <>
+                <button onClick={()=>{
+                    this.enable_recording();
+                }}></button>
                 <Divider orientation="left">People</Divider>
                 <div className={isEmpty} style={{ height: '30%', overflowY: 'scroll' }}>
                     {(peoples_here_render.length == 0)?
@@ -174,25 +221,33 @@ class HereList extends Component {
                         </span>
                       } />
                     :peoples_here_render.map((data) => {
+                        
                         return (
                             <div key={data.id} className={`gx-chat-user-item ${selectedSectionId === data.id ? 'active' : ''}`}
-                             onClick={() => {
-                                this.onSelectUser(data);
-                            }}>
+                             >
                                 <div className="gx-chat-user-row">
-                                    <div className="gx-chat-avatar">
+                                    <div className="gx-chat-avatar" onClick={() => {
+                                        this.onSelectUser(data);
+                                    }}>
                                         <div className="gx-status-pos">
-                                            <Avatar src={`/assets/images/${data.img}`} className="gx-size-40" alt="Abbott" />
-                                            <span className={`gx-status gx-active`} />
+                                            <Badge count={(ActiveMessages[data.id]&&ActiveMessages[data.id]=== "active")? 1:0} dot >
+                                                <Avatar src={`/assets/images/${data.img}`} className="gx-size-40" alt="Abbott" />
+                                                {/* <span className={`gx-status gx-active`} /> */}
+                                            </Badge>
                                         </div>
                                     </div>
 
-                                    <div className="gx-chat-contact-col">
-                                        <div className="h4 gx-name">{data.name}</div>
+                                    <div className="gx-chat-contact-col" onClick={() => {
+                                        this.onSelectUser(data);
+                                    }}>
+                                        <div className={`h4 gx-name ${ActiveMessages[data.id] ? 'recievedMsg':''}`}>{data.name}</div>
                                         <div className="gx-chat-info-des gx-text-truncate">{/* {user.mood.substring(0, 40) + "..."} */}</div>
                                     </div>
-                                    <span className={`icons-controle person${data.id}`}><AudioOutlined style={iconStyle} /></span>
-                                    <span className={`icons-controle person${data.id}`}><FundViewOutlined style={iconStyle} /></span>
+                                    {(RoomOwnerId==Me.id)&&
+                                    (<>
+                                        <span className={`icons-controle person${data.id}`} onClick={()=>{this.ToggleMuteUser(data)}}><AudioOutlined style={iconStyle} /></span>
+                                        <span className={`icons-controle person${data.id}`} onClick={()=>{this.TogglePermitShareScreen(data)}}><FundViewOutlined style={iconStyle} /></span>
+                                    </>)}
                                 </div>
 
                             </div>

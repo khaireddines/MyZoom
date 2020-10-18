@@ -70,6 +70,24 @@ class ChatRoomController extends Controller
         }
         return response($res);
     }
+    public function GetRoomPin(Request $request)
+    {
+        $Room = ChatRoom::where('Chat_room_url','videoChatRoom_'.$this->EncodeNTimes(request('RoomId')))
+        ->get(['RoomPassword']);
+        if($Room->isEmpty())
+        return response("Room Dosn't Exist",200);
+        $Room = $Room->first();
+        return response($Room->RoomPassword);
+    }
+    public function RoomOwnerId(Request $request)
+    {
+        $Room = ChatRoom::where('Chat_room_url','videoChatRoom_'.$this->EncodeNTimes(request('RoomId')))
+        ->get(['RoomOwner']);
+        if($Room->isEmpty())
+        return response("Room Dosn't Exist",200);
+        $Room = $Room->first();
+        return response($Room->RoomOwner);
+    }
     public function UniqueNumber()
     {
         $numbers = range(111111, 999999);

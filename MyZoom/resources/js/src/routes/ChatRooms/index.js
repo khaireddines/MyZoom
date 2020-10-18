@@ -499,7 +499,11 @@ class ChatRooms extends Component {
             description: Name,
             is_private: false,
             videocodec: "vp9",
-            permanent:true
+            permanent:true,
+            /* record:true,
+            rec_dir:'./media/records',
+            lock_record : true */
+
         };
         if (isPrivate) {
             body={...body,pin:RoomPassword}

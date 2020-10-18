@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 import "./video.css";
 import HereList from "./components/hereList";
+import Axios from "axios";
 var classNames = require("classnames");
 
 const { Header, Footer, Sider, Content } = Layout;
@@ -49,7 +50,8 @@ const VideoLayout = ({ RoomName, SFUHandler, myroom, RoomExist }) => {
         siderleft: CollapsedRight,
         size: !CollapsedRight
     });
-
+    
+    
     return (
         <>
             {RoomExist ? (
@@ -62,7 +64,7 @@ const VideoLayout = ({ RoomName, SFUHandler, myroom, RoomExist }) => {
                         collapsible
                         collapsed={CollapsedLeft}
                     >
-                        <HereList myroom={myroom} />
+                        <HereList myroom={myroom} SFUHandler={SFUHandler} />
                     </Sider>
                     <Layout
                         onMouseOver={hideControls}

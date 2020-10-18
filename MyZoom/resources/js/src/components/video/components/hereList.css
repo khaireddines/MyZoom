@@ -16,3 +16,6 @@ span.onAction>span{
     justify-content: center;
     align-items: center;
 }
+.recievedMsg{
+    font-weight: 500;
+}
