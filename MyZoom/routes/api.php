@@ -23,6 +23,9 @@ Route::middleware('auth:api')->group(function () {
     Route::post('getUser', function () {return  Auth::user();});
     Route::post('RoomOwnerId','ChatRoomController@RoomOwnerId');
     Route::post('GetRoomPin','ChatRoomController@GetRoomPin');
+    Route::post('GetRoomConfigFile','ChatRoomController@RoomConfigFile');
+    Route::post('AddOrUpdateUserToConfigRoom','ChatRoomController@AddOrUpdateUserToConfigRoom');
+    Route::post('CheckIfAmMuted','ChatRoomController@CheckIfAmMuted');
 
     Route::post('addfriend','friendlistController@store');
     Route::post('AcceptFriendship','friendlistController@AcceptFriendship');

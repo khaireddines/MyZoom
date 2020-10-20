@@ -500,6 +500,7 @@ class ChatRooms extends Component {
             is_private: false,
             videocodec: "vp9",
             permanent:true,
+            //FIXME: Record Config
             /* record:true,
             rec_dir:'./media/records',
             lock_record : true */
@@ -579,3 +580,7 @@ const mapStateToProps = state => ({
 });
 const mapDispatchToProps = dispatch => ({});
 export default connect(mapStateToProps, mapDispatchToProps)(ChatRooms);
+
+
+
+

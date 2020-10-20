@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Divider, Avatar, Empty, Spin, Badge } from "antd";
 import Moment from "moment";
-import { AudioOutlined, FundViewOutlined, FrownOutlined } from "@ant-design/icons";
+import { AudioOutlined, FundViewOutlined, FrownOutlined, AudioMutedOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import './hereList.css';
 import CustomScrollbars from '../../../util/CustomScrollbars';
@@ -94,9 +94,21 @@ class HereList extends Component {
             RoomOwnerId:null,
             ActiveMessages:[],
             SFUHandler:this.props.SFUHandler,
-            pin:null
+            pin:null,
+            People_Mute_State:[],
+            Muted:this.props.Muted
         }
     }
+    GetServerMuteState=async()=>{
+        let Res = await Axios.post('api/GetRoomConfigFile',{RoomId:this.state.RoomId});
+        if (Res.status === 200) {
+            this.setState({
+                People_Mute_State:Res.data
+            });
+        }
+    }
+    
+    
     RoomOwnerId=async()=>{
         let Res = await Axios.post('api/RoomOwnerId',{RoomId:this.state.RoomId});
         this.setState({
@@ -122,10 +134,11 @@ class HereList extends Component {
     
     componentDidMount(prevProps, prevState) {
         this.RoomOwnerId();
+        this.GetServerMuteState();
+        
         var audiorecieve = new Audio('/assets/sounds/recived.mp3');
         window.Echo.join(`PrivateChatInRooms_${this.state.Me.id}`)
         .here(users => {
-            console.log(users);
         })
         .listen("PrivateChatInRooms", message_recived => {
             if (this.state.selectedUser ==null || message_recived.from !=this.state.selectedUser.id) {
@@ -201,7 +214,9 @@ class HereList extends Component {
         console.log(User);
     }
     render() {
-        const { peoples_here_render, selectedSectionId, conversation, selectedUser, message, loading, ActiveMessages, RoomOwnerId, Me } = this.state;
+        const { peoples_here_render, selectedSectionId, conversation,
+                selectedUser, message, loading, ActiveMessages, RoomOwnerId,
+                Me, People_Mute_State } = this.state;
         const { conversationData } = conversation;
         let isEmpty = classNames({
             'privatechat':(peoples_here_render.length == 0)?true:false
@@ -245,8 +260,8 @@ class HereList extends Component {
                                     </div>
                                     {(RoomOwnerId==Me.id)&&
                                     (<>
-                                        <span className={`icons-controle person${data.id}`} onClick={()=>{this.ToggleMuteUser(data)}}><AudioOutlined style={iconStyle} /></span>
-                                        <span className={`icons-controle person${data.id}`} onClick={()=>{this.TogglePermitShareScreen(data)}}><FundViewOutlined style={iconStyle} /></span>
+                                        <span className={`icons-controle person${data.id} ${People_Mute_State[data.id]?'Muted':'' }`} id={`${data.id}`} onClick={()=>{this.ToggleMuteUser(data)}}>{People_Mute_State[data.id]?<AudioMutedOutlined style={iconStyle} />:<AudioOutlined style={iconStyle} />}</span>
+                                        <span className={`icons-controle person${data.id} `} onClick={()=>{this.TogglePermitShareScreen(data)}}><FundViewOutlined style={iconStyle} /></span>
                                     </>)}
                                 </div>
 

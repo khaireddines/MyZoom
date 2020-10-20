@@ -21,6 +21,7 @@ class CreateChatRoomsTable extends Migration
             $table->string('Chat_room_url');
             $table->boolean('isPrivate')->default(false);
             $table->string('RoomPassword')->nullable();
+            $table->json('Config')->nullable();
             $table->foreign('RoomOwner')->references('id')->on('users');
             $table->timestamps();
         });

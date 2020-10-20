@@ -50,7 +50,11 @@ const VideoLayout = ({ RoomName, SFUHandler, myroom, RoomExist }) => {
         siderleft: CollapsedRight,
         size: !CollapsedRight
     });
-    
+    const [Muted, setMuted] = useState(false);
+    useEffect(() => {
+        
+        
+    }, [])
     
     return (
         <>
@@ -64,7 +68,7 @@ const VideoLayout = ({ RoomName, SFUHandler, myroom, RoomExist }) => {
                         collapsible
                         collapsed={CollapsedLeft}
                     >
-                        <HereList myroom={myroom} SFUHandler={SFUHandler} />
+                        <HereList myroom={myroom}  SFUHandler={SFUHandler} />
                     </Sider>
                     <Layout
                         onMouseOver={hideControls}
@@ -89,6 +93,7 @@ const VideoLayout = ({ RoomName, SFUHandler, myroom, RoomExist }) => {
                         <Footer style={{ padding: "3px 32px" }}>
                             <Controls
                                 RoomName={RoomName}
+                                myroom={myroom}
                                 LeftSider={toggleCollapsedLeft}
                                 RightSider={toggleCollapsedRight}
                                 SFUHandler={SFUHandler}
@@ -102,7 +107,7 @@ const VideoLayout = ({ RoomName, SFUHandler, myroom, RoomExist }) => {
                         collapsible
                         collapsed={CollapsedRight}
                     >
-                        <Communication myroom={myroom}></Communication>
+                        <Communication  myroom={myroom}></Communication>
                     </Sider>
                 </Layout>
             ) : (

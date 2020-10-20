@@ -1,4 +1,4 @@
-import React,{ useState } from "react";
+import React,{ useState, useEffect } from "react";
 import { Popover } from "antd";
 import {
     CommentOutlined,
@@ -12,6 +12,7 @@ import {
     FundProjectionScreenOutlined
 } from "@ant-design/icons";
 import "./controls.css";
+import Axios from "../../../util/Api";
 var classNames = require('classnames');
 let iconStyle = {
     fontSize: "24px",
@@ -25,7 +26,7 @@ let videoiconStyleBlack ={
     fontSize: "24px",
     color: "#2f3136"
 };
-const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
+const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider, myroom }) => {
     let screenType = "screen";
     let publish = {
         request: "configure",
@@ -124,6 +125,19 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
 
         videoOff = SFUHandler.isVideoMuted();
     };
+    const [Muted,setMuted] = useState(false);
+    const MuteSelfIfPresentInMuteConfigFile = async()=>{
+        let Res = await Axios.post('api/CheckIfAmMuted',{RoomId:myroom});
+        if (Res.status === 200) {
+            if (Res.data) {
+                setMuted(true);
+                setMicrophoneActive(true);
+                SFUHandler.muteAudio();
+                document.getElementById('Mute').setAttribute("disabled","true");
+            }
+        }
+    }
+    
     const ToggleMicrophone = () => {
         let micOff = SFUHandler.isAudioMuted();
         if (micOff) 
@@ -196,6 +210,9 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
             });
         }
     };
+    useEffect(() => {
+        MuteSelfIfPresentInMuteConfigFile();
+    }, [])
     return (
         <div id="controls" className="videoControls-24w7Xp">
             <div className="gradientContainer-10lXLB"></div>
@@ -317,12 +334,13 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider }) => {
                             </Popover>
                         </div>
                         <div>
-                        <Popover content={<div>Mute</div>} trigger="hover">
+                        <Popover content={(Muted)?<div>Mute By Room Owner</div>:<div>Mute</div>} trigger="hover">
                             <button
                                 aria-label="Mute"
                                 type="button"
                                 className={MicrophoneClassNames}
-                                onClick={ToggleMicrophone}
+                                onClick={(!Muted)&&ToggleMicrophone}
+                                id="Mute"
                             >
                                 {(MicrophoneActive)?<AudioMutedOutlined style={videoiconStyleBlack} />
                                 :<AudioOutlined style={videoiconStyleWhite} />}

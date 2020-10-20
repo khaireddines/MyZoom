@@ -8,4 +8,7 @@ class ChatRoom extends Model
 {
     protected $table = 'chat_rooms';
     protected $guarded = [];
+    protected $casts = [
+        'Config' => 'array',
+    ];
 }
