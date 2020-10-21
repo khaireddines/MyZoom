@@ -205,10 +205,20 @@ class HereList extends Component {
 
         }
     }
-    ToggleMuteUser = (User)=>{
+    ToggleMuteUser = async(User,MuteState)=>{
+        /* Code to mute other Users only for current user 
         let UserRemoteSFUHandler = User.remoteHandler;
-        UserRemoteSFUHandler.send({message:{"request" : "configure","audio" :false}});
-        //console.log(UserRemoteSFUHandler.isAudioMuted());
+        UserRemoteSFUHandler.send({message:{"request" : "configure","audio" :false}}); */
+        let Res = await Axios.post('api/AddOrUpdateUserToConfigRoom',
+        {RoomId:this.state.RoomId,
+        UserId:User.id,
+        Muted:!MuteState})
+        if (Res.status === 200) {
+            this.setState({
+                People_Mute_State:{...this.state.People_Mute_State,[User.id]:Res.data.Muted}
+            })
+        }
+
     }
     TogglePermitShareScreen = (User)=>{
         console.log(User);
@@ -224,9 +234,9 @@ class HereList extends Component {
         return (
 
             <>
-                <button onClick={()=>{
+                {/* <button onClick={()=>{
                     this.enable_recording();
-                }}></button>
+                }}></button> */}
                 <Divider orientation="left">People</Divider>
                 <div className={isEmpty} style={{ height: '30%', overflowY: 'scroll' }}>
                     {(peoples_here_render.length == 0)?
@@ -260,7 +270,7 @@ class HereList extends Component {
                                     </div>
                                     {(RoomOwnerId==Me.id)&&
                                     (<>
-                                        <span className={`icons-controle person${data.id} ${People_Mute_State[data.id]?'Muted':'' }`} id={`${data.id}`} onClick={()=>{this.ToggleMuteUser(data)}}>{People_Mute_State[data.id]?<AudioMutedOutlined style={iconStyle} />:<AudioOutlined style={iconStyle} />}</span>
+                                        <span className={`icons-controle person${data.id} ${People_Mute_State[data.id]==true?'Muted':'Active' }`} id={`${data.id}`} onClick={()=>{this.ToggleMuteUser(data,People_Mute_State[data.id])}}>{People_Mute_State[data.id]?<AudioMutedOutlined style={iconStyle} />:<AudioOutlined style={iconStyle} />}</span>
                                         <span className={`icons-controle person${data.id} `} onClick={()=>{this.TogglePermitShareScreen(data)}}><FundViewOutlined style={iconStyle} /></span>
                                     </>)}
                                 </div>

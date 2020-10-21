@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\ChatRoom;
+use App\Events\Muted;
 use App\SubedRooms;
 use App\User;
 use Illuminate\Http\Request;
@@ -128,9 +129,7 @@ class ChatRoomController extends Controller
         }else
         {
             return response('false');
-        }
-        
-        
+        }   
     }
     public function AddOrUpdateUserToConfigRoom(Request $request)
     {
@@ -161,9 +160,10 @@ class ChatRoomController extends Controller
                 $NewConfig[$PosIfExist]=$options;
                 $Room->Config = $NewConfig;
                 $Room->save();
-                
             }
         }
+        broadcast(new Muted($options['UserId'],$options['Muted']))->toOthers();
+        return response($options);
     }
     public function SearchTable($table,$UserId)
     {

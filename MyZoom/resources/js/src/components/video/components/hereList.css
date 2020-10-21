@@ -5,7 +5,10 @@ span.icons-controle>span:hover{
     color: #038fde;
 }
 span.Muted>span{
-    color: red;
+    color: lightcoral;
+}
+span.Active>span{
+    color: lightgreen;
 }
 .privateSection > :first-child{
     bottom: 22% !important;

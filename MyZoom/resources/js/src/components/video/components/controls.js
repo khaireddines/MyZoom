@@ -1,5 +1,5 @@
 import React,{ useState, useEffect } from "react";
-import { Popover } from "antd";
+import { Popover, message } from "antd";
 import {
     CommentOutlined,
     TeamOutlined,
@@ -13,6 +13,7 @@ import {
 } from "@ant-design/icons";
 import "./controls.css";
 import Axios from "../../../util/Api";
+import { useSelector} from "react-redux";
 var classNames = require('classnames');
 let iconStyle = {
     fontSize: "24px",
@@ -27,6 +28,7 @@ let videoiconStyleBlack ={
     color: "#2f3136"
 };
 const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider, myroom }) => {
+    const {authUser} = useSelector(state => state.auth);
     let screenType = "screen";
     let publish = {
         request: "configure",
@@ -130,14 +132,25 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider, myroom }) => {
         let Res = await Axios.post('api/CheckIfAmMuted',{RoomId:myroom});
         if (Res.status === 200) {
             if (Res.data) {
-                setMuted(true);
-                setMicrophoneActive(true);
-                SFUHandler.muteAudio();
-                document.getElementById('Mute').setAttribute("disabled","true");
+                MuteIfTrueRecieved(Res.data);
             }
         }
     }
-    
+    const MuteIfTrueRecieved = (Muted)=>{
+        setMuted(Muted);
+        setMicrophoneActive(Muted);
+        if (Muted) {
+            SFUHandler.muteAudio();
+            message.warn(<span id="Muted">You Have Been Muted By RoomOwner!</span>,3);
+            document.getElementById('Mute').setAttribute("disabled","true");
+        }else
+        {
+            SFUHandler.unmuteAudio();
+            message.success(<span id="Unmuted">You Have Been Unmuted By RoomOwner ^ç^</span>,3);
+            document.getElementById('Mute').removeAttribute("disabled");
+        }
+        
+    }
     const ToggleMicrophone = () => {
         let micOff = SFUHandler.isAudioMuted();
         if (micOff) 
@@ -212,6 +225,13 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider, myroom }) => {
     };
     useEffect(() => {
         MuteSelfIfPresentInMuteConfigFile();
+        
+        window.Echo.join(`Muted_${authUser.id}`)
+        .here(users => {
+        })
+        .listen("Muted", Event => {
+            MuteIfTrueRecieved(Event.Muted);
+        });
     }, [])
     return (
         <div id="controls" className="videoControls-24w7Xp">

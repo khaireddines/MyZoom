@@ -9,6 +9,7 @@
 }
 .ant-card-bordered {
     border: 1px solid #7c878c;
+    max-width: 500px;
 }
 .ant-card-body{
     display: flex;

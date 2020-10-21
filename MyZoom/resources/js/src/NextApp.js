@@ -11,10 +11,6 @@ const VideoRoom = React.lazy(() =>import("./containers/VideoRoom"));
 const store = configureStore(/ provide initial state if any /);
 
 
-
-
-
-
 const NextApp = () =>
   <Provider store={store}>
     <Suspense fallback={<CircularProgress/>}>
