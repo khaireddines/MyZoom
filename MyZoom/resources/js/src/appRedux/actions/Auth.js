@@ -120,6 +120,8 @@ export const userSignOut = () => {
         dispatch({ type: FETCH_START });
         localStorage.removeItem("tokens");
         localStorage.removeItem("user");
+        axios.post('api/Logout');
+        window.location.replace('/');
         dispatch({ type: FETCH_SUCCESS });
         dispatch({ type: SIGNOUT_USER_SUCCESS });
     };

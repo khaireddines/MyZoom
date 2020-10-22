@@ -96,7 +96,8 @@ class HereList extends Component {
             SFUHandler:this.props.SFUHandler,
             pin:null,
             People_Mute_State:[],
-            Muted:this.props.Muted
+            Muted:this.props.Muted,
+            WhoIsSS:null
         }
     }
     GetServerMuteState=async()=>{
@@ -106,14 +107,6 @@ class HereList extends Component {
                 People_Mute_State:Res.data
             });
         }
-    }
-    
-    
-    RoomOwnerId=async()=>{
-        let Res = await Axios.post('api/RoomOwnerId',{RoomId:this.state.RoomId});
-        this.setState({
-            RoomOwnerId:Res.data
-        });
     }
     GetRoomPin=async()=>{
         let Res = await Axios.post('api/GetRoomPin',{RoomId:this.state.RoomId});
@@ -131,13 +124,18 @@ class HereList extends Component {
         }
         this.state.SFUHandler.send({message:EnableRecord});
     }
-    
+    RoomOwnerId=async()=>{
+        let Res = await Axios.post('api/RoomOwnerId',{RoomId:this.state.RoomId});
+        this.setState({
+            RoomOwnerId:Res.data
+        });
+    }
     componentDidMount(prevProps, prevState) {
         this.RoomOwnerId();
         this.GetServerMuteState();
         
         var audiorecieve = new Audio('/assets/sounds/recived.mp3');
-        window.Echo.join(`PrivateChatInRooms_${this.state.Me.id}`)
+        window.Echo.join(`PrivateChatInRooms_${this.state.Me.id}_${this.state.RoomId}`)
         .here(users => {
         })
         .listen("PrivateChatInRooms", message_recived => {
@@ -221,12 +219,25 @@ class HereList extends Component {
 
     }
     TogglePermitShareScreen = (User)=>{
-        console.log(User);
+        const { WhoIsSS, RoomId }=this.state;
+        if (WhoIsSS == null) {
+            Axios.post('api/AllowOrDisallowShareScreen',{UserId:User.id,Allow:true,RoomId:RoomId});
+            this.setState({WhoIsSS:User.id});
+        }else
+        if (WhoIsSS==User.id) {
+            Axios.post('api/AllowOrDisallowShareScreen',{UserId:User.id,Allow:false,RoomId:RoomId});
+            this.setState({WhoIsSS:null});
+        }else{
+            Axios.post('api/AllowOrDisallowShareScreen',{UserId:WhoIsSS,Allow:false,RoomId:RoomId});
+            Axios.post('api/AllowOrDisallowShareScreen',{UserId:User.id,Allow:true,RoomId:RoomId});
+            this.setState({WhoIsSS:User.id});
+        }
+        
     }
     render() {
         const { peoples_here_render, selectedSectionId, conversation,
                 selectedUser, message, loading, ActiveMessages, RoomOwnerId,
-                Me, People_Mute_State } = this.state;
+                Me, People_Mute_State, WhoIsSS } = this.state;
         const { conversationData } = conversation;
         let isEmpty = classNames({
             'privatechat':(peoples_here_render.length == 0)?true:false
@@ -266,12 +277,12 @@ class HereList extends Component {
                                         this.onSelectUser(data);
                                     }}>
                                         <div className={`h4 gx-name ${ActiveMessages[data.id] ? 'recievedMsg':''}`}>{data.name}</div>
-                                        <div className="gx-chat-info-des gx-text-truncate">{/* {user.mood.substring(0, 40) + "..."} */}</div>
+                                        <div className="gx-chat-info-des gx-text-truncate"> {(RoomOwnerId==data.id)&&<span>Room Owner</span>} </div>
                                     </div>
                                     {(RoomOwnerId==Me.id)&&
                                     (<>
                                         <span className={`icons-controle person${data.id} ${People_Mute_State[data.id]==true?'Muted':'Active' }`} id={`${data.id}`} onClick={()=>{this.ToggleMuteUser(data,People_Mute_State[data.id])}}>{People_Mute_State[data.id]?<AudioMutedOutlined style={iconStyle} />:<AudioOutlined style={iconStyle} />}</span>
-                                        <span className={`icons-controle person${data.id} `} onClick={()=>{this.TogglePermitShareScreen(data)}}><FundViewOutlined style={iconStyle} /></span>
+                                        <span className={`icons-controle person${data.id} ${WhoIsSS==data.id ?'Active':''}`} onClick={()=>{this.TogglePermitShareScreen(data)}}><FundViewOutlined style={iconStyle} /></span>
                                     </>)}
                                 </div>
 

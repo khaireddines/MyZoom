@@ -109,7 +109,7 @@ const MainApp = () => {
                 .listen(
                     "MessageSent",
                     e => {
-                        console.log(e);
+                        //console.log(e);
                         dispatch({ type: MESSAGE_RECIVED, payload: e });
                         audio.play();
                     }

@@ -51,8 +51,8 @@ const VideoLayout = ({ RoomName, SFUHandler, myroom, RoomExist }) => {
         size: !CollapsedRight
     });
     const [Muted, setMuted] = useState(false);
+    
     useEffect(() => {
-        
         
     }, [])
     

@@ -11,22 +11,23 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class Muted implements ShouldBroadcastNow
+class AllowOrDisallowShareScreen implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $toWhom;
-    public $Muted;
+
+    public $toWhom; 
+    public $AllowSS;
     public $RoomId;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($toWhom, $Muted, $RoomId)
+    public function __construct($toWhom,$AllowSS,$RoomId)
     {
         $this->toWhom = $toWhom;
-        $this->Muted  = $Muted; 
-        $this->RoomId = $RoomId;
+        $this->AllowSS = $AllowSS;
+        $this->RoomId=$RoomId;
     }
 
     /**

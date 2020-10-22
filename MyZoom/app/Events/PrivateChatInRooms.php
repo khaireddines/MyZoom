@@ -18,16 +18,18 @@ class PrivateChatInRooms implements ShouldBroadcastNow
     public $from;
     public $toWhom;
     public $msg;
+    public $RoomId;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($from,$toWhom,$msg)
+    public function __construct($from,$toWhom,$msg,$RoomId)
     {
         $this->from=$from;
         $this->toWhom=$toWhom;
         $this->msg=$msg;
+        $this->RoomId=$RoomId;
     }
 
     /**
@@ -37,6 +39,6 @@ class PrivateChatInRooms implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('PrivateChatInRooms_'.$this->toWhom);
+        return new PresenceChannel('PrivateChatInRooms_'.$this->toWhom.'_'.$this->RoomId);
     }
 }

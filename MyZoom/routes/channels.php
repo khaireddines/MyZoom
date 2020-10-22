@@ -22,9 +22,11 @@ Broadcast::channel('Chat_{id}', function ($user,$id) {
 Broadcast::channel('ChatRoom_{id}', function ($user,$id) {
     return $user;
 });
-Broadcast::channel('PrivateChatInRooms_{id}', function ($user,$id) {
+Broadcast::channel('PrivateChatInRooms_{id}_{RoomId}', function ($user,$id, $RoomId) {
     return $user;
 });
-Broadcast::channel('Muted_{id}', function ($user,$id) {
+Broadcast::channel('Muted_{id}_{RoomId}', function ($user,$id, $RoomId) {
     return $user;
 });
+
+

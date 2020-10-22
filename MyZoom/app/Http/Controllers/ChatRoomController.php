@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\ChatRoom;
+use App\Events\AllowOrDisallowShareScreen;
 use App\Events\Muted;
 use App\SubedRooms;
 use App\User;
@@ -90,12 +91,16 @@ class ChatRoomController extends Controller
     }
     public function RoomConfigFile(Request $request)
     {
+        $result = [];
         $Room = ChatRoom::where('Chat_room_url', 'videoChatRoom_' . $this->EncodeNTimes(request('RoomId')))
             ->get(['Config']);
         if ($Room->isEmpty())
             return response("Room Dosn't Exist", 404);
+        
         $Room = $Room->first();
-        $result = [];
+        if (!$Room->Config) {
+            return response($result);
+        }
         foreach ($Room->Config as $key => $value) {
             $data[$value['UserId']] = $value['Muted'];
         }
@@ -162,8 +167,12 @@ class ChatRoomController extends Controller
                 $Room->save();
             }
         }
-        broadcast(new Muted($options['UserId'],$options['Muted']))->toOthers();
+        broadcast(new Muted($options['UserId'],$options['Muted'],request('RoomId')))->toOthers();
         return response($options);
+    }
+    public function AllowOrDisallowShareScreen(Request $request)
+    {
+        broadcast(new AllowOrDisallowShareScreen($request->UserId,$request->Allow,$request->RoomId))->toOthers();
     }
     public function SearchTable($table,$UserId)
     {

@@ -113,7 +113,7 @@ class PrivateChatInRoomController extends Controller
         ]);
         $newMsg->save();
         // fire broadcast message here
-        broadcast(new PrivateChatInRooms(Auth::user()->id,request('with'),request('msg')))->toOthers();
+        broadcast(new PrivateChatInRooms(Auth::user()->id,request('with'),request('msg'),request('RoomId')))->toOthers();
     }
 
    
