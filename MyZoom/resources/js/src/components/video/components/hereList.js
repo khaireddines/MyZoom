@@ -171,7 +171,7 @@ class HereList extends Component {
         
       }
     componentDidUpdate(prevProps, prevState) {
-        const {conversation}= this.state;
+        const { conversation, WhoIsSS}= this.state;
         if(prevState.conversation !== conversation){
             this.scrollPositionBottom();
         }
@@ -182,6 +182,14 @@ class HereList extends Component {
             }, 2000);
         }
         if (this.props.whoLeft != prevProps.whoLeft) {
+            if (this.props.whoLeft.id == WhoIsSS) {
+                setTimeout(() => {
+                this.setState({
+                    WhoIsSS:null
+                });
+            }, 2000);
+            }
+
             if (this.props.whoLeft.id == this.state.selectedSectionId) {
                 setTimeout(() => {
                     this.setState({
