@@ -14,6 +14,9 @@ import {
 import "./controls.css";
 import Axios from "../../../util/Api";
 import { useSelector} from "react-redux";
+import Janus from "../../../util/JanusES6";
+import adapter from "webrtc-adapter";
+import Moment from "moment";
 var classNames = require('classnames');
 let iconStyle = {
     fontSize: "24px",
@@ -254,8 +257,74 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider, myroom }) => {
             if (Res.data !=authUser.id) {
                 document.getElementById('AllowSS').setAttribute("disabled","true");
             }else
-            setAllowSS(true);
+            {
+                setAllowSS(true);
+                AttachRecordIfRoomOwner();
+            }
         }
+    }
+    let RecordHandler = null;
+    let janus = null;
+    const server = "https://acelens.me:8089/janus";
+    const opaqueId = "RecordsOf-"+authUser.name+'-'+ Janus.randomString(12);
+    const [RecordHandlerInState, setRecordHandlerInState] = useState(null);
+    const AttachRecordIfRoomOwner = ()=>{
+        Janus.init({
+            debug: true,
+            dependencies: Janus.useDefaultDependencies({ adapter }),
+            callback: () => {
+                janus = new Janus({
+                    server: server,
+                    success: () => {
+                        janus.attach({
+                            plugin: "janus.plugin.recordplay",
+                            opaqueId: opaqueId,
+                            success: pluginHandler => {
+                                RecordHandler = pluginHandler;
+                                setRecordHandlerInState(pluginHandler);
+                                Janus.log(
+                                    "Plugin attached! (" +
+                                    RecordHandler.getPlugin() +
+                                    ", id=" +
+                                    RecordHandler.getId() +
+                                    ")"
+                                );
+                                RecordHandler.createOffer({
+                                    success: (jsep) => {
+                                        let RecordName = JSON.stringify({...authUser,RoomId:myroom});
+                                        var body = { 
+                                            request: "record",
+                                            name:RecordName,
+                                        };
+                                        RecordHandler.send({ message: body, jsep: jsep });
+                                        // that's how you get all the record lists
+                                        /* var rec = { request: "list" };
+                                        RecordHandler.send({message:rec,success: (result)=> {
+                                            console.log(result);
+                                        }}); */
+                                    },
+                                    error: (error) => {
+                                        Janus.error("WebRTC error...", error);
+                                    }
+                                })
+                            },
+                            onmessage: (msg, jsep) => {
+                                Janus.log(msg);
+                                if(jsep)
+                                    RecordHandler.handleRemoteJsep({ jsep: jsep });
+                            },
+                            error: error => {
+                                Janus.error(
+                                    "  -- Error attaching plugin...",
+                                    error
+                                );
+
+                            }
+                        })
+                    }
+                })
+            }
+        })
     }
     useEffect(() => {
         MuteSelfIfPresentInMuteConfigFile();
@@ -270,7 +339,7 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider, myroom }) => {
             AllowSelfShareScreenWhenTrue(Event.AllowSS);
         });
         
-    }, [])
+    }, []);
     return (
         <div id="controls" className="videoControls-24w7Xp">
             <div className="gradientContainer-10lXLB"></div>
