@@ -77,7 +77,7 @@ const SignUp = (props) => {
                 {getFieldDecorator('password', {
                   rules: [
                     {required: true, message: 'Please input your Password!'},
-                    {len:8,message:'Password weak, 8 character length recommended!'}
+                    {min:8,message:'Password weak, 8 character length recommended!'}
                   ],
                 })(
                   <Input type="password" placeholder="Password"/>
