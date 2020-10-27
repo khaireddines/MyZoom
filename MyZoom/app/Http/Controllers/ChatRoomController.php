@@ -109,21 +109,24 @@ class ChatRoomController extends Controller
     }
     public function CheckIfAmMuted(Request $request)
     {
+        $options['UserId'] = Auth::user()->id;
+        $options['Muted'] = false;
         $Room = ChatRoom::where('Chat_room_url', 'videoChatRoom_' . $this->EncodeNTimes(request('RoomId')))
             ->get(['id','RoomOwner','Config']);
         if ($Room->isEmpty())
             return response("Room Dosn't Exist", 404);
         $Room = $Room->first();
+        if ($Room->Config == null) {
+            $Room->Config = array($options);
+            $Room->save();
+        }else
         if (Auth::user()->id != $Room->RoomOwner) {
             $PosIfExist=$this->SearchTable($Room->Config,Auth::user()->id);
             if ($PosIfExist==='NotFound') {
-                $options['UserId'] = Auth::user()->id;
-                $options['Muted'] = false;
                 $NewConfig = $Room->Config;
                 array_push($NewConfig,$options);
                 $Room->Config = $NewConfig;
                 $Room->save();
-                
                 return response('false');
             } else {
                 if ($Room->Config[$PosIfExist]['Muted']) 
