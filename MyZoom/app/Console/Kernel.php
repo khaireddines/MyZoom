@@ -25,7 +25,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('passport:purge')->dailyAt('00:00');
+        $schedule->command('passport:purge')->everyMinute();
+        //$schedule->exec('sh /application/MyZoom/public/uploads/Records/auto-converter.sh')->everyMinute();
     }
 
     /**

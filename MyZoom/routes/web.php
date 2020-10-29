@@ -23,3 +23,4 @@ Route::get('/test/test/{msg}',function ($msg)
     
    //broadcast(new MessageSent($msg))->toOthers(); 
 });
+Route::view('/test/test/test/testRecord','testRecords');

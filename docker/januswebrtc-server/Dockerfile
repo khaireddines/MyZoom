@@ -4,7 +4,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -y \
 	&& apt-get -y install aptitude git \
 	&& aptitude -y install libmicrohttpd-dev libjansson-dev \
-	libssl-dev wget libsofia-sip-ua-dev libglib2.0-dev \
+	ffmpeg libssl-dev libavcodec-dev libavformat-dev wget libsofia-sip-ua-dev libglib2.0-dev \
 	libopus-dev libogg-dev libcurl4-openssl-dev liblua5.3-dev \
 	libconfig-dev pkg-config gengetopt libtool automake meson ninja-build
 
@@ -44,7 +44,7 @@ RUN cp /lib64/libnice.so.10 /lib/
 RUN git clone https://github.com/meetecho/janus-gateway.git \
 	&& cd janus-gateway \
 	&& sh autogen.sh \
-	&& ./configure --prefix=/opt/janus \
+	&& ./configure --prefix=/opt/janus --enable-post-processing \
 	&& make \
 	&& make install \
 	&& make configs

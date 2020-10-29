@@ -291,7 +291,7 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider, myroom }) => {
                                 );
                                 RecordHandler.createOffer({
                                     success: (jsep) => {
-                                        let RecordName = JSON.stringify({...authUser,RoomId:myroom});
+                                        let RecordName = JSON.stringify({...authUser,RoomId:myroom,RoomName:RoomName});
                                         var body = { 
                                             request: "record",
                                             name:RecordName,

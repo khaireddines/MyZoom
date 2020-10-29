@@ -14,7 +14,7 @@ import {
 } from "../../constants/ThemeSetting";
 import "./sidebar.css";
 import IntlMessages from "../../util/IntlMessages";
-import { VideoCameraOutlined } from "@ant-design/icons";
+import { VideoCameraOutlined, VideoCameraAddOutlined  } from "@ant-design/icons";
 
 const SidebarContent = () => {
 
@@ -63,7 +63,10 @@ const SidebarContent = () => {
               <Link to="/social/contacts"><i className="icon icon icon-contacts"/>
                 <IntlMessages id="sidebar.contactsApp"/></Link>
             </Menu.Item>
-
+            <Menu.Item key="Records">
+              <Link to="/Records"><VideoCameraAddOutlined style={{fontSize: "20px"}} />
+                <IntlMessages id="sidebar.Records"/></Link>
+            </Menu.Item>
           </Menu>
         </CustomScrollbars>
       </div>
