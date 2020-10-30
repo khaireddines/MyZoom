@@ -58,4 +58,8 @@ Route::middleware('auth:api')->group(function () {
     //Private_Chat in Rooms
     Route::post('PrivateChatNewMsg','PrivateChatInRoomController@store');
     Route::post('PrivateChatConversation','PrivateChatInRoomController@conversation');
+
+    // Records Routes
+    Route::post('storeRecord','RecordsController@store');
+    Route::post('GetRecords','RecordsController@GetRecords');
 });

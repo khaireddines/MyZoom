@@ -1,20 +1,36 @@
 import React from "react";
-import { Menu, Modal } from "antd";
+import { Menu, Modal, Dropdown } from "antd";
 import { PlayCircleOutlined } from "@ant-design/icons";
 import { connect } from "react-redux";
 import Moment from "moment";
-class RecordCell extends React.Component {
+
+class RecordCellReady extends React.Component {
     handleCancel = (e) => {
         this.setState({ videoPlayClicked: false });
-        this.props.stopPreview();
-        
+        document.getElementById(`thevideo_${this.props.record.id}`).pause();
     };
-    onPlayClick = (RecordId) => {
+    onPlayClick = () => {
         this.setState({ videoPlayClicked: true });
-        setTimeout(() => {
-            this.props.playPreview(RecordId);
-        }, 500);
     }
+    download=()=>{
+        document.getElementById(`link_${this.props.record.id}`).click();
+    }
+    getOption = () =>{ 
+        let options = ['Download'];
+        return options;
+      }
+    menus = () => (<Menu onClick={(e) => {
+        if (e.key === 'Download') {
+          this.download();
+        }
+      }
+      }>
+        {this.getOption().map(option =>
+          <Menu.Item key={option}>
+            {option}
+          </Menu.Item>,
+        )}
+      </Menu>);
     constructor() {
         super();
         this.state = {
@@ -24,14 +40,14 @@ class RecordCell extends React.Component {
 
     render() {
         const { record } = this.props;
-        const { id, name, date } = record;
-        const data = JSON.parse(name);
-        const modifiedDate = Moment(date, "YYYY-MM-DD hh:mm:ss").format('llll');
+        const { id, RecordOwner, Room, created_at, RecordPathName } = record;
+        
+        const modifiedDate = Moment(created_at, "YYYY-MM-DD hh:mm:ss").format('llll');
         return (
             <div className="gx-contact-item">
                 <div className="gx-module-list-icon">
                     <div className="gx-ml-2 gx-d-none gx-d-sm-flex play">
-                        <PlayCircleOutlined onClick={() => { this.onPlayClick(id) }} style={{ marginRight: '12px', fontSize: '30px', color: '#038fde' }} />
+                        <PlayCircleOutlined onClick={() => { this.onPlayClick() }} style={{ marginRight: '12px', fontSize: '30px', color: '#038fde' }} />
                     </div>
                 </div>
 
@@ -46,7 +62,7 @@ class RecordCell extends React.Component {
                                 Room Name :
                             </span>
                             <span className="gx-phone gx-d-inline-block">
-                                {data.RoomName}
+                                 {Room.Name} 
                             </span>
                         </div>
                         <div className="gx-text-muted">
@@ -54,12 +70,13 @@ class RecordCell extends React.Component {
                                 Record Of :
                             </span>
                             <span className="gx-phone gx-d-inline-block">
-                                {(this.props.authUser.id == data.id) ? "That's Mine ^ç^" : data.name}
+                                {(this.props.authUser.id == RecordOwner.id) ? "That's Mine ^ç^" : RecordOwner.name}
                             </span>
                         </div>
                     </div>
+                    <a hidden id={`link_${id}`} style={{display:'hidden'}} href={`/uploads/Records/records/${RecordPathName}`} download></a>
                     <Modal
-                        title= {`Preview Of ${data.RoomName}, [${modifiedDate}]`}
+                        title= {`Record Of ${RecordOwner.name}, [${modifiedDate}]`}
                         visible={this.state.videoPlayClicked}
                         footer={null}
                         onCancel={this.handleCancel}
@@ -67,14 +84,15 @@ class RecordCell extends React.Component {
                         style={{top:'50px'}}
                         className="preview"
                     >
-                        <video id={`thepreview_${id}`} style={{width:"100%"}} autoPlay playsInline />
+                        <video id={`thevideo_${id}`} style={{width:"100%"}} autoPlay controls >
+                            <source src={`/uploads/Records/records/${RecordPathName}`} type="video/webm" />
+                        </video>
                     </Modal>
-                    {/*  <div className="gx-module-contact-right">
-
+                    <div className="gx-module-contact-right">
                         <Dropdown overlay={this.menus()} placement="bottomRight" trigger={['hover']}>
                             <i className="gx-icon-btn icon icon-ellipse-v" />
                         </Dropdown>
-                    </div> */}
+                    </div> 
                 </div>
             </div>
         )
@@ -84,4 +102,4 @@ const mapStateToProps = state => ({
     authUser: state.auth.authUser
 });
 const mapDispatchToProps = dispatch => ({});
-export default connect(mapStateToProps, mapDispatchToProps)(RecordCell);
+export default connect(mapStateToProps, mapDispatchToProps)(RecordCellReady);

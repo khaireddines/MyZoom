@@ -3,31 +3,39 @@ import {
     SmileOutlined,
     BarsOutlined,
     ShareAltOutlined,
-    VideoCameraAddOutlined
+    VideoCameraAddOutlined,
+    CloudServerOutlined
 } from "@ant-design/icons";
 import IntlMessages from "../../../util/IntlMessages";
 import RecordList from "./RecordsList";
 import AppModuleHeader from "../../../components/AppModuleHeader/index";
 import CustomScrollbars from "../../../util/CustomScrollbars";
 import { Drawer, Modal, Empty} from "antd";
-
+import Axios from "../../../util/Api";
 let iconStyle = {
     marginRight: "16px",
     fontSize: "20px"
   };
 const { confirm } = Modal;
+
 const filterOptions = [
     {
         id: 1,
+        name: 'Previews',
+        icon: <CloudServerOutlined style={iconStyle} />
+    },
+    {
+        id: 2,
         name: 'All Records',
         icon: <BarsOutlined style={iconStyle} />
-    },{
-        id: 2,
+    },
+    {
+        id: 3,
         name: 'My Records',
         icon: <SmileOutlined style={iconStyle} />
     },
     {
-        id: 3,
+        id: 4,
         name: 'Shared Records',
         icon: <ShareAltOutlined style={iconStyle} />
     }
@@ -69,7 +77,9 @@ class index extends Component {
         } else {
             const filterRecords = this.state.allRecords.filter((record) =>
                 JSON.parse(record.name).RoomName.toLowerCase().indexOf(RoomName.toLowerCase()) > -1);
-            if (filterOption === 'All Records') {
+            if (filterOption === 'Previews'){
+                this.setState({ recordsList: filterRecords });
+            } else if (filterOption === 'All Records') {
                 this.setState({ recordsList: filterRecords });
             } else if (filterOption === 'My Records') {
                 this.setState({ recordsList: filterRecords });
@@ -79,28 +89,44 @@ class index extends Component {
         }
     };
     onFilterOptionSelect = (option) => {
+        if (this.state.type === 'preview') 
+        this.getRecordsReady();
+        else
+        this.getRecordsOfServer();
         switch (option.name) {
+            case 'Previews': {
+                this.setState({
+                    selectedSectionId: option.id,
+                    type:'preview',
+                    filterOption: option.name,
+                    recordsList: this.state.allRecords
+                });
+                break;
+            }
             case 'All Records': {
                 this.setState({
                     selectedSectionId: option.id,
+                    type:'records',
                     filterOption: option.name,
-                    recordsList: this.state.allRecords
+                    recordsList: this.state.allRecordsReady
                 });
                 break;
             }
             case 'My Records': {
                 this.setState({
                     selectedSectionId: option.id,
+                    type:'records',
                     filterOption: option.name,
-                    recordsList: this.state.allRecords
+                    recordsList: this.state.allRecordsReady
                 });
                 break;
             }
             case 'Shared Records': {
                 this.setState({
                     selectedSectionId: option.id,
+                    type:'records',
                     filterOption: option.name,
-                    recordsList: this.state.allRecords
+                    recordsList: this.state.allRecordsReady
                 });
                 break;
             }
@@ -119,9 +145,56 @@ class index extends Component {
           drawerState: !this.state.drawerState
         });
     };
+    getRoomIds = async()=>{
+        let result = [];
+        let Res = await Axios.post('api/AllRooms');
+        if(Res.data.length !=0){
+            Res.data.map((row)=>{
+                result.push(row.Name); 
+            });
+        }
+        return result;
+    }
+    
     componentDidMount(){
-        this.state.recordsList.map((row)=>{
-            console.log(row);
+        this.filterRecords();
+    }
+    filterRecords = ()=>{
+        this.getRoomIds().then((res)=>{
+            let result = [];
+            this.state.allRecordsOfServer.map((row)=>{
+                let data = JSON.parse(row.name);
+                if (res.includes(data.RoomName)) {
+                    result.push(row);
+                }
+            });
+            this.setState({
+                recordsList:result,
+                allRecords: result
+            })
+        });
+    }
+    getRecordsOfServer = async ()=>{
+        var update = { request: "update" };
+        await this.state.RecordHandler.send({
+            message: update, success: () => {
+                var rec = { request: "list" };
+                this.state.RecordHandler.send({
+                    message: rec, success: (result) => {
+                        this.setState({
+                            allRecordsOfServer:result.list
+                        })
+                    }
+                });
+            }
+        });
+        this.filterRecords();
+    }
+    getRecordsReady = async ()=> {
+        let Res = await Axios.post('api/GetRecords',{});
+        this.setState({
+            allRecordsReady: Res.data,
+            recordsList : Res.data
         });
     }
     playPreview(Recordid){    
@@ -139,9 +212,11 @@ class index extends Component {
           selectedSectionId: 1,
           drawerState: false,
           searchRecords: '',
-          filterOption: 'All Records',
-          allRecords: this.props.recordsList,
-          recordsList: this.props.recordsList,
+          filterOption: 'Previews',
+          allRecordsOfServer: this.props.recordsList,
+          allRecordsReady:[],
+          allRecords: [],
+          recordsList: [],
           selectedContact: null,
           selectedContacts: 0,
           RecordHandler:this.props.RecordHandlerInState

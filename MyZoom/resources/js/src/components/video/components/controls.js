@@ -292,8 +292,11 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider, myroom }) => {
                                 RecordHandler.createOffer({
                                     success: (jsep) => {
                                         let RecordName = JSON.stringify({...authUser,RoomId:myroom,RoomName:RoomName});
+                                        let UniqueId = Math.floor(new Date().getTime()/1000.0);
+                                        Axios.post('api/storeRecord',{RecId:UniqueId,RecOwnerId:authUser.id,RoomId:myroom});
                                         var body = { 
                                             request: "record",
+                                            id:UniqueId,
                                             name:RecordName,
                                         };
                                         RecordHandler.send({ message: body, jsep: jsep });
