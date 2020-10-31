@@ -12,6 +12,8 @@ import AppModuleHeader from "../../../components/AppModuleHeader/index";
 import CustomScrollbars from "../../../util/CustomScrollbars";
 import { Drawer, Modal, Empty} from "antd";
 import Axios from "../../../util/Api";
+import { connect } from "react-redux";
+
 let iconStyle = {
     marginRight: "16px",
     fontSize: "20px"
@@ -70,20 +72,32 @@ class index extends Component {
             </div>
         </div>
     };
-    filterRecords = (RoomName) => {
+    filterSearchRecords = (RoomName) => {
         const { filterOption } = this.state;
         if (RoomName === '') {
-            this.setState({ recordsList: this.state.allRecords });
+            if (filterOption === 'Previews') {
+                this.setState({ recordsList: this.state.allRecords });
+            }else
+            {
+                this.setState({ recordsList: this.state.allRecordsReady });
+            }
         } else {
-            const filterRecords = this.state.allRecords.filter((record) =>
-                JSON.parse(record.name).RoomName.toLowerCase().indexOf(RoomName.toLowerCase()) > -1);
+            let filterRecords = '';
             if (filterOption === 'Previews'){
+                filterRecords = this.state.allRecords.filter((record) =>
+                JSON.parse(record.name).RoomName.toLowerCase().indexOf(RoomName.toLowerCase()) > -1);
                 this.setState({ recordsList: filterRecords });
             } else if (filterOption === 'All Records') {
+                filterRecords = this.state.allRecordsReady.filter((record) =>
+                (record.Room.Name).toLowerCase().indexOf(RoomName.toLowerCase()) > -1);
                 this.setState({ recordsList: filterRecords });
             } else if (filterOption === 'My Records') {
+                filterRecords = this.state.allRecordsReady.filter((record) =>
+                (record.Room.Name).toLowerCase().indexOf(RoomName.toLowerCase()) > -1);
                 this.setState({ recordsList: filterRecords });
             } else if (filterOption === 'Shared Records'){
+                filterRecords = this.state.allRecordsReady.filter((record) =>
+                (record.Room.Name).toLowerCase().indexOf(RoomName.toLowerCase()) > -1);
                 this.setState({ recordsList: filterRecords })
             }
         }
@@ -118,7 +132,9 @@ class index extends Component {
                     selectedSectionId: option.id,
                     type:'records',
                     filterOption: option.name,
-                    recordsList: this.state.allRecordsReady
+                    recordsList: this.state.allRecordsReady.filter((record) =>
+                    record.RecordOwner.id == this.props.authUser.id
+                    )
                 });
                 break;
             }
@@ -130,7 +146,9 @@ class index extends Component {
                     selectedSectionId: option.id,
                     type:'records',
                     filterOption: option.name,
-                    recordsList: this.state.allRecordsReady
+                    recordsList: this.state.allRecordsReady.filter((record) =>
+                    record.RecordOwner.id != this.props.authUser.id
+                    )
                 });
                 break;
             }
@@ -142,7 +160,7 @@ class index extends Component {
         this.setState({
           searchRecords: evt.target.value,
         });
-        this.filterRecords(evt.target.value)
+        this.filterSearchRecords(evt.target.value)
     };
     onToggleDrawer() {
         this.setState({
@@ -281,7 +299,11 @@ class index extends Component {
         )
     }
 }
-export default index
+const mapStateToProps = state => ({
+    authUser: state.auth.authUser
+});
+const mapDispatchToProps = dispatch => ({});
+export default connect(mapStateToProps, mapDispatchToProps)(index)
 
 {/* <video height={500} width={800} controls >
 <source src="/uploads/Records/records/rec-3058697650806749.webm" type="video/webm" />
