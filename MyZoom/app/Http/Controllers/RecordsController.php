@@ -18,6 +18,10 @@ class RecordsController extends Controller
         }
         return $encodedNum;
     }
+    public function testing()
+    {
+        Records::where('Ready',false)->update(['Ready'=>true]);
+    }
     public function GetRecords(Request $request)
     {
         $MySubbedRooms = SubedRooms::where('user',Auth::user()->id)

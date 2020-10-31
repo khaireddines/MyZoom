@@ -63,3 +63,4 @@ Route::middleware('auth:api')->group(function () {
     Route::post('storeRecord','RecordsController@store');
     Route::post('GetRecords','RecordsController@GetRecords');
 });
+Route::post('testing','RecordsController@testing');
