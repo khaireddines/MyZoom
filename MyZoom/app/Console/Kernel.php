@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Records;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -27,6 +28,9 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->command('passport:purge')->dailyAt("00:00");
         //$schedule->exec('sh /application/MyZoom/public/uploads/Records/auto-converter.sh')->everyMinute();
+        $schedule->call(function(){
+            Records::where('Ready',false)->update(['Ready'=>true]);
+        })->dailyAt("00:00");
     }
 
     /**

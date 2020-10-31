@@ -89,12 +89,9 @@ class index extends Component {
         }
     };
     onFilterOptionSelect = (option) => {
-        if (this.state.type === 'preview') 
-        this.getRecordsReady();
-        else
-        this.getRecordsOfServer();
         switch (option.name) {
             case 'Previews': {
+                this.getRecordsOfServer();
                 this.setState({
                     selectedSectionId: option.id,
                     type:'preview',
@@ -104,6 +101,7 @@ class index extends Component {
                 break;
             }
             case 'All Records': {
+                this.getRecordsReady();
                 this.setState({
                     selectedSectionId: option.id,
                     type:'records',
@@ -113,6 +111,9 @@ class index extends Component {
                 break;
             }
             case 'My Records': {
+                if (!this.state.loadedOnce) {
+                    this.getRecordsReady();
+                }
                 this.setState({
                     selectedSectionId: option.id,
                     type:'records',
@@ -122,6 +123,9 @@ class index extends Component {
                 break;
             }
             case 'Shared Records': {
+                if (!this.state.loadedOnce) {
+                    this.getRecordsReady();
+                }
                 this.setState({
                     selectedSectionId: option.id,
                     type:'records',
@@ -194,7 +198,8 @@ class index extends Component {
         let Res = await Axios.post('api/GetRecords',{});
         this.setState({
             allRecordsReady: Res.data,
-            recordsList : Res.data
+            recordsList : Res.data,
+            loadedOnce:true
         });
     }
     playPreview(Recordid){    
@@ -215,6 +220,7 @@ class index extends Component {
           filterOption: 'Previews',
           allRecordsOfServer: this.props.recordsList,
           allRecordsReady:[],
+          loadedOnce:false,
           allRecords: [],
           recordsList: [],
           selectedContact: null,
