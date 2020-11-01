@@ -103,7 +103,7 @@ div,span{outline:0;}
     visibility: hidden;
   }
 }
-span.Active>span{
+span.ActiveRec>span{
     color: lightgreen !important;
 }
 span.NotActive>span{
