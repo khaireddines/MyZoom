@@ -89,3 +89,23 @@ div,span{outline:0;}
 .active div>svg{
     color: #2f3136 !important;;
 }
+.blink {
+  animation: blink-animation 1s steps(5, start) infinite;
+  -webkit-animation: blink-animation 1s steps(5, start) infinite;
+}
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+@-webkit-keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+span.Active>span{
+    color: lightgreen !important;
+}
+span.NotActive>span{
+    cursor: pointer;
+}

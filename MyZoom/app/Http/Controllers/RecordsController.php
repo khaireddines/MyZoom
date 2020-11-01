@@ -24,6 +24,7 @@ class RecordsController extends Controller
     }
     public function GetRecords(Request $request)
     {
+        $result=[];
         $MySubbedRooms = SubedRooms::where('user',Auth::user()->id)
         ->where('room_request_accepted',true)
         ->get(['room']);
@@ -44,9 +45,13 @@ class RecordsController extends Controller
 
                 ];
             }
+            if ($result != null) {
+                $sorted =collect($result)->sortByDesc('created_at');
+            return response($sorted->values()->all());
+            }else
             return response($result);
         }else 
-        return response([]);
+        return response($result);
     }
     public function store(Request $request)
     {
