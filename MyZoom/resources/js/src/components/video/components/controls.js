@@ -246,7 +246,9 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider, myroom }) => {
     }
     const StartRecord = () => {
         if(!RecordOn){
+            preShareScreen();
             RecordHandlerInState.createOffer({
+            media: { video: screenType },
             success: (jsep) => {
                 let RecordName = JSON.stringify({ ...authUser, RoomId: myroom, RoomName: RoomName });
                 let UniqueId = Math.floor(new Date().getTime() / 1000.0);
@@ -258,7 +260,7 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider, myroom }) => {
                 };
                 RecordHandlerInState.send({ message: body, jsep: jsep });
                 setRecordOn(true);
-                setRecordVideoOn(true);
+                setRecordShareScreenOn(true);
             }
         })}
         else{
@@ -407,8 +409,8 @@ const Controls = ({ RoomName, SFUHandler, RightSider, LeftSider, myroom }) => {
                                 </h3>
                             </div>
                             {(authUser.id == RoomOwnerIdState)&&(<div style={{float:'right',marginRight:'5px',marginTop:'10px'}} >
-                                <span type="button" className={`${RecordVideoOn ?'ActiveRec':'NotActive'}`} style={{position: 'absolute',top: '1rem',right: '7rem'}} onClick={(RecordVideoOn)? undefined : RecordVideo}> <VideoCameraOutlined style={iconStyle} /></span>
-                                <span type="button" className={`${RecordShareScreenOn ?'ActiveRec':'NotActive'}`} style={{position: 'absolute',top: '1rem',right: '5rem'}} onClick={(RecordShareScreenOn)? undefined : RecordShareScreen}> <FundViewOutlined style={iconStyle} /></span>
+                                {/* <span type="button" className={`${RecordVideoOn ?'ActiveRec':'NotActive'}`} style={{position: 'absolute',top: '1rem',right: '7rem'}} onClick={(RecordVideoOn)? undefined : RecordVideo}> <VideoCameraOutlined style={iconStyle} /></span>
+                                <span type="button" className={`${RecordShareScreenOn ?'ActiveRec':'NotActive'}`} style={{position: 'absolute',top: '1rem',right: '5rem'}} onClick={(RecordShareScreenOn)? undefined : RecordShareScreen}> <FundViewOutlined style={iconStyle} /></span> */}
                                 <span type="button" style={{cursor: 'pointer',position: 'absolute',top: '0rem',right: '1rem'}} onClick={StartRecord}>
                                     <span className={recordsClassNames} style={{fontSize: '50px'}}>
                                         <svg id="Capa_1" width="1em" height="1em" viewBox="0 0 496.716 496.716"xmlns="http://www.w3.org/2000/svg">
