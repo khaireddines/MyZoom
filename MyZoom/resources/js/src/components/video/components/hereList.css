@@ -4,10 +4,10 @@
 span.icons-controle>span:hover{
     color: #038fde;
 }
-span.Muted>span{
+span.MutedMic>span{
     color: lightcoral;
 }
-span.Active>span{
+span.ActiveMic>span{
     color: lightgreen;
 }
 .privateSection > :first-child{

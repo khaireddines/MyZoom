@@ -6,6 +6,7 @@ import Moment from "moment";
 import { Empty, Divider } from "antd";
 import { connect } from "react-redux";
 import { userSignIn } from "../../../appRedux/actions";
+import './communication.css';
 class communication extends Component {
     constructor(props) {
         super(props);

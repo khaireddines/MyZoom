@@ -11,6 +11,7 @@ import {
 import "./video.css";
 import HereList from "./components/hereList";
 import Axios from "axios";
+import OwnLayout from "./components/OwnLayout";
 var classNames = require("classnames");
 
 const { Header, Footer, Sider, Content } = Layout;
@@ -86,8 +87,8 @@ const VideoLayout = ({ RoomName, SFUHandler, myroom, RoomExist }) => {
                                 overflowX: "hidden"
                             }}
                         >
-                            {/** here goes the video layouts */}
-                            
+                            {/** here goes the video layouts & my own video layout */}
+                            <OwnLayout />
                             
                         </Content>
                         <Footer style={{ padding: "3px 32px" }}>

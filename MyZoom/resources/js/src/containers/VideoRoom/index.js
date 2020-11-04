@@ -104,6 +104,8 @@ const VideoRoom = props => {
         });
     };
     const publishOwnFeed = () => {
+       
+        //publish feed
         SFUHandler.createOffer({
             media: {
                 audioRecv: false,
@@ -182,6 +184,7 @@ const VideoRoom = props => {
                             </div>
                         </div>
                         `;
+                        // FIXME: Image HardCoded
                         let newVideoTag = `
                         <div>
                             <div class="ant-card ant-card-bordered" id="card${msg["id"]}" style="
@@ -204,7 +207,7 @@ const VideoRoom = props => {
                                 </div>
                         </div>
                         `;
-                        
+                        // FIXME: Here is the fix for the picture 
                         let mypayload={
                             id:msg['id'],
                             img:SFURemoteHandler.rfdisplay.Profile_picture,
@@ -405,10 +408,18 @@ const VideoRoom = props => {
                                 Janus.debug(" ::: Got a local stream :::");
                                 mystream = stream;
                                 // attatch the stream to the video tag
-                                /* Janus.attachMediaStream(
+                                Janus.attachMediaStream(
                                     document.getElementById("myvideo"),
                                     stream
-                                ); */
+                                );
+                                var videoTracks = stream.getVideoTracks();
+				                if(!videoTracks || videoTracks.length === 0) {
+                                    document.getElementById(`myvideodiv`).style.display='none';
+                                    document.getElementById(`mycard`).style.display='';
+                                }else{
+                                    document.getElementById(`mycard`).style.display='none';
+                                    document.getElementById(`myvideodiv`).style.display='';
+                                }
                             },
                             onremotestream: stream => {
                                 // that's a send only method

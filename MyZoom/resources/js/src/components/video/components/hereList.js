@@ -289,8 +289,8 @@ class HereList extends Component {
                                     </div>
                                     {(RoomOwnerId==Me.id)&&
                                     (<>
-                                        <span className={`icons-controle person${data.id} ${People_Mute_State[data.id]==true?'Muted':'Active' }`} id={`${data.id}`} onClick={()=>{this.ToggleMuteUser(data,People_Mute_State[data.id])}}>{People_Mute_State[data.id]?<AudioMutedOutlined style={iconStyle} />:<AudioOutlined style={iconStyle} />}</span>
-                                        <span className={`icons-controle person${data.id} ${WhoIsSS==data.id ?'Active':''}`} onClick={()=>{this.TogglePermitShareScreen(data)}}><FundViewOutlined style={iconStyle} /></span>
+                                        <span className={`icons-controle person${data.id} ${People_Mute_State[data.id]==true?'MutedMic':'ActiveMic' }`} id={`${data.id}`} onClick={()=>{this.ToggleMuteUser(data,People_Mute_State[data.id])}}>{People_Mute_State[data.id]?<AudioMutedOutlined style={iconStyle} />:<AudioOutlined style={iconStyle} />}</span>
+                                        <span className={`icons-controle person${data.id} ${WhoIsSS==data.id ?'ActiveMic':''}`} onClick={()=>{this.TogglePermitShareScreen(data)}}><FundViewOutlined style={iconStyle} /></span>
                                     </>)}
                                 </div>
 
